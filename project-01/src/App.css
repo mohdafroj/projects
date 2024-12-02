@@ -92,3 +92,8 @@ header ul {
   display: flex;
   gap: 10px;
 }
+
+.shops img {
+  display: flex;
+  width: 20px;
+}
