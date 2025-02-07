@@ -3,6 +3,7 @@ videos
 server/node_modules
 myapp/node_modules
 mynest/node_modules
+myvue/node_modules
 project-01/node_modules
 project-02/node_modules
 trafficlight/node_modules
