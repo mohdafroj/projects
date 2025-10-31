@@ -24,6 +24,8 @@ RUN apk --no-cache add \
     npm \
     && curl -sSL https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions -o /usr/local/bin/install-php-extensions \
     && chmod +x /usr/local/bin/install-php-extensions
+# Install ext-mongodb 1.21.2 via PECL
+RUN pecl install mongodb-1.21.2 && docker-php-ext-enable mongodb
 # Install PHP extensions
 RUN install-php-extensions gd pdo pdo_mysql mbstring zip bcmath
 # Install Composer globally
