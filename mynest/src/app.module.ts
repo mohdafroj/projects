@@ -8,10 +8,10 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     PropertyModule,
-    DevtoolsModule.register({ http: process.env.NODE_ENV != 'prouction' }),
     UsersModule,
+    DevtoolsModule.register({ http: process.env.NODE_ENV != 'prouction' }),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

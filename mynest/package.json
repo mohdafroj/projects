@@ -1,8 +1,8 @@
 {
   "name": "mynest",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Learn NestJS",
+  "author": "Mohd Afroj",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
