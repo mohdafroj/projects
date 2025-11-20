@@ -1,23 +1,53 @@
 services:
     srv_nest_dev:
+        container_name: ctr_nest_dev
         build:
             context: .
             dockerfile: Dockerfile.dev
-        container_name: ctr_nest_dev
-        profiles:
-            - dev
-        ports:
-            - "3000:3000"
-        volumes:
-            - .:/app
-            - /app/node_modules
         env_file:
             - .env.development
+        ports:
+            - "3000:3000"
+        depends_on:
+            - srv_postgresql
+        volumes:
+            - .:/app
+        profiles:
+            - dev
+    srv_nest_prod:
+        container_name: ctr_nest_prod
+        build:
+            context: .
+            dockerfile: Dockerfile.prod
+        env_file:
+            - .env.production
+        ports:
+            - "3001:3000"
+        depends_on:
+            - srv_postgresql
+        profiles:
+            - prod
+
+    srv_postgresql:
+        image: postgres:18-alpine
+        container_name: ctr_postgresql
         environment:
-            - CHOKIDAR_USEPOLLING=true
-            - CHOKIDAR_INTERVAL=100
-        networks:
-            - nestjs
-networks:
-    nestjs:
-        driver: bridge
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=postgres
+        ports:
+            - '5432:5432'
+        volumes:
+            - postgresql-db-data:/var/lib/postgresql/data
+    srv_pgadmin:
+        image: dpage/pgadmin4
+        container_name: ctr_pgadmin
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=admin@example.com
+            - PGADMIN_DEFAULT_PASSWORD=admin
+        ports:
+            - '5050:80'
+        depends_on:
+            - srv_postgresql
+volumes:
+    postgresql-db-data:
