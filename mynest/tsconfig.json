@@ -24,7 +24,8 @@
     "watchDirectory": "dynamicPriorityPolling",
     "excludeDirectories": [
       "**/node_modules",
-      "dist"
+      "dist",
+      "postgres"
     ]
   }
 }

@@ -9,8 +9,20 @@ COPY package*.json ./
 #Install depencies
 RUN npm ci
 
+# Copy prisma schema early to generate client
+COPY prisma ./prisma
+
 #Copy rest project files
 COPY . .
 
+# Generate Prisma Client after everything is in place
+#RUN npx prisma generate
+
+# Expose for hot reload
+EXPOSE 3000
+
 #Run dev command accoring to package.json
 CMD ["npm", "run", "start:dev"]
+
+# Wait for Postgres then generate Prisma client and start dev server
+#CMD ["sh", "-c", "until nc -z postgres 5432; do echo 'waiting for postgres...'; sleep 1; done; npm run prisma:generate && npm run start:dev"]
