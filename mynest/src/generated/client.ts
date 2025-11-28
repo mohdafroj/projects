@@ -12,14 +12,16 @@
 
 import * as process from 'node:process'
 import * as path from 'node:path'
+import { fileURLToPath } from 'node:url'
+globalThis['__dirname'] = path.dirname(fileURLToPath(import.meta.url))
 
 import * as runtime from "@prisma/client/runtime/client"
-import * as $Enums from "./enums"
-import * as $Class from "./internal/class"
-import * as Prisma from "./internal/prismaNamespace"
+import * as $Enums from "./enums.js"
+import * as $Class from "./internal/class.js"
+import * as Prisma from "./internal/prismaNamespace.js"
 
-export * as $Enums from './enums'
-export * from "./enums"
+export * as $Enums from './enums.js'
+export * from "./enums.js"
 /**
  * ## Prisma Client
  * 
@@ -28,7 +30,7 @@ export * from "./enums"
  * ```
  * const prisma = new PrismaClient()
  * // Fetch zero or more Users
- * const users = await prisma.user.findMany()
+ * const users = await prisma.users.findMany()
  * ```
  * 
  * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
@@ -38,12 +40,42 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model User
+ * Model users
  * 
  */
-export type User = Prisma.UserModel
+export type users = Prisma.usersModel
 /**
- * Model Profile
+ * Model profiles
  * 
  */
-export type Profile = Prisma.ProfileModel
+export type profiles = Prisma.profilesModel
+/**
+ * Model ms_roles
+ * 
+ */
+export type ms_roles = Prisma.ms_rolesModel
+/**
+ * Model ms_user_roles
+ * 
+ */
+export type ms_user_roles = Prisma.ms_user_rolesModel
+/**
+ * Model ms_permissions
+ * 
+ */
+export type ms_permissions = Prisma.ms_permissionsModel
+/**
+ * Model ms_modules
+ * 
+ */
+export type ms_modules = Prisma.ms_modulesModel
+/**
+ * Model ms_features
+ * 
+ */
+export type ms_features = Prisma.ms_featuresModel
+/**
+ * Model ms_module_feature_permissions
+ * 
+ */
+export type ms_module_feature_permissions = Prisma.ms_module_feature_permissionsModel

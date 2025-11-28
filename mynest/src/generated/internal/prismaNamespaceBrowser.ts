@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models'
-export type * from './prismaNamespace'
+export type * from '../models.js'
+export type * from './prismaNamespace.js'
 
 export const Decimal = runtime.Decimal
 
@@ -51,8 +51,14 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User',
-  Profile: 'Profile'
+  users: 'users',
+  profiles: 'profiles',
+  ms_roles: 'ms_roles',
+  ms_user_roles: 'ms_user_roles',
+  ms_permissions: 'ms_permissions',
+  ms_modules: 'ms_modules',
+  ms_features: 'ms_features',
+  ms_module_feature_permissions: 'ms_module_feature_permissions'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -71,27 +77,100 @@ export const TransactionIsolationLevel = {
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const UserScalarFieldEnum = {
+export const UsersScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
   password: 'password',
-  mobile: 'mobile'
+  mobile: 'mobile',
+  is_active: 'is_active',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
 } as const
 
-export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum]
 
 
-export const ProfileScalarFieldEnum = {
+export const ProfilesScalarFieldEnum = {
   id: 'id',
   title: 'title',
   picture: 'picture',
   content: 'content',
   published: 'published',
-  authorId: 'authorId'
+  author_id: 'author_id'
 } as const
 
-export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
+export type ProfilesScalarFieldEnum = (typeof ProfilesScalarFieldEnum)[keyof typeof ProfilesScalarFieldEnum]
+
+
+export const Ms_rolesScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  name: 'name',
+  description: 'description',
+  is_active: 'is_active',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Ms_rolesScalarFieldEnum = (typeof Ms_rolesScalarFieldEnum)[keyof typeof Ms_rolesScalarFieldEnum]
+
+
+export const Ms_user_rolesScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  role_id: 'role_id',
+  created_at: 'created_at'
+} as const
+
+export type Ms_user_rolesScalarFieldEnum = (typeof Ms_user_rolesScalarFieldEnum)[keyof typeof Ms_user_rolesScalarFieldEnum]
+
+
+export const Ms_permissionsScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  permission_code: 'permission_code',
+  is_active: 'is_active',
+  created_at: 'created_at'
+} as const
+
+export type Ms_permissionsScalarFieldEnum = (typeof Ms_permissionsScalarFieldEnum)[keyof typeof Ms_permissionsScalarFieldEnum]
+
+
+export const Ms_modulesScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  module_code: 'module_code',
+  is_active: 'is_active',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Ms_modulesScalarFieldEnum = (typeof Ms_modulesScalarFieldEnum)[keyof typeof Ms_modulesScalarFieldEnum]
+
+
+export const Ms_featuresScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  feature_code: 'feature_code',
+  feature_on: 'feature_on',
+  is_active: 'is_active',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Ms_featuresScalarFieldEnum = (typeof Ms_featuresScalarFieldEnum)[keyof typeof Ms_featuresScalarFieldEnum]
+
+
+export const Ms_module_feature_permissionsScalarFieldEnum = {
+  id: 'id',
+  module_id: 'module_id',
+  feature_id: 'feature_id',
+  permission_id: 'permission_id',
+  created_at: 'created_at'
+} as const
+
+export type Ms_module_feature_permissionsScalarFieldEnum = (typeof Ms_module_feature_permissionsScalarFieldEnum)[keyof typeof Ms_module_feature_permissionsScalarFieldEnum]
 
 
 export const SortOrder = {

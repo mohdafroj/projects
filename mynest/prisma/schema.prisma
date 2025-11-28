@@ -6,20 +6,30 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  output   = "../src/generated"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
+enum FeatureOn {
+  web
+  mobile
+  both
+}
+
 model users {
-  id       Int        @id @default(autoincrement())
-  name     String
-  email    String     @unique
-  password String
-  mobile   String?
-  profiles profiles[]
+  id          Int             @id @default(autoincrement())
+  name        String
+  email       String          @unique
+  password    String
+  mobile      String?
+  is_active   Boolean         @default(true)
+  created_at  DateTime        @default(now())
+  updated_at  DateTime        @updatedAt
+  profiles    profiles[]
+  msUserRoles ms_user_roles[]
 }
 
 model profiles {
@@ -30,4 +40,65 @@ model profiles {
   published Boolean? @default(false)
   author    users?   @relation(fields: [author_id], references: [id])
   author_id Int?
+}
+
+model ms_roles {
+  id          Int             @id @default(autoincrement())
+  title       String
+  name        String
+  description String
+  is_active   Boolean         @default(true)
+  created_at  DateTime        @default(now())
+  updated_at  DateTime        @updatedAt
+  msUserRoles ms_user_roles[]
+}
+
+model ms_user_roles {
+  id         Int      @id @default(autoincrement())
+  user       users    @relation(fields: [user_id], references: [id])
+  user_id    Int
+  role       ms_roles @relation(fields: [role_id], references: [id])
+  role_id    Int
+  created_at DateTime @default(now())
+}
+
+model ms_permissions {
+  id                         Int                             @id @default(autoincrement())
+  name                       String
+  permission_code            String                          @unique
+  is_active                  Boolean                         @default(true)
+  created_at                 DateTime                        @default(now())
+  msModuleFeaturePermissions ms_module_feature_permissions[]
+}
+
+model ms_modules {
+  id                         Int                             @id @default(autoincrement())
+  name                       String
+  module_code                String                          @unique
+  is_active                  Boolean                         @default(true)
+  created_at                 DateTime                        @default(now())
+  updated_at                 DateTime                        @updatedAt
+  msModuleFeaturePermissions ms_module_feature_permissions[]
+}
+
+model ms_features {
+  id                         Int                             @id @default(autoincrement())
+  name                       String
+  feature_code               String                          @unique
+  feature_on                 FeatureOn                       @default(web)
+  is_active                  Boolean                         @default(true)
+  created_at                 DateTime                        @default(now())
+  updated_at                 DateTime                        @updatedAt
+  msModuleFeaturePermissions ms_module_feature_permissions[]
+}
+
+model ms_module_feature_permissions {
+  id            Int            @id @default(autoincrement())
+  module        ms_modules     @relation(fields: [module_id], references: [id])
+  module_id     Int
+  feature       ms_features    @relation(fields: [feature_id], references: [id])
+  feature_id    Int
+  permission    ms_permissions @relation(fields: [permission_id], references: [id])
+  permission_id Int
+  created_at    DateTime       @default(now())
 }
