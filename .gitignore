@@ -5,6 +5,7 @@ myapp/node_modules
 mynest/node_modules
 mynest/postgres
 mynest/prisma/migrations
+mynest/package-lock.json
 myvue/node_modules
 project-01/node_modules
 project-02/node_modules
