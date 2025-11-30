@@ -4,6 +4,7 @@ server/node_modules
 myapp/node_modules
 mynest/node_modules
 mynest/postgres
+mynest/src/generated
 mynest/prisma/migrations
 mynest/package-lock.json
 myvue/node_modules
