@@ -7,6 +7,7 @@ mynest/postgres
 mynest/src/generated
 mynest/prisma/migrations
 mynest/package-lock.json
+mynest/prisma/migrations/migration_lock.toml
 myvue/node_modules
 project-01/node_modules
 project-02/node_modules
