@@ -4,15 +4,15 @@ import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
-    constructor(private userService: UsersService) { }
+  constructor(private userService: UsersService) {}
 
-    @Get()
-    async findAll(): Promise<User[]> {
-        return this.userService.findAll();
-    }
+  @Get()
+  async findAll(): Promise<User[]> {
+    return this.userService.findAll();
+  }
 
-    @Get(':id')
-    findOne(@Param('id', ParseIntPipe) id) {
-        return this.userService.findById(id);
-    }
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id) {
+    return this.userService.findById(id);
+  }
 }
