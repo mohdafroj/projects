@@ -5,6 +5,7 @@ import { PropertyModule } from './property/property.module';
 import { DevtoolsModule } from '@nestjs/devtools-integration';
 import { UsersModule } from './users/users.module';
 //import { TypeOrmModule } from '@nestjs/typeorm';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -22,8 +23,9 @@ import { UsersModule } from './users/users.module';
     //   autoLoadEntities: true,
     // }),
     DevtoolsModule.register({ http: process.env.NODE_ENV != 'prouction' }),
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
