@@ -1,19 +1,18 @@
 import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
-import { User } from './interfaces/user.interface';
 import { UsersService } from './users.service';
-import { users, Prisma } from '../generated/client';
+import { User } from '../generated/prisma/client';
 
 @Controller('users')
 export class UsersController {
-  constructor(private userService: UsersService) {}
+  constructor(private userService: UsersService) { }
 
   @Get()
-  async findAll(): Promise<users[]> {
+  async findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id) {
-    return this.userService.findById(id);
+    return this.userService.findByUnique(id);
   }
 }

@@ -1,12 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
@@ -19,86 +14,102 @@ enum FeatureOn {
   both
 }
 
-model users {
-  id          Int             @id @default(autoincrement())
-  name        String
-  email       String          @unique
-  password    String
-  mobile      String?
-  is_active   Boolean         @default(true)
-  created_at  DateTime        @default(now())
-  updated_at  DateTime        @updatedAt
-  profiles    profiles[]
-  msUserRoles ms_user_roles[]
+model User {
+  id         Int        @id @default(autoincrement())
+  name       String
+  email      String     @unique
+  password   String
+  mobile     String?
+  is_active  Boolean    @default(true)
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  Profile    Profile[]
+  UserRole   UserRole[]
+
+  @@map("users")
 }
 
-model profiles {
+model Profile {
   id        Int      @id @default(autoincrement())
   title     String
   picture   String?
   content   String?
   published Boolean? @default(false)
-  author    users?   @relation(fields: [author_id], references: [id])
+  author    User?    @relation(fields: [author_id], references: [id])
   author_id Int?
+
+  @@map("profiles")
 }
 
-model ms_roles {
-  id          Int             @id @default(autoincrement())
+model Role {
+  id          Int        @id @default(autoincrement())
   title       String
   name        String
   description String
-  is_active   Boolean         @default(true)
-  created_at  DateTime        @default(now())
-  updated_at  DateTime        @updatedAt
-  msUserRoles ms_user_roles[]
+  is_active   Boolean    @default(true)
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  UserRole    UserRole[]
+
+  @@map("ms_roles")
 }
 
-model ms_user_roles {
+model UserRole {
   id         Int      @id @default(autoincrement())
-  user       users    @relation(fields: [user_id], references: [id])
+  user       User     @relation(fields: [user_id], references: [id])
   user_id    Int
-  role       ms_roles @relation(fields: [role_id], references: [id])
+  role       Role     @relation(fields: [role_id], references: [id])
   role_id    Int
   created_at DateTime @default(now())
+
+  @@map("ms_user_roles")
 }
 
-model ms_permissions {
-  id                         Int                             @id @default(autoincrement())
-  name                       String
-  permission_code            String                          @unique
-  is_active                  Boolean                         @default(true)
-  created_at                 DateTime                        @default(now())
-  msModuleFeaturePermissions ms_module_feature_permissions[]
+model Permission {
+  id              Int      @id @default(autoincrement())
+  name            String
+  permission_code String   @unique
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now())
+  mfp             Mfp[]
+
+  @@map("ms_permissions")
 }
 
-model ms_modules {
-  id                         Int                             @id @default(autoincrement())
-  name                       String
-  module_code                String                          @unique
-  is_active                  Boolean                         @default(true)
-  created_at                 DateTime                        @default(now())
-  updated_at                 DateTime                        @updatedAt
-  msModuleFeaturePermissions ms_module_feature_permissions[]
+model Module {
+  id          Int      @id @default(autoincrement())
+  name        String
+  module_code String   @unique
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  mfp         Mfp[]
+
+  @@map("ms_modules")
 }
 
-model ms_features {
-  id                         Int                             @id @default(autoincrement())
-  name                       String
-  feature_code               String                          @unique
-  feature_on                 FeatureOn                       @default(web)
-  is_active                  Boolean                         @default(true)
-  created_at                 DateTime                        @default(now())
-  updated_at                 DateTime                        @updatedAt
-  msModuleFeaturePermissions ms_module_feature_permissions[]
+model Feature {
+  id           Int       @id @default(autoincrement())
+  name         String
+  feature_code String    @unique
+  feature_on   FeatureOn @default(web)
+  is_active    Boolean   @default(true)
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  mfp          Mfp[]
+
+  @@map("ms_features")
 }
 
-model ms_module_feature_permissions {
-  id            Int            @id @default(autoincrement())
-  module        ms_modules     @relation(fields: [module_id], references: [id])
+model Mfp {
+  id            Int        @id @default(autoincrement())
+  module        Module     @relation(fields: [module_id], references: [id])
   module_id     Int
-  feature       ms_features    @relation(fields: [feature_id], references: [id])
+  feature       Feature    @relation(fields: [feature_id], references: [id])
   feature_id    Int
-  permission    ms_permissions @relation(fields: [permission_id], references: [id])
+  permission    Permission @relation(fields: [permission_id], references: [id])
   permission_id Int
-  created_at    DateTime       @default(now())
+  created_at    DateTime   @default(now())
+
+  @@map("ms_mfp")
 }

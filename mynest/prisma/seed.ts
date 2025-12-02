@@ -6,7 +6,25 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 async function main() {
-    //Start of seed permissions data
+    console.log("Start of Seeding Data - ");
+    //Start of users data
+    const users = [
+        { name: 'Admin', email: 'admin@example.com', password: 'admin', mobile: '1234567890' },
+        { name: 'User', email: 'user@example.com', password: 'user', mobile: '1234567890' }
+    ];
+
+    for (const user of users) {
+        const result = await prisma.user.upsert({
+            where: { email: user.email },
+            update: {}, // No update needed if exists (or update fields if you want)
+            create: user,
+        });
+        console.log(`User "${user.name}" (${user.email}) → ${result.id ? 'Created' : 'Already exists'}`);
+    }
+
+    //End of users data
+
+    //Start of permissions data
     const permissions = [
         { name: 'View', permission_code: 'view' },
         { name: 'Create', permission_code: 'create' },
@@ -16,7 +34,7 @@ async function main() {
     ];
 
     for (const perm of permissions) {
-        const result = await prisma.ms_permissions.upsert({
+        const result = await prisma.permission.upsert({
             where: { permission_code: perm.permission_code },
             update: {}, // No update needed if exists (or update fields if you want)
             create: perm,
@@ -24,7 +42,7 @@ async function main() {
         console.log(`Permission "${perm.name}" (${perm.permission_code}) → ${result.id ? 'Created' : 'Already exists'}`);
     }
 
-    //End of seed permissions data
+    //End of permissions data
 
     console.log("Seed done");
 }

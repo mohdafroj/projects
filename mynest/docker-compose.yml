@@ -13,6 +13,7 @@ services:
         volumes:
             - .:/app
             - node_modules:/app/node_modules
+            - prisma:/app/prisma
         profiles:
             - dev
     srv_nest_prod:
@@ -40,28 +41,18 @@ services:
             - '5432:5432'
         volumes:
             - pgdata:/var/lib/postgresql/data
-    # srv_prisma:
-    #     #image: node:20-bullseye-slim
-    #     image: node:22-alpine
-    #     container_name: ctr_prisma
-    #     working_dir: /app
-    #     volumes:
-    #         - ./:/app
-    #     env_file:
-    #         - .env.development
+    # srv_pgadmin:
+    #     image: dpage/pgadmin4
+    #     container_name: ctr_pgadmin
+    #     environment:
+    #         - PGADMIN_DEFAULT_EMAIL=admin@example.com
+    #         - PGADMIN_DEFAULT_PASSWORD=admin
+    #         - PYTHONWARNINGS=ignore
+    #     ports:
+    #         - '5050:80'
     #     depends_on:
     #         - srv_postgresql
-    #     entrypoint: [ "sh", "-c", "npm ci && npx prisma migrate deploy && npx prisma generate" ]
-    srv_pgadmin:
-        image: dpage/pgadmin4
-        container_name: ctr_pgadmin
-        environment:
-            - PGADMIN_DEFAULT_EMAIL=admin@example.com
-            - PGADMIN_DEFAULT_PASSWORD=admin
-        ports:
-            - '5050:80'
-        depends_on:
-            - srv_postgresql
 volumes:
     pgdata:
     node_modules:
+    prisma:
