@@ -4,18 +4,31 @@ import { User, Prisma } from '../generated/prisma/client';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [];
+
   constructor(private prisma: PrismaService) { }
+
   create(data: Prisma.UserCreateInput): Promise<User> {
     return this.prisma.user.create({ data });
   }
 
-  async findAll(): Promise<User[]> {
-    return this.prisma.user.findMany({});
+  update(params: { data: Prisma.UserUpdateInput, where: Prisma.UserWhereUniqueInput }): Promise<User> {
+    const { data, where } = params;
+    return this.prisma.user.update({ where, data });
+  }
+
+  async findAll(params: {
+    skip?: number;
+    take?: number;
+    cursor?: Prisma.UserWhereUniqueInput;
+    where?: Prisma.UserWhereInput;
+    orderBy?: Prisma.UserOrderByWithRelationInput;
+  }): Promise<User[]> {
+    const { skip, take, cursor, where, orderBy } = params;
+    return this.prisma.user.findMany({ skip, take, cursor, where, orderBy });
   }
 
   findByUnique(where: Prisma.UserWhereUniqueInput): Promise<User> {
-    return this.prisma.user.findUnique({ where })
+    return this.prisma.user.findUnique({ where });
   }
 
   removeByUnique(where: Prisma.UserWhereUniqueInput): Promise<User> {
