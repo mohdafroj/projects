@@ -1,5 +1,6 @@
 test.js
 videos
+*/node_modules
 server/node_modules
 myapp/node_modules
 mynest/node_modules
