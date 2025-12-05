@@ -7,10 +7,15 @@ export class UsersController {
   constructor(private userService: UsersService) { }
 
   @Get()
-  async findAll(): Promise<User[]> {
-    return this.userService.findAll({
+  async findAll() {
+    const users = await this.userService.findAll({
       where: { is_active: true }
     });
+    let message = 'User list found.'
+    if (users.length == 0) {
+      message = 'User list not found.';
+    }
+    return { users, message };
   }
 
   @Get(':id')
@@ -23,10 +28,14 @@ export class UsersController {
   @Post()
   async createUser(
     @Body() userData: { name: string; email: string; password: string, mobile: string },
-  ): Promise<User> {
+  ) {
     const { name, email, password, mobile } = userData;
-
-    return this.userService.create(userData);
+    let newUser = await this.userService.create(userData);
+    let message = '';
+    if (newUser) {
+      message = "User created successfully."
+    }
+    return { user: newUser, message };
   }
 
   @Put(':id')
