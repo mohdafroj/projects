@@ -44,7 +44,7 @@ model Profile {
 model Role {
   id          Int        @id @default(autoincrement())
   title       String
-  name        String
+  name        String     @unique
   description String
   is_active   Boolean    @default(true)
   created_at  DateTime   @default(now())

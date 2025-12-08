@@ -5,16 +5,17 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from '../generated/prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(private userService: UsersService) {}
+  constructor(private userService: UsersService) { }
 
   @Get()
   async findAll() {
@@ -28,10 +29,9 @@ export class UsersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<User> {
-    let response = this.userService.findByUnique({ id });
-
-    return response;
+  async findOne(@Param('id') id: number) {
+    let user = await this.userService.findByUnique({ id });
+    return { user, message: user ? 'User detail' : 'User not found' };
   }
 
   @Post()
@@ -47,15 +47,51 @@ export class UsersController {
   }
 
   @Put(':id')
-  async updateUser(@Param('id') id: string): Promise<User> {
-    return this.userService.update({
-      where: { id: Number(id) },
-      data: { is_active: true },
-    });
+  async updateUser(@Param('id') id: number, @Body() userData: UpdateUserDto) {
+    let user = await this.userService.findByUnique({ id });
+    let updatesUser = null;
+    if (user) {
+      updatesUser = await this.userService.update({
+        where: { id: Number(id) },
+        data: userData,
+      });
+    }
+    return { user: user && updatesUser, message: updatesUser ? 'User detail updated successfully' : 'User not found' };
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<User> {
-    return this.userService.removeByUnique({ id: Number(id) });
+  async deleteUser(@Param('id') id: number) {
+    let user = await this.userService.findByUnique({ id });
+    if (user) {
+      await this.userService.removeByUnique({ id: Number(id) });
+    }
+    return { user, message: user ? 'User deleted successfully' : 'User not found' };
   }
+
+  @Patch(':id')
+  async patchUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() userData: UpdateUserDto
+  ) {
+    const user = await this.userService.findByUnique({ id });
+
+    if (!user) {
+      return {
+        message: 'User not found',
+      };
+    }
+
+    const updatedUser = await this.userService.update({
+      where: { id },
+      data: userData,
+    });
+
+    return {
+      success: true,
+      message: 'User updated successfully',
+      data: updatedUser,
+    };
+  }
+
+
 }

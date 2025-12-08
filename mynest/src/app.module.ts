@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PropertyModule } from './property/property.module';
+import { AutorizationModule } from './autorization/autorization.module';
 import { DevtoolsModule } from '@nestjs/devtools-integration';
 import { UsersModule } from './users/users.module';
-//import { TypeOrmModule } from '@nestjs/typeorm';
 import { PrismaModule } from './prisma/prisma.module';
+//import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    PropertyModule,
+    AutorizationModule,
     UsersModule,
     // TypeOrmModule.forRoot({
     //   type: 'postgres',
