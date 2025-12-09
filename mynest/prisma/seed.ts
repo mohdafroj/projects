@@ -6,6 +6,12 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 async function main() {
+    await prisma.role.upsert({
+        where: { id: 2 },
+        update: { name: 'Super Admin 2' },
+        create: { name: 'Super Admin 2', title: 'Super Admin 2', description: 'Super Admin 2' }
+    });
+
     console.log("Start of Seeding Data - ");
     //Start of users data
     const users = [

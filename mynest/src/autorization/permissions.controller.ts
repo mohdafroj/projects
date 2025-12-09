@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { CreatePermissionDto } from './dto/create-permission.dto';
 import { PermissionsService } from './permissions.service';
+import { UpdatePermissionDto } from './dto/update-permission.dto';
 
 @Controller('permissions')
 export class PermissionsController {
@@ -44,7 +45,7 @@ export class PermissionsController {
 
     @Put(':id')
     @UsePipes(new ValidationPipe({ groups: ['update'] }))
-    async update(@Param('id') id: number, @Body() body: CreatePermissionDto) {
+    async update(@Param('id') id: number, @Body() body: UpdatePermissionDto) {
         let find = await this.service.findByUnique({ id });
         let updatedData = null;
         if (find) {

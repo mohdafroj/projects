@@ -77,13 +77,14 @@ model Permission {
 }
 
 model Module {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
-  module_code String   @unique
-  is_active   Boolean  @default(true)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  module_code String    @unique
+  is_active   Boolean   @default(true)
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
   mfp         Mfp[]
+  features    Feature[]
 
   @@map("ms_modules")
 }
@@ -92,6 +93,8 @@ model Feature {
   id           Int       @id @default(autoincrement())
   name         String
   feature_code String    @unique
+  module       Module    @relation(fields: [module_id], references: [id])
+  module_id    Int
   feature_on   FeatureOn @default(web)
   is_active    Boolean   @default(true)
   created_at   DateTime  @default(now())
