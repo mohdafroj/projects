@@ -6,6 +6,7 @@ import { DevtoolsModule } from '@nestjs/devtools-integration';
 import { UsersModule } from './users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
 //import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PrismaModule } from './prisma/prisma.module';
     // }),
     DevtoolsModule.register({ http: process.env.NODE_ENV != 'prouction' }),
     PrismaModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

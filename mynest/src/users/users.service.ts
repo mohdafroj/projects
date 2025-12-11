@@ -34,4 +34,8 @@ export class UsersService {
   removeByUnique(where: Prisma.UserWhereUniqueInput): Promise<User> {
     return this.prisma.user.delete({ where });
   }
+
+  findOne(username: string): Promise<User> {
+    return this.prisma.user.findUnique({ where: { email: username } });
+  }
 }
