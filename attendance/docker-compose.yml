@@ -1,0 +1,17 @@
+services:
+  srv_attendance:
+    container_name: ctr_attendance
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    env_file:
+      - .env.staging
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    profiles:
+      - dev
+volumes:
+  node_modules:

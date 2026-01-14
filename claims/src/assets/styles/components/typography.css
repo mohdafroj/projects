@@ -1,0 +1,230 @@
+/* ========================== */
+/* Headings Styling */
+/* ========================== */
+body h1, body h2, body h3, body h4, body h5, body h6 {
+    all: unset;
+}
+body h1 {
+    font-size: 3.75rem ; /* text-6xl */
+    font-weight: 600;   /* font-semibold */
+     color: #0f172a;    /* slate-900 */
+
+}
+
+.dark h1 {
+    color: #e2e8f0;    /* slate-300 */
+}
+
+body h2 {
+    font-size: 3rem ;  /* text-5xl */
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.dark h2 {
+    color: #e2e8f0;
+}
+
+body h3 {
+    font-size: 2.25rem ;  /* text-4xl */
+    font-weight: 500;    /* font-medium */
+    color: #0f172a;
+}
+
+.dark h3 {
+    color: #e2e8f0;
+}
+
+body h4 {
+    font-size: 1.875rem ; /* text-3xl */
+    font-weight: 500;
+    color: #0f172a;
+}
+
+.dark h4 {
+    color: #e2e8f0;
+}
+
+body h5 {
+    font-size: 1.5rem ;   /* text-2xl */
+    font-weight: 500;
+    color: #0f172a;
+}
+
+.dark h5 {
+    color: #e2e8f0;
+}
+
+body h6 {
+    font-size: 1.25rem ;   /* text-xl */
+    font-weight: 500;
+    line-height: 20px;
+    color: #0f172a;
+}
+
+.dark h6 {
+    color: #e2e8f0;
+}
+
+/* ========================== */
+/* Display Headings */
+/* ========================== */
+
+.display-1 {
+    font-size: 70px;
+    line-height: 80px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.dark .display-1 {
+    color: #e2e8f0;
+}
+
+.display-2 {
+    font-size: 48px;
+    line-height: 58px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.dark .display-2 {
+    color: #e2e8f0;
+}
+
+.display-3 {
+    font-size: 40px;
+    line-height: 48px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.dark .display-3 {
+    color: #e2e8f0;
+}
+
+.display-4 {
+    font-size: 40px;
+    line-height: 48px;
+    font-weight: 400;
+    color: #0f172a;
+}
+
+.dark .display-4 {
+    color: #e2e8f0;
+}
+
+/* ========================== */
+/* Blockquote Styling */
+/* ========================== */
+blockquote {
+    border-left: 2px solid #64748b; /* gray-500 */
+    padding-left: 1.25rem; /* pl-5 */
+    font-size: 1.25rem;  /* text-xl */
+    font-style: italic;
+}
+
+/* ========================== */
+/* Gradients */
+/* ========================== */
+.gradient-1 {
+    background: linear-gradient(96.2deg, #0575e6 0%, #021b79 100%);
+}
+
+.gradient-2 {
+    background: linear-gradient(96.01deg, #00c9ff 0.29%, #fff94c 100%);
+}
+
+.gradient-3 {
+    background: linear-gradient(96.01deg, #aaffa9 0.29%, #11ffbd 100%);
+}
+
+/* ========================== */
+/* Custom List Styling */
+/* ========================== */
+.custom-list {
+    position: relative;
+    padding-left: 1rem;
+    margin-left: -0.25rem;
+    list-style: none;
+}
+
+.custom-list li {
+    position: relative;
+}
+
+.custom-list li::before {
+    position: absolute;
+    left: 0;
+    content: "";
+}
+
+ol.custom-list ol,
+ul.custom-list ul {
+    margin-top: 0.75rem;
+}
+
+ol.custom-list li,
+ul.custom-list li {
+    padding-left: 1.5rem;
+}
+
+.lits-by-numbaring {
+    counter-reset: listitem;
+}
+
+.lits-by-numbaring li {
+    padding-left: 1.3em;
+    position: relative;
+    margin-left: -0.25rem;
+}
+
+.lits-by-numbaring li::before {
+    counter-increment: listitem;
+    content: counters(listitem, ".") ".";
+    position: absolute;
+    left: 0;
+}
+
+.lits-by-slash li {
+    padding-left: 1rem;
+    position: relative;
+}
+
+.lits-by-slash li::before {
+    content: "-";
+    position: absolute;
+    left: 6px;
+}
+
+/* richtexteditor */
+.rich-text-editor .rich-editor-content ul {
+  list-style-type: disc;
+  margin-left: 2em;
+}
+
+.rich-text-editor .rich-editor-content ol {
+  list-style-type: decimal;
+  margin-left: 2em;
+}
+
+
+.rich-text-editor .rich-editor-content li {
+  display: list-item;
+}
+.rich-editor-content h1 { font-size: 2em; font-weight: bold; margin: 0.67em 0; }
+.rich-editor-content h2 { font-size: 1.5em; font-weight: bold; margin: 0.75em 0; }
+.rich-editor-content h3 { font-size: 1.17em; font-weight: bold; margin: 0.83em 0; }
+.rich-editor-content h4 { font-size: 1em; font-weight: bold; margin: 1.12em 0; }
+.rich-editor-content table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+.rich-editor-content th,
+.rich-editor-content td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+.rich-editor-content th { background: #f5f5f5; font-weight: bold; }
+.rich-editor-content blockquote {
+  border-left: 4px solid #ccc;
+  padding-left: 12px;
+  margin-left: 0;
+  color: #555;
+  font-style: italic;
+  /* background: #eee; */
+}

@@ -1,0 +1,133 @@
+{
+    "events": [
+      {
+        "title": "President’s Address to both Houses at 11.00 A.M.",
+        "start": "2025-01-31"
+      },
+      {
+        "title": "Government Business No Question Hour",
+        "start": "2025-02-01"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-02-03"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-02-04"
+      },
+      {
+        "title": "Holiday (General Elections to Legislative Assembly of NCT of Delhi, 2025)",
+        "start": "2025-02-05",
+        "color": "#fa916b"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-02-06"
+      },
+      {
+        "title": "Private Members’ Bills",
+        "start": "2025-02-07"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-02-10"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-02-11"
+      },
+      {
+        "title": "No Sitting (Guru Ravi Das’s Birthday)",
+        "start": "2025-02-12",
+        "color": "#fa916b"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-02-13"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-03-10"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-03-11"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-03-12"
+      },
+      {
+        "title": "Private Members’ Resolutions",
+        "start": "2025-03-13"
+      },
+      {
+        "title": "Holiday (Holi)",
+        "start": "2025-03-14",
+        "color": "#fa916b"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-03-17"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-03-18"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-03-19"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-03-20"
+      },
+      {
+        "title": "Private Members’ Bills",
+        "start": "2025-03-21"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-03-24"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-03-25"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-03-26"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-03-27"
+      },
+      {
+        "title": "Private Members’ Resolutions",
+        "start": "2025-03-28"
+      },
+      {
+        "title": "Holiday (Id-ul-Fitr)",
+        "start": "2025-03-31",
+        "color": "#fa916b"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-04-01"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-04-02"
+      },
+      {
+        "title": "Government Business",
+        "start": "2025-04-03"
+      },
+      {
+        "title": "Private Members’ Bills",
+        "start": "2025-04-04"
+      }
+    ]
+  }
+  

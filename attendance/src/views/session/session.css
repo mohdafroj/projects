@@ -1,0 +1,148 @@
+.bg-custom-navy {
+  background-color: #3E4F88;
+  color: aliceblue;
+  white-space: nowrap;
+}
+
+.justify-content-space {
+  justify-content: space-between;
+}
+
+.pb-15 {
+  padding-bottom: 15px;
+}
+
+.statusbox {
+  background: #daefff;
+  padding: 10px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.close-btn {
+  color: red;
+  font-size: 17px;
+}
+.fc-calendar :deep(.fc-daygrid-day-top) {
+  justify-content: left;
+}
+
+.fc-calendar {
+  font-size: 15px;
+}
+
+.fc-calendar :deep(.fc-highlight){
+    background: transparent;
+}
+.fc-calendar :deep(.fc-customPreviewButton-button){
+    background: #3E4F88;
+    padding: 8px 20px;
+    border-radius: 50px;
+}
+
+/* .fc-calendar :deep(.fc-scrollgrid-section-body) {
+  cursor: pointer;
+} */
+/* /////////////////////////////////////////////////////////Calender Header//////////////////////////////////////////////// */
+.fc-calendar :deep(.fc-header-toolbar) {
+  display: flex;
+  align-items: center;
+}
+.fc-calendar :deep(.fc-toolbar-chunk:first-child) {
+  flex-shrink: 0;
+}
+.fc-calendar :deep(.fc-toolbar-chunk:nth-child(2)) {
+  flex-grow: 1;
+  font-size: 15px;
+  padding-left: 20px;
+}
+.fc-calendar :deep(.fc-toolbar-chunk:last-child) {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.fc-calendar :deep(.fc-prev-button),
+.fc-calendar :deep(.fc-next-button),
+.fc-calendar :deep(.fc-prev-button:hover),
+.fc-calendar :deep(.fc-prev-button:active),
+.fc-calendar :deep(.fc-prev-button:focus),
+.fc-calendar :deep(.fc-next-button:hover),
+.fc-calendar :deep(.fc-next-button:active),
+.fc-calendar :deep(.fc-next-button:focus) {
+  background: none !important;
+  color: #2F2B3DE5 !important;
+  border: 0px !important;
+  box-shadow: none !important;
+}
+.fc-calendar :deep(.fc-today-button),
+.fc-calendar :deep(.fc-today-button:hover),
+.fc-calendar :deep(.fc-today-button:active),
+.fc-calendar :deep(.fc-today-button.fc-button:focus) {
+  display: none;
+  background-color: #2B7FFF29;
+  border: 0px;
+  box-shadow: none;
+  color: #2B7FFF;
+  text-transform: capitalize;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.fc-calendar :deep(.fc-button-group) {
+  display: flex;
+  border-radius: 0.375rem;
+}
+.fc-calendar :deep(.fc-button-group .fc-button) {
+  background-color: #2B7FFF29;
+  border: 0px;
+  box-shadow: none;
+  color: #2B7FFF;
+  text-transform: capitalize;
+}
+.fc-calendar :deep(.fc-button-group .fc-button:focus) {
+  box-shadow: none;
+}
+.fc-calendar :deep(.fc-button-group .fc-button:hover) {
+  background-color: #2B7FFF3D;
+}
+.fc-calendar :deep(.fc-button-group .fc-button.fc-button-active) {
+  background-color: #2B7FFF3D;
+  box-shadow: none;
+}
+/* ///////////////////////////////////////////////Calender Body//////////////////////////////////////////////// */
+.fc-calendar :deep(.fc-day-today) {
+  cursor: pointer;
+  background-color: transparent;
+}
+.fc-calendar :deep(.fc-day-today .fc-daygrid-day-top a) {
+  border-radius: 50%;
+  padding: 4px 6px;
+  background-color: #2B7FFF3D;
+  color: #000000 !important;
+  font-weight: 500;
+}
+.fc-calendar :deep(.fc-day-future) {
+  cursor: pointer;
+}
+/* .fc-calendar :deep(.fc-day-today:hover),
+.fc-calendar :deep(.fc-day-future:hover){
+  box-shadow: 0px 0px 5px 0px #00000050;
+} */
+.fc-calendar :deep(.fc-daygrid-day-frame) {
+  padding: 5px 5px;
+}
+.fc-calendar :deep(.fc-col-header-cell) {
+  font-weight: 500;
+  border: 0px;
+  border-bottom: 1px solid #DDDDDD;
+}
+
+.fc-calendar :deep(.fc-daygrid-event-harness) {
+  margin-top: 5px !important;
+}
+
+.fc-calendar :deep(.fc-more-link:hover) {
+  box-shadow: 0px 0px 10px 0px #00000050;
+}
+.fc-calendar :deep(.fc-event-title){
+    padding: 3px 10px;
+    font-weight: 600;
+}

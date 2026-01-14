@@ -1,0 +1,183 @@
+import { sky, gray as _gray } from "tailwindcss/colors";
+
+export const content = [
+  "./public/**/*.html",
+  "./src/**/*.{vue,js,ts,jsx,tsx}",
+  "./components/**/*.{vue,js,css}",
+  "./node_modules/vue-tailwind-datepicker/**/*.js",
+  "./node_modules/@sds/oneui-common-ui/**/*.js",
+  // "./node_modules/@pc/**/*.{vue,js,ts,jsx,tsx}",sds/oneui-common-ui
+];
+export const safelist = [
+  "btn-outline-primary",
+  "btn-outline-secondary",
+  "border-violet-700",
+  "ring-violet-200",
+  "hover:bg-violet-50",
+  "border-2",
+];
+export const mode = "jit";
+export const darkMode = "class";
+export const experimental = {
+  rtl: false,
+};
+export const theme = {
+  container: {
+    center: true,
+    padding: {
+      DEFAULT: "15px",
+      sm: "15px",
+      lg: "15px",
+      xl: "0",
+      "2xl": "0",
+    },
+    screens: {
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1280px",
+    },
+  },
+  extend: {
+    colors: {
+      "vtd-primary": sky,
+      "vtd-secondary": _gray,
+      primary: {
+        50: "#faf5ff",
+        100: "#f3e8ff",
+        200: "#e9d5ff",
+        300: "#d8b4fe",
+        400: "#c084fc",
+        500: "#a855f7",
+        600: "#9333ea",
+        700: "#7e22ce",
+        800: "#6b21a8",
+        900: "#581c87",
+      },
+      secondary: {
+        50: "#fdf4ff",
+        100: "#fae8ff",
+        200: "#f5d0fe",
+        300: "#f0abfc",
+        400: "#e879f9",
+        500: "#d946ef",
+        600: "#c026d3",
+        700: "#a21caf",
+        800: "#86198f",
+        900: "#701a75",
+      },
+      danger: {
+        50: "#fef2f2",
+        100: "#fee2e2",
+        200: "#fecaca",
+        300: "#fca5a5",
+        400: "#f87171",
+        500: "#ef4444",
+        600: "#dc2626",
+        700: "#b91c1c",
+        800: "#991b1b",
+        900: "#7f1d1d",
+      },
+      black: {
+        50: "#F9FAFB",
+        100: "#F4F5F7",
+        200: "#E5E7EB",
+        300: "#D2D6DC",
+        400: "#9FA6B2",
+        500: "#111112",
+        600: "#475569",
+        700: "#334155",
+        800: "#1E293B",
+        900: "#0F172A",
+      },
+      warning: {
+        50: "#FFFAF8",
+        100: "#FFF4F1",
+        200: "#FEE4DA",
+        300: "#FDD2C3",
+        400: "#FCB298",
+        500: "#FA916B",
+        600: "#DF8260",
+        700: "#965741",
+        800: "#714231",
+        900: "#492B20",
+      },
+      info: {
+        50: "#F3FEFF",
+        100: "#E7FEFF",
+        200: "#C5FDFF",
+        300: "#A3FCFF",
+        400: "#5FF9FF",
+        500: "#0CE7FA",
+        600: "#00B8D4",
+        700: "#007A8D",
+        800: "#005E67",
+        900: "#003F42",
+      },
+      success: {
+        50: "#f0fdf4",
+        100: "#dcfce7",
+        200: "#bbf7d0",
+        300: "#86efac",
+        400: "#4ade80",
+        500: "#22c55e",
+        600: "#16a34a",
+        700: "#15803d",
+        800: "#166534",
+        900: "#14532d",
+      },
+      gray: {
+        50: "#F9FAFB",
+        100: "#F4F5F7",
+        200: "#E5E7EB",
+        300: "#D2D6DC",
+        400: "#9FA6B2",
+        500: "#68768A",
+        600: "#475569",
+        700: "#334155",
+        800: "#1E293B",
+        900: "#0F172A",
+      },
+    },
+
+    fontFamily: {
+      sans: ['"Noto Sans"', "sans-serif"],
+    },
+    boxShadow: {
+      base: "0px 0px 1px rgba(40, 41, 61, 0.08), 0px 0.5px 2px rgba(96, 97, 112, 0.16)",
+      base2: "0px 2px 4px rgba(40, 41, 61, 0.04), 0px 8px 16px rgba(96, 97, 112, 0.16)",
+      base3: "16px 10px 40px rgba(15, 23, 42, 0.22)",
+      deep: "-2px 0px 8px rgba(0, 0, 0, 0.16)",
+      dropdown: "0px 4px 8px rgba(0, 0, 0, 0.08)",
+
+      testi: "0px 4px 24px rgba(0, 0, 0, 0.06)",
+      todo: "rgba(235 233 241, 0.6) 0px 3px 10px 0px",
+    },
+    keyframes: {
+      zoom: {
+        "0%, 100%": { transform: "scale(0.5)" },
+        "50%": { transform: "scale(1)" },
+      },
+      tada: {
+        "0%": { transform: "scale3d(1, 1, 1)" },
+        "10%, 20%": {
+          transform: "scale3d(1, 1, 0.95) rotate3d(0, 0, 1, -10deg)",
+        },
+        "30%, 50%, 70%, 90%": {
+          transform: "scale3d(1, 1, 1) rotate3d(0, 0, 1, 10deg)",
+        },
+        "40%, 60%, 80%": {
+          transform: "rotate3d(0, 0, 1, -10deg)",
+        },
+        "100%": { transform: "scale3d(1, 1, 1)" },
+      },
+    },
+    animation: {
+      "spin-slow": "spin 3s linear infinite",
+      zoom: "zoom 1s ease-in-out infinite",
+      tada: "tada 1.5s ease-in-out infinite",
+    },
+  },
+};
+export const plugins = [];

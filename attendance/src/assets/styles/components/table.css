@@ -1,0 +1,152 @@
+/* Base Table Styling */
+table.vgt-table {
+    border: 1px solid #e2e8f0; /* slate-100 */
+    border-right: 0;
+    border-left: 0;
+    background-color: white;
+}
+
+.dark table.vgt-table {
+    border-color: #334155; /* slate-700 */
+    background-color: #1e293b; /* slate-800 */
+}
+
+table.vgt-table.table {
+    table-layout: fixed !important;
+}
+
+.vgt-inner-wrap {
+    box-shadow: none;
+}
+
+/* Responsive Table */
+
+
+/* Checkbox and Border Styling */
+.vgt-table th.line-numbers,
+.vgt-table th.vgt-checkbox-col {
+    border-right: none !important;
+    border-bottom: 1px solid #eef1f9 !important;
+}
+
+.vgt-table.bordered td,
+.vgt-table.bordered th {
+    border: 1px solid #e2e8f0; /* slate-100 */
+}
+
+.dark .vgt-table.bordered td,
+.dark .vgt-table.bordered th {
+    border: 1px solid #334155; /* slate-700 */
+}
+
+/* Table Head Styling */
+.vgt-table thead th {
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #475569; /* slate-600 */
+    padding: 1.25rem; /* py-5 px-6 */
+    background: linear-gradient(to top, white, white);
+}
+
+.dark .vgt-table thead th {
+    color: #e2e8f0; /* slate-300 */
+    background: linear-gradient(to top, #1e293b, #1e293b); /* dark slate */
+}
+
+/* Center Alignment */
+.vgt-table.centered td,
+.vgt-table.centered th {
+    text-align: center;
+}
+
+/* Striped and Table Head Styling */
+.vgt-table.striped thead th,
+.vgt-table.table-head thead th {
+    background: linear-gradient(to top, #f1f5f9, #f1f5f9); /* slate-100 */
+}
+
+.dark .vgt-table.striped thead th,
+.dark .vgt-table.table-head thead th {
+    background: linear-gradient(to top, #1e293b, #1e293b); /* slate-700 */
+}
+
+/* Striped Rows */
+.vgt-table.striped tbody tr:nth-of-type(even) {
+    background: linear-gradient(to top, #f1f5f9, #f1f5f9); /* slate-100 */
+}
+
+.vgt-table.striped tbody tr:nth-of-type(odd) {
+    background: linear-gradient(to top, white, white);
+}
+
+.dark .vgt-table.striped tbody tr:nth-of-type(even) {
+    background: linear-gradient(to top, #1e293b, #1e293b);
+}
+
+.dark .vgt-table.striped tbody tr:nth-of-type(odd) {
+    background: linear-gradient(to top, #0f172a, #0f172a);
+}
+
+/* Borderless Table */
+.vgt-table.borderless td,
+.vgt-table.borderless th {
+    border: none;
+}
+
+/* Middle Aligned Content */
+.vgt-table.v-middle td {
+    vertical-align: middle;
+}
+
+/* Checkbox Column Styling */
+.vgt-table th.vgt-checkbox-col {
+    background: transparent !important;
+}
+
+.vgt-table input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    position: relative;
+    border: none;
+}
+
+.vgt-table input[type="checkbox"]::before {
+    content: '';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 18px;
+    height: 18px;
+    margin: -0.7px;
+    background-color: #e2e8f0; /* slate-100 */
+    border-radius: 4px;
+    position: absolute;
+    inset: 0;
+}
+
+.dark .vgt-table input[type="checkbox"]::before {
+    background-color: #334155; /* slate-500 */
+}
+
+.vgt-table input[type="checkbox"]:checked {
+    background-color: #1e293b; /* slate-900 */
+}
+
+.vgt-table input[type="checkbox"]:checked::before {
+    content: url("https://api.iconify.design/heroicons-outline/check.svg?color=white");
+    background-color: #1e293b;
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px #1e293b; /* slate-900 */
+}
+
+/* Dark Mode Checkbox Column */
+.dark .vgt-table.table-head thead th.vgt-checkbox-col {
+    background: #334155 !important;
+    border-bottom: 1px solid transparent !important;
+}
+
+.dark .vgt-table th.vgt-checkbox-col {
+    border-bottom: 1px solid #334155 !important;
+}

@@ -1,0 +1,38 @@
+##################### As on 1st Jan, 2026 ###################
+1. Done - The Transaction Number should be concise and meaningful. A label should also be added to explain the purpose of the transaction.
+2. If an item is removed or marked with a cross in the admissibility list, the system shall automatically mark the item as non-admissible. The item shall remain editable at all three levels—Initiator, Reviewer, and Approver—allowing modifications as needed before final settlement.
+3. The template shall not be editable or directly accessible prior to approval and shall only be generated as an output file after approval. The applicable template shall be viewable by the user only upon approval of the case. Upon approval, the system shall generate two separate output documents:
+    1. Internal Version – digitally signed by the Approver and meant for internal/official use to send to MS&A Branch and P&AO. https://docs.google.com/document/d/1AJxZgfFcldqbbDBUJS9dPhVJgCoTyMB3jwsL91IXWvA/edit?tab=t.0
+    2. Member Version – intended for communication to the Hon’ble Member, for which a digital signature shall not be required. https://docs.google.com/document/d/1R4puKJPRSurRBtcd9xMqFVZLPfD3u048GqC2ADcl7R8/edit?tab=t.0
+    
+    For the internally generated letter, the user shall be provided with the facility to edit the content. During preview, the user shall be able to manually enter or update any required details that are not available in the system.
+    
+    The final required format of the letter shall be shared with the System Division for review and approval prior to implementation.
+    
+4. The Member shall be notified in Sadasya Setu regarding payment reimbursement, along with relevant details such as admissible and non-admissible items. 
+5. Done - The ‘Add Remark’ section shall, by default, be smaller in comparison to the item details section.
+6. Provision shall be made in the system to record casual vacancy of a Member for reference purposes in the application, wherever applicable.
+7. Done - E-Sign Document should be renamed as E-Signed Document.
+8. The Secretariat User shall have the right to view and access all system-generated digitally signed documents at a single consolidated level.
+9. The system shall maintain an index of issued letters/documents, capturing relevant metadata for each generated document.
+10. The system shall provide reporting and search facilities enabling retrieval of documents based on the following parameters:
+    - Member-wise
+    - Date-wise
+    
+    Each generated document shall be labeled with a meaningful and standardized nomenclature (including, but not limited to, document type, Member name/ID, and date), enabling easy identification and retrieval.
+    
+    The system shall support search functionality over indexed documents based on document metadata and labels.
+    
+11.  The Member Information section shall include an additional option, “Documents Issued”, displaying the name of the document and its date of issue, along with a facility to re-send the document to the Member through approved communication channels such as Email, WhatsApp, or Sadasya Setu, as decided by the competent authority.
+12. View Member’s claim detail will show the details of all previous claim submitted by Member. 
+13. The MIS shall be designed to be intuitive and user-friendly, with clear navigation, logical report categorization, and self-explanatory filters and labels, enabling users to easily generate, view, interpret, and export reports.
+14. Recent view / last claim settled will be added in filter.
+15. Empty space in forward to reviewer should be removed. Button should be right aligned.
+16. Help will not appear on every page and Help is meant for people who are using from outside.
+17. Action Button should be added at the bottom with the pagination bar. 
+18. Done - Member information should be collapsible. Recruitment type like full term(Color coded), casual appointment should be added. Term to be replace should be renamed as phase.
+19. The system shall allow submission of only one bill at a time. A new bill cannot be submitted until the previously submitted bill has been settled. While attempting to submit a new bill under such circumstances, the system shall display a prompt message to the Member informing them that the previous bill must be settled first.
+20. The system shall provide a link of the business rules for checking the admissibility of claims, allowing users to verify eligibility criteria directly within the system.
+21. The action currently labeled “Reject” shall be renamed to “Drop”. When selecting the Drop action, the user shall be required to provide a reason from a predefined dropdown list of valid reasons.
+22. Even in the case of approval, if the payment is partial, the reason dropdown shall include an additional option labeled “Incomplete Bill” to indicate that the bill has not been fully settled.
+23. A feasibility study shall be conducted to enable two-way communication between the Member and RSS. This functionality would allow the Member to resubmit documents for the same claim in cases where the submitted documents were found to be incomplete.

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "title": "It Equipment Claim",
+    "description": "Initiate, review, approve, and track IT equipment claims efficiently.",
+    "url": "/rssms/claims/it-equipment"
+  },
+  {
+    "id": 2,
+    "title": "Submit New Claim",
+    "description": "submit a new IT equipment claim on behalf of a Hon'ble Member.",
+    "url": "/rssms/claims/it-equipment/submit-new-claim"
+  },
+  {
+    "id": 3,
+    "title": "Initate CGHS Card Request",
+    "description": "Start the process to request a new CGHS card.",
+    "url": "/rssms/cghs-card-request"
+  },
+  {
+    "id": 4,
+    "title": "Approve CGHS Card Request",
+    "description": "Review and approve CGHS card requests for Hon'ble members.",
+    "url": "/rssms/cghs-card-status"
+  }
+]

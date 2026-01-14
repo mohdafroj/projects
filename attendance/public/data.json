@@ -1,0 +1,445 @@
+{
+  "success_code": 200,
+  "message": "Request successfull.",
+  "class": "success",
+  "data": {
+      "members": [
+          {
+              "id": 344,
+              "division_no": 0,
+              "name": "Shri Zawar Hussain",
+              "status": "Not Signed",
+              "state": "BR",
+              "attendance_time": "18:31 PM",
+              "is_signed": "Not Signed",
+              "attendance_date": "05-12-2022",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": "05/12/2022 18:31 PM"
+          },
+          {
+              "id": 389,
+              "division_no": 0,
+              "name": "Khawaja Inaitullah",
+              "status": "Signed",
+              "state": "BR",
+              "attendance_time": "18:31 PM",
+              "is_signed": "Signed",
+              "attendance_date": "05-12-2022",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": "05/12/2022 18:31 PM"
+          },
+          {
+              "id": 395,
+              "division_no": 0,
+              "name": "Hafiz Mohammad Ibrahim",
+              "status": "Not Signed",
+              "state": "UP",
+              "attendance_time": "18:31 PM",
+              "is_signed": "Not Signed",
+              "attendance_date": "05-12-2022",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": "05/12/2022 18:31 PM"
+          },
+          {
+              "id": 401,
+              "division_no": 0,
+              "name": "Shri V. Rajan Chellappa",
+              "status": "Signed",
+              "state": "TN",
+              "attendance_time": "18:31 PM",
+              "is_signed": "Signed",
+              "attendance_date": "05-12-2022",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": "05/12/2022 18:31 PM"
+          },
+          {
+              "id": 402,
+              "division_no": 0,
+              "name": "Shri Bhargavram Vitthal (Mama) Warerkar",
+              "status": "Not Signed",
+              "state": "NOM.",
+              "attendance_time": "18:31 PM",
+              "is_signed": "Not Signed",
+              "attendance_date": "05-12-2022",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": "05/12/2022 18:31 PM"
+          },
+          {
+              "id": 1883,
+              "division_no": 14,
+              "name": "Shri Rajeev Chandrasekhar",
+              "status": "Not Required",
+              "state": "KAR",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 1940,
+              "division_no": 13,
+              "name": "Shri Parshottam Rupala",
+              "status": "Not Required",
+              "state": "GJ",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 1981,
+              "division_no": 7,
+              "name": "Shri Anil Madhav Dave",
+              "status": "Not Required",
+              "state": "MP",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2030,
+              "division_no": 75,
+              "name": "Shri Ram Vilas Paswan",
+              "status": "Not Required",
+              "state": "BR",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2034,
+              "division_no": 1,
+              "name": "Shri Piyush Goyal",
+              "status": "Not Required",
+              "state": "MH",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2058,
+              "division_no": 49,
+              "name": "Shri Dharmendra Pradhan",
+              "status": "Not Required",
+              "state": "MP",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2059,
+              "division_no": 1,
+              "name": "Shri Jagat Prakash Nadda",
+              "status": "Not Required",
+              "state": "GJ",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2062,
+              "division_no": 12,
+              "name": "Dr. Mansukh Mandaviya",
+              "status": "Not Required",
+              "state": "GJ",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2077,
+              "division_no": 9,
+              "name": "Shri Bhupender Yadav",
+              "status": "Not Required",
+              "state": "RJ",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2099,
+              "division_no": 61,
+              "name": "Shri Ramdas Athawale",
+              "status": "Not Required",
+              "state": "MH",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2118,
+              "division_no": 127,
+              "name": "Shri Ram Nath Thakur",
+              "status": "Not Required",
+              "state": "BR",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2138,
+              "division_no": 5,
+              "name": "Smt. Nirmala Sitharaman",
+              "status": "Not Required",
+              "state": "KAR",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2221,
+              "division_no": 50,
+              "name": "Shri Hardeep Singh Puri",
+              "status": "Not Required",
+              "state": "UP",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2241,
+              "division_no": 50,
+              "name": "Shri Narayan Rane",
+              "status": "Not Required",
+              "state": "MH",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2242,
+              "division_no": 7,
+              "name": "Shri V. Muraleedharan",
+              "status": "Not Required",
+              "state": "MH",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2274,
+              "division_no": 49,
+              "name": "Shri Ashwini Vaishnaw",
+              "status": "Not Required",
+              "state": "OR",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2275,
+              "division_no": 6,
+              "name": "Shri S. Jaishankar",
+              "status": "Not Required",
+              "state": "GJ",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2281,
+              "division_no": 11,
+              "name": "Shri Satish Chandra Dubey",
+              "status": "Not Required",
+              "state": "BR",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2319,
+              "division_no": 52,
+              "name": "Shri Jyotiraditya M. Scindia",
+              "status": "Not Required",
+              "state": "MP",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2337,
+              "division_no": 10,
+              "name": "Shri B.L. Verma",
+              "status": "Not Required",
+              "state": "UP",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2349,
+              "division_no": 51,
+              "name": "Shri Sarbananda Sonowal",
+              "status": "Not Required",
+              "state": "AS",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2350,
+              "division_no": 7,
+              "name": "Dr. L. Murugan",
+              "status": "Not Required",
+              "state": "MP",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2356,
+              "division_no": 12,
+              "name": "Shri Pabitra Margherita",
+              "status": "Not Required",
+              "state": "AS",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2396,
+              "division_no": 126,
+              "name": "Shri Jayant Chaudhary",
+              "status": "Not Required",
+              "state": "UP",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2480,
+              "division_no": 9,
+              "name": "Shri George Kurian",
+              "status": "Not Required",
+              "state": "MP",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          },
+          {
+              "id": 2483,
+              "division_no": 13,
+              "name": "Shri Ravneet Singh",
+              "status": "Not Required",
+              "state": "RJ",
+              "attendance_time": "12:00",
+              "is_signed": "Not Required",
+              "attendance_date": "",
+              "profile_photo": "http://10.21.217.17:9000/public-bucket/user-profile/profile-1750927346.png",
+              "created_at": ""
+          }
+      ],
+      "party_attendance_data": {
+          "Congress": {
+              "party_name": "Congress",
+              "not_required": 0,
+              "not_signed": 2,
+              "signed": 0
+          },
+          "INC": {
+              "party_name": "Indian National Congress",
+              "not_required": 0,
+              "not_signed": 0,
+              "signed": 1
+          },
+          "AIADMK": {
+              "party_name": "All India Anna Dravida Munnetra Kazhagam",
+              "not_required": 0,
+              "not_signed": 0,
+              "signed": 1
+          },
+          "NOM.": {
+              "party_name": "Nominated",
+              "not_required": 0,
+              "not_signed": 1,
+              "signed": 0
+          },
+          "BJP": {
+              "party_name": "Bharatiya Janata Party",
+              "not_required": 22,
+              "not_signed": 0,
+              "signed": 0
+          },
+          "LJP": {
+              "party_name": "Lok Janasakti Party",
+              "not_required": 1,
+              "not_signed": 0,
+              "signed": 0
+          },
+          "RPI (ATWL)": {
+              "party_name": "Republican Party of India (ATHAWALE)",
+              "not_required": 1,
+              "not_signed": 0,
+              "signed": 0
+          },
+          "JD(U)": {
+              "party_name": "Janata Dal (United)",
+              "not_required": 1,
+              "not_signed": 0,
+              "signed": 0
+          },
+          "RLD": {
+              "party_name": "Rashtriya Lok Dal",
+              "not_required": 1,
+              "not_signed": 0,
+              "signed": 0
+          }
+      },
+      "attendanceTotals": {
+          "attendanceTotals": {
+              "totalAttendance": 31,
+              "totalSigned": 2,
+              "totalNotSigned": 3,
+              "totalNotRequired": 26
+          }
+      }
+  }
+}

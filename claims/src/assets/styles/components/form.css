@@ -1,0 +1,165 @@
+/* Base Form Control */
+/* .form-control {
+    background-color: transparent;
+    border: 1px solid #e2e8f0; /* slate-200 
+    transition: all 0.3s ease-in-out;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    font-size: 0.875rem; /* text-sm 
+    color: #1e293b; /* slate-900 
+    width: 100%;
+    height: 40px;
+} */
+.form-control {
+    @apply bg-transparent border border-slate-200 transition-all duration-[0.3s] ease-[ease-in-out] text-sm text-slate-800 w-full h-10 p-3  border-solid;
+  }
+
+.form-control::placeholder {
+    @apply text-gray-400 font-normal;
+   /* color: #94a3b8;  slate-400 
+    font-weight: normal;*/
+}
+
+.form-control:focus {
+    /* outline: none; */
+    /*border-color: #475569;  slate-600 */
+    /* box-shadow: 0 0 0 2px rgba(71, 85, 105, 0.9); slate-600 ring */
+}
+
+/* Dark Mode */
+.dark .form-control {
+    background-color: #0f172a;
+    border-color: #334155; /* slate-700 */
+    color: #f8fafc; /* white */
+}
+
+.dark .form-control::placeholder {
+    color: #94a3b8; /* slate-400 */
+}
+
+/* Form Label */
+.form-label {
+    /* margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: #475569; 
+    font-weight: 500;
+    display: block;
+    text-transform: capitalize; */
+    @apply block mb-[6px] text-gray-500 text-sm font-semibold;
+}
+
+.dark .form-label {
+    color: #f8fafc; /* white */
+}
+
+/* Input Control Styling */
+.input-control {
+    @apply bg-transparent border border-gray-300 transition-all duration-[0.3s] ease-[ease-in-out] text-gray-800 w-full p-3 border-solid;
+
+    /* background-color: transparent;
+    border: 1px solid #d1d5db;  gray-300 
+    transition: all 0.3s ease-in-out;
+
+    padding: 0.75rem;
+   
+    color: #1f2937;  gray-800 
+    width: 100%; */
+}
+
+.input-control::placeholder {
+    color: #94a3b8; /* slate-400 */
+}
+
+.dark .input-control {
+    background-color: #0f172a;
+    border-color: #334155; /* slate-700 */
+    color: #f8fafc;
+}
+
+.dark .input-control::placeholder {
+    color: #94a3b8; /* slate-400 */
+}
+
+/* Error Handling for Inputs */
+.fromGroup.has-error .input-control {
+    border-color: #ef4444; /* danger-500 */
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.9); /* danger ring */
+}
+
+.fromGroup.is-valid .input-control {
+    border-color: #22c55e; /* success-500 */
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.9); /* success ring */
+}
+
+/* Readonly and Disabled Inputs */
+.input-control[readonly] {
+    background-color: #e2e8f0; /* slate-200 */
+    color: #94a3b8; /* slate-400 */
+}
+
+.input-control[disabled] {
+    cursor: not-allowed;
+    background-color: #f8fafc; /* slate-50 */
+    color: #1e293b; /* slate-800 */
+}
+
+/* Date Range Picker Custom Styling */
+.text-vtd-primary-500-600 {
+    color: #0f172a !important;
+}
+
+.bg-vtd-primary-500-500 {
+    background-color: #0f172a !important;
+}
+
+.text-vtd-primary-500-500 {
+    color: #0f172a !important;
+}
+
+/* Dark Mode Adjustments for Date Picker */
+.dark .text-vtd-primary-500-600 {
+    color: #f8fafc !important;
+}
+
+.dark .text-vtd-primary-500-500 {
+    color: #f8fafc !important;
+}
+
+.dark .bg-vtd-primary-500-500 {
+    background-color: #334155 !important;
+}
+.flatpickr-time input:hover, .flatpickr-time .flatpickr-am-pm:hover, .flatpickr-time input:focus, .flatpickr-time .flatpickr-am-pm:focus {
+    background: #ffffff;
+}
+/* custom css for flatpickr */
+
+.relative {
+    position: relative;
+  }
+  
+  .flatpickr-input {
+    padding-right: 2.5rem; /* Adjust padding to make room for the icon */
+  }
+  
+  .flatpickr-input::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+    transform: translateY(-50%);
+    width: 2.25rem; /* Adjust size as needed */
+    height: 2.25rem;
+    background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"%3E%3Cpath stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"%3E%3C/path%3E%3C/svg%3E');
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none; /* Prevent the icon from blocking input clicks */
+    z-index: 999999;
+    background-color: red; /* Temporary for debugging */
+
+  }
+  
+  .relative input.flatpickr-input {
+    padding-right: 2.5rem; /* Space for the icon */
+  }
+  
+
