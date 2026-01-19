@@ -7,7 +7,7 @@ import { UsersModule } from './users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
 //import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { EventsGateway } from './events/events.gateway';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -27,8 +27,9 @@ import { EventsGateway } from './events/events.gateway';
     DevtoolsModule.register({ http: process.env.NODE_ENV != 'prouction' }),
     PrismaModule,
     AuthModule,
+    EventsModule
   ],
   controllers: [AppController],
-  providers: [AppService, EventsGateway],
+  providers: [AppService],
 })
 export class AppModule { }
