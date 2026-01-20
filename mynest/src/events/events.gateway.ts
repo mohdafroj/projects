@@ -4,9 +4,10 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   MessageBody,
-  ConnectedSocket
+  ConnectedSocket,
+  WebSocketServer
 } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
@@ -14,6 +15,9 @@ import { Socket } from 'socket.io';
   }
 })
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer()
+  server: Server;
+
   handleConnection(client: Socket) {
     console.log('Client connected:', client.id);
   }
@@ -35,5 +39,13 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     // broadcast to all
     client.broadcast.emit('message', payload);
     return 'Hello world!';
+  }
+
+  emitToAll(event: string, data: any) {
+    this.server.emit(event, data);
+  }
+
+  emitToClient(clientId: string, event: string, data: any) {
+    this.server.to(clientId).emit(event, data);
   }
 }
