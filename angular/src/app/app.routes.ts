@@ -9,13 +9,13 @@ export const routes: Routes = [
         component: MainLayout,
         children: [
             {
-                path: '',
+                path: 'home',
                 component: Home
             },
-            {
-                path: 'websocket',
-                component: Websocket,
-            }
         ]
+    },
+    {
+        path: 'websocket',
+        component: Websocket,
     }
 ];

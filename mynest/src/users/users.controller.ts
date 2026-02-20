@@ -29,7 +29,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     let user = await this.userService.findByUnique({ id });
     return { user, message: user ? 'User detail' : 'User not found' };
   }
@@ -47,23 +47,23 @@ export class UsersController {
   }
 
   @Put(':id')
-  async updateUser(@Param('id') id: number, @Body() userData: UpdateUserDto) {
+  async updateUser(@Param('id', ParseIntPipe) id: number, @Body() userData: UpdateUserDto) {
     let user = await this.userService.findByUnique({ id });
-    let updatesUser = null;
+    let updatedUser = null;
     if (user) {
-      updatesUser = await this.userService.update({
-        where: { id: Number(id) },
+      updatedUser = await this.userService.update({
+        where: { id },
         data: userData,
       });
     }
-    return { user: user && updatesUser, message: updatesUser ? 'User detail updated successfully' : 'User not found' };
+    return { user: updatedUser, message: updatedUser ? 'User detail updated successfully' : 'User not found' };
   }
 
   @Delete(':id')
-  async deleteUser(@Param('id') id: number) {
+  async deleteUser(@Param('id', ParseIntPipe) id: number) {
     let user = await this.userService.findByUnique({ id });
     if (user) {
-      await this.userService.removeByUnique({ id: Number(id) });
+      await this.userService.removeByUnique({ id });
     }
     return { user, message: user ? 'User deleted successfully' : 'User not found' };
   }
