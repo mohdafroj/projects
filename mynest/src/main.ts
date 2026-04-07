@@ -4,11 +4,13 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe, BadRequestException } from '@nestjs/common';
 import { ResponseTransformInterceptor } from './lib/response.transform.interceptor';
 import { AllExceptionsFilter } from './lib/filters/http-exception.filter';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     snapshot: true,
   });
+  app.use(cookieParser());
 
   // Swagger config & document
   const config = new DocumentBuilder()

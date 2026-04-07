@@ -1,16 +1,20 @@
 import { prisma } from '../src/lib/prisma';
-
+import * as bcrypt from 'bcrypt';
 if (process.env.NODE_ENV === 'production') {
     console.log('Cannot run seed in production!');
     process.exit(0);
 }
 
+const hashPassword = async (password: string) => {
+    return await bcrypt.hash(password, parseInt(process.env.HASH_SALT));
+}
+
 async function main() {
-    await prisma.role.upsert({
-        where: { id: 2 },
-        update: { name: 'Super Admin 2' },
-        create: { name: 'Super Admin 2', title: 'Super Admin 2', description: 'Super Admin 2' }
-    });
+    // await prisma.role.upsert({
+    //     where: { id: 2 },
+    //     update: { name: 'Super Admin 2' },
+    //     create: { name: 'Super Admin 2', title: 'Super Admin 2', description: 'Super Admin 2' }
+    // });
 
     console.log("Start of Seeding Data - ");
     //Start of users data
@@ -20,6 +24,8 @@ async function main() {
     ];
 
     for (const user of users) {
+        user.password = await bcrypt.hash(user.password, parseInt(process.env.HASH_SALT));
+        console.log(`Seeding user:`, user);
         const result = await prisma.user.upsert({
             where: { email: user.email },
             update: {}, // No update needed if exists (or update fields if you want)
