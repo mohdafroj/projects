@@ -23,7 +23,6 @@ export class AuthService {
                 HttpStatus.UNAUTHORIZED
             );
         }
-
         const valid = await bcrypt.compare(pass, user.password);
         if (!valid) throw new HttpException(
             'Invalid password',
@@ -34,7 +33,7 @@ export class AuthService {
         return result;
     }
 
-    async login(user: any) {
+    async login_old(user: any) {
         try {
             const userFromDb = await this.validateUser(user?.username, user?.password);
             const access_token = await this.generateAccessToken(userFromDb);
@@ -55,7 +54,7 @@ export class AuthService {
         }
     }
 
-    async refreshToken(data: any) {
+    async refresh_old(data: any) {
         try {
             const { authorization } = data;
             const token = authorization?.split(' ')[1];
@@ -101,43 +100,34 @@ export class AuthService {
         }
     }
 
-    async login1(user: User, req: Request, res: Response) {
-        const payload = { sub: user.id, email: user.email };
-
-        const accessToken = this.jwtService.sign(payload, {
-            secret: process.env.JWT_ACCESS_SECRET,
-            expiresIn: '15m',
-        });
-
-        const refreshToken = this.jwtService.sign(payload, {
-            secret: process.env.JWT_REFRESH_SECRET,
-            expiresIn: '7d',
-        });
+    async login(@Request() req: any, @Response() res: any) {
+        const userFromDb = await this.validateUser(req.body?.username, req.body?.password);
+        const payload = { sub: userFromDb.id };
+        const accessToken = await this.generateAccessToken(payload);
+        const refreshToken = await this.generateRefreshToken(payload);
 
         // hash refresh token
-        const tokenHash = await bcrypt.hash(refreshToken, 10);
-
-        await this.prisma.refreshToken.create({
-            data: {
-                userId: user.id,
-                tokenHash,
-                device: req.headers['user-agent'],
-                ip: req.ip,
-                expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-            },
-        });
-
+        const token_hash = await bcrypt.hash(refreshToken, parseInt(process.env.HASH_SALT));
+        const refreshTokenPayload = {
+            user_id: userFromDb.id,
+            token_hash,
+            device: req.headers['user-agent'],
+            ip: req.ip,
+            expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        }
+        const added = await this.refreshTokenService.create(refreshTokenPayload);
         // send via http-only cookie
-        res.cookie('refresh_token', refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
-        });
+        // res.cookie('refresh_token', refreshToken, {
+        //     httpOnly: true,
+        //     secure: true,
+        //     sameSite: 'strict',
+        // });
+        // console.log(res.cookies);
 
         return { accessToken };
     }
 
-    async refresh(@Request() req: Request, @Response() res: any) {
+    async refresh(@Request() req: any, @Response() res: any) {
         try {
             const refreshToken = req.cookies['refresh_token'];
             if (!refreshToken) {
@@ -149,10 +139,10 @@ export class AuthService {
 
             let payload = this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET, });
 
-            const userId = payload.sub;
+            const user_id = payload.sub;
 
             const tokens = await this.refreshTokenService.findAll({
-                where: { user_id: userId },
+                where: { user_id }
             });
 
             let matchedToken = null;
@@ -167,7 +157,7 @@ export class AuthService {
 
             if (!matchedToken) {
                 // possible token theft
-                await this.refreshTokenService.remove({ user_id: userId });
+                await this.refreshTokenService.remove({ user_id });
                 throw new HttpException(
                     'Token reuse detected',
                     HttpStatus.BAD_REQUEST
@@ -176,7 +166,7 @@ export class AuthService {
 
             // 🔁 ROTATION
             await this.refreshTokenService.removeByUnique({ id: matchedToken.id });
-            const newPayload = { sub: userId };
+            const newPayload = { sub: user_id };
 
             const newAccessToken = await this.generateAccessToken(newPayload);
 
@@ -185,11 +175,11 @@ export class AuthService {
             const newHash = await bcrypt.hash(newRefreshToken, 10);
 
             const newRefreshPayload = {
-                user_id: userId,
+                user_id,
                 token_hash: newHash,
                 expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
                 device: req.headers['user-agent'],
-                ip_address: req.ip
+                ip: req.ip
             };
             await this.refreshTokenService.create(newRefreshPayload);
 
@@ -205,17 +195,17 @@ export class AuthService {
         }
     }
 
-
-    async logout(req: Request, res: Response) {
+    async logout(@Request() req: any, @Response() res: any) {
         const refreshToken = req.cookies['refresh_token'];
         if (!refreshToken) return;
-
-        const tokens = await this.prisma.refreshToken.findMany();
+        const payload = this.jwtService.verify(refreshToken, { secret: process.env.JWT_REFRESH_SECRET });
+        const user_id = payload.sub;
+        const tokens = await this.refreshTokenService.findAll({ where: { user_id } });
 
         for (const t of tokens) {
-            const isMatch = await bcrypt.compare(refreshToken, t.tokenHash);
+            const isMatch = await bcrypt.compare(refreshToken, t.token_hash);
             if (isMatch) {
-                await this.prisma.refreshToken.delete({ where: { id: t.id } });
+                await this.refreshTokenService.removeByUnique({ id: t.id });
                 break;
             }
         }

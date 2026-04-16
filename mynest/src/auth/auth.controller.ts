@@ -11,8 +11,8 @@ export class AuthController {
 
     @Post('login')
     @HttpCode(200)
-    async login(@Request() req: any) {
-        return this.authService.login(req.body);
+    async login(@Request() req: any, @Response() res: any) {
+        return this.authService.login(req, res);
     }
 
     @UseGuards(RefreshAuthGuard)
@@ -24,8 +24,8 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Post('logout')
-    async logout(@Request() req: any) {
-        return req.logout();
+    async logout(@Request() req: any, @Response() res: any) {
+        return this.authService.logout(req, res);
     }
 
 }

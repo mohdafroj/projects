@@ -15,14 +15,14 @@ enum FeatureOn {
 }
 
 model RefreshToken {
-  id         String   @id @default(uuid())
+  id         Int      @id @default(autoincrement())
   user_id    Int
   token_hash String
   device     String?
   ip         String?
   expires_at DateTime
   created_at DateTime @default(now())
-  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user       User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("refresh_tokens")
 }
@@ -33,7 +33,6 @@ model User {
   email         String         @unique
   password      String
   mobile        String?
-  refresh_token String?
   is_active     Boolean        @default(true)
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
