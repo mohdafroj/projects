@@ -1,0 +1,7 @@
+## For init alembic
+docker exec -it fastapi_app alembic init alembic
+## Firt Migration
+docker exec -it fastapi_app alembic revision --autogenerate -m "init"
+
+## Apply migration
+docker exec -it fastapi_app alembic upgrade head

@@ -1,30 +1,15 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.models.user import User
-from app.core.security import hash_password
+from app.user import controller
+from app.user.dtos import UserCreateDTO
+
 router = APIRouter(prefix="/users", tags=["Users"])
 
-@router.post("/dummy-user")
-def create_test_user(db: Session = Depends(get_db)):
-    # ✅ create user
-    try:
-        test_user = User(
-            name="Admin User",
-            email="admin@example.com",
-            username="admin",
-            hashed_password=hash_password("admin")
-        )
+@router.post("/")
+def create(body: UserCreateDTO, db: Session = Depends(get_db)):
+    return controller.create_user(body, db)
 
-        db.add(test_user)
-        db.commit()
-        db.refresh(test_user)
-
-        return {
-            "message": "User created successfully",
-            "user_id": test_user.id
-        }
-
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+@router.get("/")
+def list_users(db: Session = Depends(get_db)):
+    return controller.get_all_users(db)
