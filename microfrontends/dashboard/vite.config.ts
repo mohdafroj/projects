@@ -12,7 +12,7 @@ export default defineConfig({
         './Dashboard': './src/App.tsx',
       },
       shared: ['react', 'react-dom'],
-      //manifest: true,
+      mode: 'development',
     }),
   ],
   build: {
@@ -20,6 +20,7 @@ export default defineConfig({
     target: 'esnext',
     minify: false,
     cssCodeSplit: false,
+    watch: {}, // 👈 IMPORTANT
   },
   server: {
     port: 5001,

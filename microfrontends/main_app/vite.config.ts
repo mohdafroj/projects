@@ -13,6 +13,7 @@ export default defineConfig({
         settings: 'http://localhost:5002/assets/remoteEntry.js',
       },
       shared: ['react', 'react-dom'],
+      mode: 'development',
     }),
   ],
   build: {
@@ -22,6 +23,10 @@ export default defineConfig({
     cssCodeSplit: false,
   },
   server: {
+    port: 5000,
+    strictPort: true,
+  },
+  preview: {
     port: 5000,
     strictPort: true,
   },
