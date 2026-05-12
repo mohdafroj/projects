@@ -8,6 +8,23 @@ interface User {
   status: "active" | "inactive";
 }
 
+interface Service {
+  id: string;
+  name: string;
+  description: string;
+  features: string[];
+  icon: string;
+}
+
+interface Feature {
+  id: string;
+  name: string;
+  description: string;
+  service: string;
+  module: string;
+  status: "active" | "inactive";
+}
+
 const IAM = () => {
   const [users, setUsers] = useState<User[]>([
     {
@@ -33,7 +50,105 @@ const IAM = () => {
     },
   ]);
 
-  const [selectedTab, setSelectedTab] = useState<"users" | "roles" | "permissions">("users");
+  const [services, setServices] = useState<Service[]>([
+    {
+      id: "1",
+      name: "Student Management",
+      description: "Manage student records, enrollment, and progress tracking",
+      features: ["Add Students", "View Records", "Update Progress", "Generate Reports"],
+      icon: "👥",
+    },
+    {
+      id: "2",
+      name: "Teacher Management",
+      description: "Manage teacher profiles, assignments, and schedules",
+      features: ["Manage Profiles", "Assign Classes", "Create Schedules", "Track Performance"],
+      icon: "👨‍🏫",
+    },
+    {
+      id: "3",
+      name: "Class Management",
+      description: "Manage class sections, timetables, and curricula",
+      features: ["Create Classes", "Manage Timetable", "Set Curriculum", "Assign Teachers"],
+      icon: "📚",
+    },
+    {
+      id: "4",
+      name: "Attendance System",
+      description: "Track student and teacher attendance",
+      features: ["Mark Attendance", "Generate Reports", "Set Rules", "Send Alerts"],
+      icon: "✓",
+    },
+  ]);
+
+  const [features, setFeatures] = useState<Feature[]>([
+    {
+      id: "1",
+      name: "Add Students",
+      description: "Create and add new student records",
+      service: "Student Management",
+      module: "remoteStudent",
+      status: "active",
+    },
+    {
+      id: "2",
+      name: "View Records",
+      description: "View and search student records",
+      service: "Student Management",
+      module: "remoteStudent",
+      status: "active",
+    },
+    {
+      id: "3",
+      name: "Update Progress",
+      description: "Update student progress and grades",
+      service: "Student Management",
+      module: "remoteStudent",
+      status: "active",
+    },
+    {
+      id: "4",
+      name: "Manage Profiles",
+      description: "Manage teacher profile information",
+      service: "Teacher Management",
+      module: "remoteTeacher",
+      status: "active",
+    },
+    {
+      id: "5",
+      name: "Assign Classes",
+      description: "Assign teachers to classes",
+      service: "Teacher Management",
+      module: "remoteTeacher",
+      status: "active",
+    },
+    {
+      id: "6",
+      name: "Create Classes",
+      description: "Create and configure class sections",
+      service: "Class Management",
+      module: "remoteClass",
+      status: "active",
+    },
+    {
+      id: "7",
+      name: "Mark Attendance",
+      description: "Record daily attendance",
+      service: "Attendance System",
+      module: "remoteAttendance",
+      status: "active",
+    },
+    {
+      id: "8",
+      name: "Generate Reports",
+      description: "Generate attendance reports",
+      service: "Attendance System",
+      module: "remoteAttendance",
+      status: "inactive",
+    },
+  ]);
+
+  const [selectedTab, setSelectedTab] = useState<"users" | "roles" | "permissions" | "services" | "features">("users");
   const [showForm, setShowForm] = useState(false);
   const [newUser, setNewUser] = useState({ name: "", email: "", role: "Student" });
 
@@ -76,6 +191,7 @@ const IAM = () => {
     gap: "10px",
     marginBottom: "20px",
     borderBottom: "2px solid #ddd",
+    overflowX: "auto",
   };
 
   const tabStyle = (isActive: boolean): React.CSSProperties => ({
@@ -86,6 +202,7 @@ const IAM = () => {
     cursor: "pointer",
     borderRadius: "4px 4px 0 0",
     fontWeight: isActive ? "bold" : "normal",
+    whiteSpace: "nowrap",
   });
 
   const tableStyle: React.CSSProperties = {
@@ -141,6 +258,47 @@ const IAM = () => {
     gap: "10px",
   };
 
+  const cardStyle: React.CSSProperties = {
+    background: "white",
+    padding: "20px",
+    borderRadius: "8px",
+    marginBottom: "15px",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    border: "1px solid #e0e0e0",
+  };
+
+  const cardHeaderStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    gap: "15px",
+    marginBottom: "10px",
+  };
+
+  const cardIconStyle: React.CSSProperties = {
+    fontSize: "32px",
+  };
+
+  const cardTitleStyle: React.CSSProperties = {
+    fontSize: "18px",
+    fontWeight: "bold",
+    color: "#333",
+  };
+
+  const featureListStyle: React.CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, 1fr)",
+    gap: "10px",
+    marginTop: "10px",
+  };
+
+  const featureItemStyle: React.CSSProperties = {
+    background: "#f0f0f0",
+    padding: "8px 12px",
+    borderRadius: "4px",
+    fontSize: "13px",
+    color: "#555",
+  };
+
   const addUser = () => {
     if (newUser.name && newUser.email) {
       const user: User = {
@@ -158,12 +316,14 @@ const IAM = () => {
     <div style={containerStyle}>
       <div style={headerStyle}>
         <div style={titleStyle}>Identity & Access Management</div>
-        <button style={buttonStyle} onClick={() => setShowForm(!showForm)}>
-          {showForm ? "Cancel" : "+ Add User"}
-        </button>
+        {selectedTab === "users" && (
+          <button style={buttonStyle} onClick={() => setShowForm(!showForm)}>
+            {showForm ? "Cancel" : "+ Add User"}
+          </button>
+        )}
       </div>
 
-      {showForm && (
+      {showForm && selectedTab === "users" && (
         <div style={formStyle}>
           <h3 style={{ marginBottom: "15px" }}>Create New User</h3>
           <input
@@ -216,8 +376,21 @@ const IAM = () => {
         >
           ⚙️ Permissions
         </button>
+        <button
+          style={tabStyle(selectedTab === "services")}
+          onClick={() => setSelectedTab("services")}
+        >
+          🔧 Services ({services.length})
+        </button>
+        <button
+          style={tabStyle(selectedTab === "features")}
+          onClick={() => setSelectedTab("features")}
+        >
+          ✨ Features ({features.length})
+        </button>
       </div>
 
+      {/* Users Tab */}
       {selectedTab === "users" && (
         <table style={tableStyle}>
           <thead>
@@ -258,6 +431,7 @@ const IAM = () => {
         </table>
       )}
 
+      {/* Roles Tab */}
       {selectedTab === "roles" && (
         <div style={{ background: "white", padding: "20px", borderRadius: "8px" }}>
           <h3>Available Roles</h3>
@@ -275,6 +449,7 @@ const IAM = () => {
         </div>
       )}
 
+      {/* Permissions Tab */}
       {selectedTab === "permissions" && (
         <div style={{ background: "white", padding: "20px", borderRadius: "8px" }}>
           <h3>Permission Matrix</h3>
@@ -318,6 +493,80 @@ const IAM = () => {
                 <td style={cellStyle}>✓</td>
                 <td style={cellStyle}>✓</td>
               </tr>
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Services Tab */}
+      {selectedTab === "services" && (
+        <div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px" }}>
+            {services.map((service) => (
+              <div key={service.id} style={cardStyle}>
+                <div style={cardHeaderStyle}>
+                  <div style={cardIconStyle}>{service.icon}</div>
+                  <div>
+                    <div style={cardTitleStyle}>{service.name}</div>
+                    <div style={{ fontSize: "13px", color: "#777", marginTop: "4px" }}>
+                      {service.features.length} features
+                    </div>
+                  </div>
+                </div>
+                <p style={{ fontSize: "14px", color: "#666", marginBottom: "12px" }}>
+                  {service.description}
+                </p>
+                <div>
+                  <div style={{ fontSize: "12px", fontWeight: "bold", color: "#667eea", marginBottom: "8px" }}>
+                    Features:
+                  </div>
+                  <div style={featureListStyle}>
+                    {service.features.map((feature, index) => (
+                      <div key={index} style={featureItemStyle}>
+                        ✓ {feature}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Features Tab */}
+      {selectedTab === "features" && (
+        <div>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={headerCellStyle}>Feature Name</th>
+                <th style={headerCellStyle}>Description</th>
+                <th style={headerCellStyle}>Service</th>
+                <th style={headerCellStyle}>Module</th>
+                <th style={headerCellStyle}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {features.map((feature) => (
+                <tr key={feature.id}>
+                  <td style={cellStyle}>
+                    <strong>{feature.name}</strong>
+                  </td>
+                  <td style={cellStyle}>{feature.description}</td>
+                  <td style={cellStyle}>{feature.service}</td>
+                  <td style={cellStyle}>
+                    <code style={{ background: "#f0f0f0", padding: "4px 8px", borderRadius: "4px" }}>
+                      {feature.module}
+                    </code>
+                  </td>
+                  <td style={cellStyle}>
+                    <span style={statusStyle(feature.status)}>
+                      {feature.status.charAt(0).toUpperCase() + feature.status.slice(1)}
+                    </span>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
