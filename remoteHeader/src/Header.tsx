@@ -93,6 +93,12 @@ const Header = () => {
           >
             Attendance
           </li>
+          <li
+            style={navLinkStyle(location.pathname === "/iam")}
+            onClick={() => navigate("/iam")}
+          >
+            IAM
+          </li>
         </ul>
 
         <div style={userSectionStyle}>

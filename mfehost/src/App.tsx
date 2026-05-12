@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 const RemoteHeader = React.lazy(() => import("remoteHeader/Header"));
+const RemoteIAM = React.lazy(() => import("remoteIAM/IAM"));
 
 const Dashboard = () => (
   <div style={{ padding: "20px" }}>
@@ -21,6 +22,9 @@ const Dashboard = () => (
         </li>
         <li>
           <Link to="/attendance">Attendance</Link>
+        </li>
+        <li>
+          <Link to="/iam">IAM Management</Link>
         </li>
       </ul>
     </div>
@@ -75,6 +79,14 @@ export const App = () => {
           <Route path="/teachers" element={<Teachers />} />
           <Route path="/classes" element={<Classes />} />
           <Route path="/attendance" element={<Attendance />} />
+          <Route
+            path="/iam"
+            element={
+              <Suspense fallback={<div style={{ padding: "20px" }}>Loading IAM Module...</div>}>
+                <RemoteIAM />
+              </Suspense>
+            }
+          />
         </Routes>
       </div>
     </Router>

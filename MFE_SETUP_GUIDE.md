@@ -5,7 +5,8 @@ This guide explains how to run the Host and Remote micro frontend applications t
 ## Architecture Overview
 
 - **Host App** (Port 3000): The main application that consumes remote components
-- **Remote App** (Port 3001): A module-federated component that is exposed to the host
+- **Remote Header App** (Port 3001): A module-federated component that is exposed to the host
+- **Remote IAM App** (Port 3002): A module-federated component that is exposed to the host
 
 ## Quick Start
 
@@ -17,20 +18,26 @@ cd mfehost
 npm install
 ```
 
-#### Remote App:
+#### Remote Header App:
 ```bash
 cd remoteHeader
 npm install
 ```
 
+#### Remote IAM App:
+```bash
+cd remoteIAM
+npm install
+```
+
 ### Step 2: Run Both Applications
 
-**Terminal 1 - Start Remote App:**
+**Terminal 1 - Start Remote Header App:**
 ```bash
 cd remoteHeader
 npm start
 ```
-The remote app will run on http://localhost:3001
+The remote header app will run on http://localhost:3001
 
 **Terminal 2 - Start Host App:**
 ```bash
@@ -38,6 +45,13 @@ cd mfehost
 npm start
 ```
 The host app will run on http://localhost:3000
+
+**Terminal 3 - Start Remote IAM App:**
+```bash
+cd remoteIAM
+npm start
+```
+The Remote IAM app will run on http://localhost:3002
 
 ### Step 3: View the Application
 
@@ -50,6 +64,7 @@ You should see:
 - The Host application heading
 - The Remote Header component loaded inside the host
 - The remote component has a blue border and displays "Remote Header Component"
+- The Remote IAM component loaded inside the host
 
 ## How It Works
 
@@ -63,15 +78,15 @@ You should see:
 ```
 mfehost/
   ├── src/
-  │   ├── App.js         (Consumes remote app)
-  │   └── index.js
+  │   ├── App.tsx         (Consumes remote app)
+  │   └── index.tsx
   ├── webpack.config.js  (Configured as host)
   └── package.json
 
 remoteHeader/
   ├── src/
-  │   ├── App.js         (Exposed component)
-  │   └── index.js
+  │   ├── Header.tsx         (Exposed component)
+  │   └── index.tsx
   ├── webpack.config.js  (Configured as remote)
   └── package.json
 ```

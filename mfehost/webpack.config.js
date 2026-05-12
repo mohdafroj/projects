@@ -4,6 +4,7 @@ const path = require("path");
 const deps = require("./package.json").dependencies;
 
 const remoteHeaderUrl = process.env.REMOTE_HEADER_URL || "http://localhost:3001";
+const remoteIAMUrl = process.env.REMOTE_IAM_URL || "http://localhost:3002";
 
 module.exports = {
   entry: "./src/bootstrap",
@@ -59,6 +60,7 @@ module.exports = {
       filename: "remoteEntry.js",
       remotes: {
         remoteHeader: `remoteHeader@${remoteHeaderUrl}/remoteEntry.js`,
+        remoteIAM: `remoteIAM@${remoteIAMUrl}/remoteEntry.js`,
       },
       exposes: {
         "./App": "./src/App",
