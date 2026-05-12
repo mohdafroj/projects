@@ -1,58 +1,38 @@
-# Remote Micro Frontend React App
+# School Management CRM - Remote Header Micro Frontend
 
-This is a remote micro frontend app that exposes components via Webpack Module Federation to be consumed by a host application.
+This is the remote header component for the School Management CRM micro frontend architecture. It provides navigation and branding for the entire application.
 
-## Setup
+## Features
 
-1. Install dependencies:
-   ```
-   npm install
-   ```
+- Responsive navigation bar with school branding
+- Navigation links to all main modules (Dashboard, Students, Teachers, Classes, Attendance)
+- User profile section with logout button
+- Active route highlighting
+- Gradient styling for professional appearance
+- Module Federation exposure as a remote component
 
-2. Start the development server:
-   ```
-   npm start
-   ```
+## Development
 
-   The app will run on http://localhost:3001
-
-## Building
-
-To build for production:
+```bash
+npm install
+npm start
 ```
+
+Runs on http://localhost:3001
+
+## Building for Production
+
+```bash
 npm run build
 ```
 
-To serve the built app:
+## Docker
+
+```bash
+docker build -t remote-header .
+docker run -p 3001:3001 remote-header
 ```
-npm run serve
-```
 
-## Exposed Components
+## Module Federation
 
-This remote app exposes the following:
-- **App**: The main App component available as `remoteApp/App`
-
-## Connecting to Host
-
-To connect this remote app to the host application:
-
-1. Update the host's `webpack.config.js` to add this remote:
-   ```js
-   remotes: {
-     remoteApp: "remoteApp@http://localhost:3001/remoteEntry.js"
-   }
-   ```
-
-2. In the host app, import the remote component:
-   ```js
-   const RemoteApp = React.lazy(() => import('remoteApp/App'));
-   ```
-
-3. Use `<Suspense>` to handle loading states when rendering the component.
-
-## Notes
-
-- The remote app generates a `remoteEntry.js` file when built/served that the host can consume.
-- Shared dependencies (react, react-dom) are configured to be shared between host and remote.
-- Both apps should ideally use the same versions of shared dependencies.
+This app exposes the `Header` component for consumption by the host application. It shares common dependencies (React, React Router) as singletons to ensure version compatibility.

@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  host:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - mfe-network
+    depends_on:
+      - remote-header
+
+  remote-header:
+    build:
+      context: ../remoteHeader
+      dockerfile: Dockerfile
+    ports:
+      - "8001:3001"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - mfe-network
+
+networks:
+  mfe-network:
+    driver: bridge

@@ -1,51 +1,91 @@
-const { ModuleFederationPlugin } = require("webpack").container;
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { ModuleFederationPlugin } = require("webpack").container;
+const path = require("path");
+const deps = require("./package.json").dependencies;
+
+const remoteHeaderUrl = process.env.REMOTE_HEADER_URL || "http://localhost:3001";
 
 module.exports = {
-    entry: "./src/index.js",
-    output: {
-        publicPath: "auto",
+  entry: "./src/bootstrap",
+  mode: "development",
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "[name].[contenthash].js",
+    publicPath: process.env.NODE_ENV === "production" ? "/" : "auto",
+    chunkFilename: "[name].[contenthash].js",
+    clean: true,
+  },
+  resolve: {
+    extensions: [".tsx", ".ts", ".jsx", ".js"],
+    alias: {
+      "@": path.resolve(__dirname, "src/"),
     },
-    mode: "development",
-    devServer: {
-        port: 3000,
+  },
+  devServer: {
+    port: 3000,
+    historyApiFallback: true,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
     },
-    module: {
-        rules: [
-            {
-                test: /\.jsx?$/,
-                loader: "babel-loader",
-                exclude: /node_modules/,
-                options: {
-                    presets: ["@babel/preset-react"],
-                },
-            },
-            {
-                test: /\.css$/i,
-                use: ["style-loader", "css-loader", "postcss-loader"],
-            },
-        ],
-    },
-    plugins: [
-        new ModuleFederationPlugin({
-            name: "host",
-            remotes: {
-                // Add remotes here, e.g., remoteHeader: "remoteHeader@http://localhost:3001/remoteEntry.js",
-                remoteHeader: "HeaderApp@http://localhost:3001/remoteEntry.js"
-            },
-            shared: {
-                react: {
-                    singleton: true,
-                    requiredVersion: "^18.3.1",
-                },
-                "react-dom": {
-                    singleton: true,
-                    requiredVersion: "^18.3.1",
-                },
-            },
-        }),
-        new HtmlWebpackPlugin({
-            template: "./public/index.html",
-        }),
+  },
+  cache: {
+    type: "filesystem",
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(ts|tsx|js|jsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              "@babel/preset-env",
+              "@babel/preset-react",
+              "@babel/preset-typescript",
+            ],
+          },
+        },
+      },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
     ],
+  },
+  plugins: [
+    new ModuleFederationPlugin({
+      name: "host",
+      filename: "remoteEntry.js",
+      remotes: {
+        remoteHeader: `remoteHeader@${remoteHeaderUrl}/remoteEntry.js`,
+      },
+      exposes: {
+        "./App": "./src/App",
+      },
+      shared: {
+        react: {
+          singleton: true,
+          requiredVersion: deps.react,
+          eager: true,
+          strictVersion: false,
+        },
+        "react-dom": {
+          singleton: true,
+          requiredVersion: deps["react-dom"],
+          eager: true,
+          strictVersion: false,
+        },
+        "react-router-dom": {
+          singleton: true,
+          requiredVersion: deps["react-router-dom"],
+          eager: true,
+          strictVersion: false,
+        },
+      },
+    }),
+    new HtmlWebpackPlugin({
+      template: "./public/index.html",
+    }),
+  ],
 };

@@ -13,13 +13,13 @@ This guide explains how to run the Host and Remote micro frontend applications t
 
 #### Host App:
 ```bash
-cd host-mfe-react
+cd mfehost
 npm install
 ```
 
 #### Remote App:
 ```bash
-cd remote-app
+cd remoteHeader
 npm install
 ```
 
@@ -27,14 +27,14 @@ npm install
 
 **Terminal 1 - Start Remote App:**
 ```bash
-cd remote-app
+cd remoteHeader
 npm start
 ```
 The remote app will run on http://localhost:3001
 
 **Terminal 2 - Start Host App:**
 ```bash
-cd host-mfe-react
+cd mfehost
 npm start
 ```
 The host app will run on http://localhost:3000
@@ -48,27 +48,27 @@ http://localhost:3000
 
 You should see:
 - The Host application heading
-- The Remote App component loaded inside the host
-- The remote component has a blue border and displays "Remote App Component"
+- The Remote Header component loaded inside the host
+- The remote component has a blue border and displays "Remote Header Component"
 
 ## How It Works
 
 1. **Module Federation**: Both apps use Webpack 5's Module Federation feature
 2. **Remote Entry**: When the remote app starts, it generates `remoteEntry.js` at `http://localhost:3001/remoteEntry.js`
-3. **Dynamic Import**: The host app uses `React.lazy()` to dynamically import `remoteApp/App`
+3. **Dynamic Import**: The host app uses `React.lazy()` to dynamically import `remoteHeader/Header`
 4. **Shared Dependencies**: React and ReactDOM are shared to avoid duplication
 
 ## File Structure
 
 ```
-host-mfe-react/
+mfehost/
   ├── src/
   │   ├── App.js         (Consumes remote app)
   │   └── index.js
   ├── webpack.config.js  (Configured as host)
   └── package.json
 
-remote-app/
+remoteHeader/
   ├── src/
   │   ├── App.js         (Exposed component)
   │   └── index.js
@@ -112,13 +112,13 @@ To add additional remote apps:
 
 ### Build Host:
 ```bash
-cd host-mfe-react
+cd mfehost
 npm run build
 ```
 
 ### Build Remote:
 ```bash
-cd remote-app
+cd remoteHeader
 npm run build
 ```
 
