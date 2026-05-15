@@ -1,0 +1,61 @@
+services:
+  srv_mfehost:
+    image: img_mfehost
+    build:
+      context: ./mfehost
+      dockerfile: Dockerfile
+    container_name: ctr_mfehost
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./mfehost:/app
+      - /app/node_modules
+    networks:
+      - projectnetwork
+    depends_on:
+      - srv_remoteHeader
+
+  srv_remoteHeader:
+    image: img_remoteheader
+    build:
+      context: ./remoteHeader
+      dockerfile: Dockerfile
+    container_name: ctr_remoteheader
+    ports:
+      - "3001:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./remoteHeader:/app
+      - /app/node_modules
+    networks:
+      - projectnetwork
+
+  srv_jenkins:
+    image: jenkins/jenkins:lts
+    container_name: ctr_jenkins
+
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+
+    networks:
+      - projectnetwork
+
+volumes:
+  jenkins_home:
+
+networks:
+  projectnetwork:
+    driver: bridge

@@ -16,9 +16,9 @@ WORKDIR /app
 
 RUN npm install -g http-server
 
-COPY --from=builder /app/dist ./
+COPY --from=builder /app/dist ./dist
 COPY package*.json ./
 
 EXPOSE 3000
 
-CMD ["http-server", ".", "-p", "3000", "-c-1"]
+CMD ["http-server", "dist", "-p", "3000", "-c-1"]

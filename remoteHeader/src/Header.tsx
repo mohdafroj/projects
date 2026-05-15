@@ -59,7 +59,7 @@ const Header = () => {
     <header style={headerStyle}>
       <nav style={navStyle}>
         <div style={logoStyle} onClick={() => navigate("/")}>
-          🎓 School CRM
+          💼 Software CRM
         </div>
 
         <ul style={navLinksStyle}>

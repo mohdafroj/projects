@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./IAM.css";
 
 interface User {
   id: string;
@@ -25,6 +26,21 @@ interface Feature {
   status: "active" | "inactive";
 }
 
+interface Role {
+  id: string;
+  name: string;
+  description: string;
+  permissions: number;
+}
+
+interface Permission {
+  id: string;
+  name: string;
+  admin: boolean;
+  teacher: boolean;
+  student: boolean;
+}
+
 const IAM = () => {
   const [users, setUsers] = useState<User[]>([
     {
@@ -48,6 +64,38 @@ const IAM = () => {
       role: "Student",
       status: "inactive",
     },
+  ]);
+
+  const [roles, setRoles] = useState<Role[]>([
+    {
+      id: "1",
+      name: "Admin",
+      description: "Full access to all features and settings",
+      permissions: 25,
+    },
+    {
+      id: "2",
+      name: "Teacher",
+      description: "Access to teaching, grading, and classroom management",
+      permissions: 15,
+    },
+    {
+      id: "3",
+      name: "Student",
+      description: "Limited access to course content and grades",
+      permissions: 5,
+    },
+  ]);
+
+  const [permissions, setPermissions] = useState<Permission[]>([
+    { id: "1", name: "View Users", admin: true, teacher: false, student: false },
+    { id: "2", name: "Create Users", admin: true, teacher: false, student: false },
+    { id: "3", name: "Manage Roles", admin: true, teacher: false, student: false },
+    { id: "4", name: "Create Classes", admin: true, teacher: true, student: false },
+    { id: "5", name: "View Grades", admin: true, teacher: true, student: true },
+    { id: "6", name: "Edit Attendance", admin: true, teacher: true, student: false },
+    { id: "7", name: "Generate Reports", admin: true, teacher: true, student: false },
+    { id: "8", name: "View Dashboard", admin: true, teacher: true, student: true },
   ]);
 
   const [services, setServices] = useState<Service[]>([
@@ -151,153 +199,12 @@ const IAM = () => {
   const [selectedTab, setSelectedTab] = useState<"users" | "roles" | "permissions" | "services" | "features">("users");
   const [showForm, setShowForm] = useState(false);
   const [newUser, setNewUser] = useState({ name: "", email: "", role: "Student" });
-
-  const containerStyle: React.CSSProperties = {
-    padding: "20px",
-    background: "#f5f5f5",
-    minHeight: "calc(100vh - 100px)",
-  };
-
-  const headerStyle: React.CSSProperties = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: "30px",
-    background: "white",
-    padding: "20px",
-    borderRadius: "8px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  };
-
-  const titleStyle: React.CSSProperties = {
-    fontSize: "24px",
-    fontWeight: "bold",
-    color: "#333",
-  };
-
-  const buttonStyle: React.CSSProperties = {
-    background: "#667eea",
-    color: "white",
-    border: "none",
-    padding: "10px 20px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontSize: "14px",
-    fontWeight: "500",
-  };
-
-  const tabsStyle: React.CSSProperties = {
-    display: "flex",
-    gap: "10px",
-    marginBottom: "20px",
-    borderBottom: "2px solid #ddd",
-    overflowX: "auto",
-  };
-
-  const tabStyle = (isActive: boolean): React.CSSProperties => ({
-    padding: "12px 20px",
-    background: isActive ? "#667eea" : "white",
-    color: isActive ? "white" : "#333",
-    border: "none",
-    cursor: "pointer",
-    borderRadius: "4px 4px 0 0",
-    fontWeight: isActive ? "bold" : "normal",
-    whiteSpace: "nowrap",
-  });
-
-  const tableStyle: React.CSSProperties = {
-    width: "100%",
-    borderCollapse: "collapse",
-    background: "white",
-    borderRadius: "8px",
-    overflow: "hidden",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  };
-
-  const cellStyle: React.CSSProperties = {
-    padding: "12px",
-    textAlign: "left",
-    borderBottom: "1px solid #ddd",
-  };
-
-  const headerCellStyle: React.CSSProperties = {
-    ...cellStyle,
-    background: "#667eea",
-    color: "white",
-    fontWeight: "bold",
-  };
-
-  const statusStyle = (status: string): React.CSSProperties => ({
-    padding: "4px 12px",
-    borderRadius: "12px",
-    fontSize: "12px",
-    fontWeight: "bold",
-    background: status === "active" ? "#d4edda" : "#f8d7da",
-    color: status === "active" ? "#155724" : "#721c24",
-  });
-
-  const formStyle: React.CSSProperties = {
-    background: "white",
-    padding: "20px",
-    borderRadius: "8px",
-    marginBottom: "20px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  };
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "10px",
-    marginBottom: "10px",
-    border: "1px solid #ddd",
-    borderRadius: "4px",
-    fontSize: "14px",
-  };
-
-  const formButtonsStyle: React.CSSProperties = {
-    display: "flex",
-    gap: "10px",
-  };
-
-  const cardStyle: React.CSSProperties = {
-    background: "white",
-    padding: "20px",
-    borderRadius: "8px",
-    marginBottom: "15px",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-    border: "1px solid #e0e0e0",
-  };
-
-  const cardHeaderStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "15px",
-    marginBottom: "10px",
-  };
-
-  const cardIconStyle: React.CSSProperties = {
-    fontSize: "32px",
-  };
-
-  const cardTitleStyle: React.CSSProperties = {
-    fontSize: "18px",
-    fontWeight: "bold",
-    color: "#333",
-  };
-
-  const featureListStyle: React.CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: "repeat(2, 1fr)",
-    gap: "10px",
-    marginTop: "10px",
-  };
-
-  const featureItemStyle: React.CSSProperties = {
-    background: "#f0f0f0",
-    padding: "8px 12px",
-    borderRadius: "4px",
-    fontSize: "13px",
-    color: "#555",
-  };
+  const [showRoleForm, setShowRoleForm] = useState(false);
+  const [newRole, setNewRole] = useState({ name: "", description: "", permissions: 0 });
+  const [showServiceForm, setShowServiceForm] = useState(false);
+  const [showFeatureForm, setShowFeatureForm] = useState(false);
+  const [showPermissionForm, setShowPermissionForm] = useState(false);
+  const [newPermission, setNewPermission] = useState({ name: "", admin: false, teacher: false, student: false });
 
   const addUser = () => {
     if (newUser.name && newUser.email) {
@@ -312,36 +219,96 @@ const IAM = () => {
     }
   };
 
+  const addRole = () => {
+    if (newRole.name && newRole.description) {
+      const role: Role = {
+        id: String(roles.length + 1),
+        ...newRole,
+      };
+      setRoles([...roles, role]);
+      setNewRole({ name: "", description: "", permissions: 0 });
+      setShowRoleForm(false);
+    }
+  };
+
+  const addPermission = () => {
+    if (newPermission.name) {
+      const permission: Permission = {
+        id: String(permissions.length + 1),
+        ...newPermission,
+      };
+      setPermissions([...permissions, permission]);
+      setNewPermission({ name: "", admin: false, teacher: false, student: false });
+      setShowPermissionForm(false);
+    }
+  };
+
+  const deleteRole = (id: string) => {
+    setRoles(roles.filter((role) => role.id !== id));
+  };
+
+  const deletePermission = (id: string) => {
+    setPermissions(permissions.filter((perm) => perm.id !== id));
+  };
+
+  const deleteService = (id: string) => {
+    setServices(services.filter((service) => service.id !== id));
+  };
+
+  const deleteFeature = (id: string) => {
+    setFeatures(features.filter((feature) => feature.id !== id));
+  };
+
   return (
-    <div style={containerStyle}>
-      <div style={headerStyle}>
-        <div style={titleStyle}>Identity & Access Management</div>
+    <div className="iam-container">
+      <div className="iam-header">
+        <div className="iam-title">Identity & Access Management</div>
         {selectedTab === "users" && (
-          <button style={buttonStyle} onClick={() => setShowForm(!showForm)}>
+          <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
             {showForm ? "Cancel" : "+ Add User"}
+          </button>
+        )}
+        {selectedTab === "roles" && (
+          <button className="btn btn-secondary" onClick={() => setShowRoleForm(!showRoleForm)}>
+            {showRoleForm ? "Cancel" : "+ Add Role"}
+          </button>
+        )}
+        {selectedTab === "permissions" && (
+          <button className="btn btn-secondary" onClick={() => setShowPermissionForm(!showPermissionForm)}>
+            {showPermissionForm ? "Cancel" : "+ Add Permission"}
+          </button>
+        )}
+        {selectedTab === "services" && (
+          <button className="btn btn-secondary" onClick={() => setShowServiceForm(!showServiceForm)}>
+            {showServiceForm ? "Cancel" : "+ Add Service"}
+          </button>
+        )}
+        {selectedTab === "features" && (
+          <button className="btn btn-secondary" onClick={() => setShowFeatureForm(!showFeatureForm)}>
+            {showFeatureForm ? "Cancel" : "+ Add Feature"}
           </button>
         )}
       </div>
 
       {showForm && selectedTab === "users" && (
-        <div style={formStyle}>
-          <h3 style={{ marginBottom: "15px" }}>Create New User</h3>
+        <div className="iam-form">
+          <h3>Create New User</h3>
           <input
             type="text"
             placeholder="Full Name"
-            style={inputStyle}
+            className="form-input"
             value={newUser.name}
             onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
           />
           <input
             type="email"
             placeholder="Email"
-            style={inputStyle}
+            className="form-input"
             value={newUser.email}
             onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
           />
           <select
-            style={inputStyle}
+            className="form-input"
             value={newUser.role}
             onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
           >
@@ -349,41 +316,120 @@ const IAM = () => {
             <option>Teacher</option>
             <option>Student</option>
           </select>
-          <div style={formButtonsStyle}>
-            <button style={buttonStyle} onClick={addUser}>
+          <div className="form-buttons">
+            <button className="btn btn-primary" onClick={addUser}>
               Create User
             </button>
           </div>
         </div>
       )}
 
-      <div style={tabsStyle}>
+      {showRoleForm && selectedTab === "roles" && (
+        <div className="iam-form">
+          <h3>Create New Role</h3>
+          <input
+            type="text"
+            placeholder="Role Name"
+            className="form-input"
+            value={newRole.name}
+            onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
+          />
+          <textarea
+            placeholder="Role Description"
+            className="form-input form-textarea"
+            value={newRole.description}
+            onChange={(e) => setNewRole({ ...newRole, description: e.target.value })}
+          />
+          <input
+            type="number"
+            placeholder="Number of Permissions"
+            className="form-input"
+            value={newRole.permissions}
+            onChange={(e) => setNewRole({ ...newRole, permissions: parseInt(e.target.value) || 0 })}
+          />
+          <div className="form-buttons">
+            <button className="btn btn-primary" onClick={addRole}>
+              Create Role
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showPermissionForm && selectedTab === "permissions" && (
+        <div className="iam-form">
+          <h3>Create New Permission</h3>
+          <input
+            type="text"
+            placeholder="Permission Name"
+            className="form-input"
+            value={newPermission.name}
+            onChange={(e) => setNewPermission({ ...newPermission, name: e.target.value })}
+          />
+          <div className="form-checkbox">
+            <label>
+              <input
+                type="checkbox"
+                checked={newPermission.admin}
+                onChange={(e) => setNewPermission({ ...newPermission, admin: e.target.checked })}
+              />
+              Admin Access
+            </label>
+          </div>
+          <div className="form-checkbox">
+            <label>
+              <input
+                type="checkbox"
+                checked={newPermission.teacher}
+                onChange={(e) => setNewPermission({ ...newPermission, teacher: e.target.checked })}
+              />
+              Teacher Access
+            </label>
+          </div>
+          <div className="form-checkbox">
+            <label>
+              <input
+                type="checkbox"
+                checked={newPermission.student}
+                onChange={(e) => setNewPermission({ ...newPermission, student: e.target.checked })}
+              />
+              Student Access
+            </label>
+          </div>
+          <div className="form-buttons">
+            <button className="btn btn-primary" onClick={addPermission}>
+              Create Permission
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="iam-tabs">
         <button
-          style={tabStyle(selectedTab === "users")}
+          className={`tab ${selectedTab === "users" ? "active" : ""}`}
           onClick={() => setSelectedTab("users")}
         >
           👥 Users ({users.length})
         </button>
         <button
-          style={tabStyle(selectedTab === "roles")}
+          className={`tab ${selectedTab === "roles" ? "active" : ""}`}
           onClick={() => setSelectedTab("roles")}
         >
-          🔐 Roles
+          🔐 Roles ({roles.length})
         </button>
         <button
-          style={tabStyle(selectedTab === "permissions")}
+          className={`tab ${selectedTab === "permissions" ? "active" : ""}`}
           onClick={() => setSelectedTab("permissions")}
         >
-          ⚙️ Permissions
+          ⚙️ Permissions ({permissions.length})
         </button>
         <button
-          style={tabStyle(selectedTab === "services")}
+          className={`tab ${selectedTab === "services" ? "active" : ""}`}
           onClick={() => setSelectedTab("services")}
         >
           🔧 Services ({services.length})
         </button>
         <button
-          style={tabStyle(selectedTab === "features")}
+          className={`tab ${selectedTab === "features" ? "active" : ""}`}
           onClick={() => setSelectedTab("features")}
         >
           ✨ Features ({features.length})
@@ -392,38 +438,32 @@ const IAM = () => {
 
       {/* Users Tab */}
       {selectedTab === "users" && (
-        <table style={tableStyle}>
+        <table className="iam-table">
           <thead>
             <tr>
-              <th style={headerCellStyle}>Name</th>
-              <th style={headerCellStyle}>Email</th>
-              <th style={headerCellStyle}>Role</th>
-              <th style={headerCellStyle}>Status</th>
-              <th style={headerCellStyle}>Actions</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
-                <td style={cellStyle}>{user.name}</td>
-                <td style={cellStyle}>{user.email}</td>
-                <td style={cellStyle}>{user.role}</td>
-                <td style={cellStyle}>
-                  <span style={statusStyle(user.status)}>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>
+                  <span className={`status status-${user.status}`}>
                     {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                   </span>
                 </td>
-                <td style={cellStyle}>
-                  <button
-                    style={{
-                      ...buttonStyle,
-                      background: "#e74c3c",
-                      padding: "6px 12px",
-                      fontSize: "12px",
-                    }}
-                  >
-                    Delete
-                  </button>
+                <td>
+                  <div className="action-buttons">
+                    <button className="btn btn-edit">Edit</button>
+                    <button className="btn btn-danger">Delete</button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -433,66 +473,73 @@ const IAM = () => {
 
       {/* Roles Tab */}
       {selectedTab === "roles" && (
-        <div style={{ background: "white", padding: "20px", borderRadius: "8px" }}>
-          <h3>Available Roles</h3>
-          <div style={{ marginTop: "15px" }}>
-            <div style={{ marginBottom: "15px", padding: "10px", border: "1px solid #ddd", borderRadius: "4px" }}>
-              <strong>Admin</strong> - Full access to all features and settings
-            </div>
-            <div style={{ marginBottom: "15px", padding: "10px", border: "1px solid #ddd", borderRadius: "4px" }}>
-              <strong>Teacher</strong> - Access to teaching, grading, and classroom management
-            </div>
-            <div style={{ marginBottom: "15px", padding: "10px", border: "1px solid #ddd", borderRadius: "4px" }}>
-              <strong>Student</strong> - Limited access to course content and grades
-            </div>
-          </div>
+        <div>
+          <table className="iam-table">
+            <thead>
+              <tr>
+                <th>Role Name</th>
+                <th>Description</th>
+                <th>Permissions</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {roles.map((role) => (
+                <tr key={role.id}>
+                  <td>
+                    <strong>{role.name}</strong>
+                  </td>
+                  <td>{role.description}</td>
+                  <td>
+                    <span className="permission-badge">{role.permissions} permissions</span>
+                  </td>
+                  <td>
+                    <div className="action-buttons">
+                      <button className="btn btn-edit">Edit</button>
+                      <button className="btn btn-danger" onClick={() => deleteRole(role.id)}>
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
       {/* Permissions Tab */}
       {selectedTab === "permissions" && (
-        <div style={{ background: "white", padding: "20px", borderRadius: "8px" }}>
-          <h3>Permission Matrix</h3>
-          <table style={{ ...tableStyle, marginTop: "15px" }}>
+        <div>
+          <table className="iam-table">
             <thead>
               <tr>
-                <th style={headerCellStyle}>Permission</th>
-                <th style={headerCellStyle}>Admin</th>
-                <th style={headerCellStyle}>Teacher</th>
-                <th style={headerCellStyle}>Student</th>
+                <th>Permission</th>
+                <th>Admin</th>
+                <th>Teacher</th>
+                <th>Student</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td style={cellStyle}>View Users</td>
-                <td style={cellStyle}>✓</td>
-                <td style={cellStyle}>✗</td>
-                <td style={cellStyle}>✗</td>
-              </tr>
-              <tr>
-                <td style={cellStyle}>Create Users</td>
-                <td style={cellStyle}>✓</td>
-                <td style={cellStyle}>✗</td>
-                <td style={cellStyle}>✗</td>
-              </tr>
-              <tr>
-                <td style={cellStyle}>Manage Roles</td>
-                <td style={cellStyle}>✓</td>
-                <td style={cellStyle}>✗</td>
-                <td style={cellStyle}>✗</td>
-              </tr>
-              <tr>
-                <td style={cellStyle}>Create Classes</td>
-                <td style={cellStyle}>✓</td>
-                <td style={cellStyle}>✓</td>
-                <td style={cellStyle}>✗</td>
-              </tr>
-              <tr>
-                <td style={cellStyle}>View Grades</td>
-                <td style={cellStyle}>✓</td>
-                <td style={cellStyle}>✓</td>
-                <td style={cellStyle}>✓</td>
-              </tr>
+              {permissions.map((permission) => (
+                <tr key={permission.id}>
+                  <td>
+                    <strong>{permission.name}</strong>
+                  </td>
+                  <td className="checkmark">{permission.admin ? "✓" : "✗"}</td>
+                  <td className="checkmark">{permission.teacher ? "✓" : "✗"}</td>
+                  <td className="checkmark">{permission.student ? "✓" : "✗"}</td>
+                  <td>
+                    <div className="action-buttons">
+                      <button className="btn btn-edit">Edit</button>
+                      <button className="btn btn-danger" onClick={() => deletePermission(permission.id)}>
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -500,70 +547,77 @@ const IAM = () => {
 
       {/* Services Tab */}
       {selectedTab === "services" && (
-        <div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px" }}>
-            {services.map((service) => (
-              <div key={service.id} style={cardStyle}>
-                <div style={cardHeaderStyle}>
-                  <div style={cardIconStyle}>{service.icon}</div>
+        <div className="services-grid">
+          {services.map((service) => (
+            <div key={service.id} className="service-card">
+              <div className="card-header">
+                <div className="card-title-section">
+                  <div className="card-icon">{service.icon}</div>
                   <div>
-                    <div style={cardTitleStyle}>{service.name}</div>
-                    <div style={{ fontSize: "13px", color: "#777", marginTop: "4px" }}>
-                      {service.features.length} features
-                    </div>
+                    <div className="card-title">{service.name}</div>
+                    <div className="card-subtitle">{service.features.length} features</div>
                   </div>
                 </div>
-                <p style={{ fontSize: "14px", color: "#666", marginBottom: "12px" }}>
-                  {service.description}
-                </p>
-                <div>
-                  <div style={{ fontSize: "12px", fontWeight: "bold", color: "#667eea", marginBottom: "8px" }}>
-                    Features:
-                  </div>
-                  <div style={featureListStyle}>
-                    {service.features.map((feature, index) => (
-                      <div key={index} style={featureItemStyle}>
-                        ✓ {feature}
-                      </div>
-                    ))}
-                  </div>
+                <div className="action-buttons">
+                  <button className="btn btn-edit">Edit</button>
+                  <button className="btn btn-danger" onClick={() => deleteService(service.id)}>
+                    Delete
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
+              <p className="card-description">{service.description}</p>
+              <div className="card-features">
+                <div className="features-label">Features:</div>
+                <div className="features-list">
+                  {service.features.map((feature, index) => (
+                    <div key={index} className="feature-item">
+                      ✓ {feature}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
       {/* Features Tab */}
       {selectedTab === "features" && (
         <div>
-          <table style={tableStyle}>
+          <table className="iam-table">
             <thead>
               <tr>
-                <th style={headerCellStyle}>Feature Name</th>
-                <th style={headerCellStyle}>Description</th>
-                <th style={headerCellStyle}>Service</th>
-                <th style={headerCellStyle}>Module</th>
-                <th style={headerCellStyle}>Status</th>
+                <th>Feature Name</th>
+                <th>Description</th>
+                <th>Service</th>
+                <th>Module</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {features.map((feature) => (
                 <tr key={feature.id}>
-                  <td style={cellStyle}>
+                  <td>
                     <strong>{feature.name}</strong>
                   </td>
-                  <td style={cellStyle}>{feature.description}</td>
-                  <td style={cellStyle}>{feature.service}</td>
-                  <td style={cellStyle}>
-                    <code style={{ background: "#f0f0f0", padding: "4px 8px", borderRadius: "4px" }}>
-                      {feature.module}
-                    </code>
+                  <td>{feature.description}</td>
+                  <td>{feature.service}</td>
+                  <td>
+                    <code className="module-code">{feature.module}</code>
                   </td>
-                  <td style={cellStyle}>
-                    <span style={statusStyle(feature.status)}>
+                  <td>
+                    <span className={`status status-${feature.status}`}>
                       {feature.status.charAt(0).toUpperCase() + feature.status.slice(1)}
                     </span>
+                  </td>
+                  <td>
+                    <div className="action-buttons">
+                      <button className="btn btn-edit">Edit</button>
+                      <button className="btn btn-danger" onClick={() => deleteFeature(feature.id)}>
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

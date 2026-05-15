@@ -18,13 +18,14 @@ RUN npm install -g http-server
 
 RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 
-COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+#COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+COPY --from=builder /app/dist ./dist
 
-USER nodejs
+#USER nodejs
 
-EXPOSE 3001
+EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD test -f dist/index.html || exit 1
 
-CMD ["http-server", "dist", "-p", "3001", "-c-1"]
+CMD ["http-server", "dist", "-p", "3000", "-c-1"]

@@ -6,8 +6,8 @@ const RemoteIAM = React.lazy(() => import("remoteIAM/IAM"));
 
 const Dashboard = () => (
   <div style={{ padding: "20px" }}>
-    <h2>School Management Dashboard</h2>
-    <p>Welcome to the School Management CRM System</p>
+    <h2>Software Management Dashboard</h2>
+    <p>Welcome to the Software Management CRM System</p>
     <div style={{ marginTop: "20px" }}>
       <h3>Quick Links:</h3>
       <ul>
