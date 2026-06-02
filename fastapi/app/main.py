@@ -2,35 +2,63 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
-from app.db.session import engine, Base
-# from app.auth.router import router as auth_router
-from app.user.router import router as user_router
+from starlette.middleware.cors import CORSMiddleware
 
-#import fastapi
-#print(fastapi.__version__)
-Base.metadata.create_all(bind=engine)
+from app.core.config import settings
+from app.api.v1.api import api_router
 
-app = FastAPI()
-
-@app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request: Request, exc: StarletteHTTPException):
-    if isinstance(exc.detail, dict) and "success" in exc.detail:
-        return JSONResponse(status_code=exc.status_code, content=exc.detail)
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"success": False, "message": str(exc.detail), "data": []},
+def get_application() -> FastAPI:
+    _app = FastAPI(
+        title=settings.PROJECT_NAME,
+        debug=settings.DEBUG,
     )
 
-@app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    return JSONResponse(
-        status_code=422,
-        content={"success": False, "message": "Validation error", "data": exc.errors()},
-    )
+    # Set all CORS enabled origins
+    if settings.BACKEND_CORS_ORIGINS:
+        _app.add_middleware(
+            CORSMiddleware,
+            allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
-#app.include_router(auth_router)
-app.include_router(user_router)
+    # Exception Handlers
+    @_app.exception_handler(StarletteHTTPException)
+    async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "success": False,
+                "message": str(exc.detail),
+                "data": None
+            },
+        )
 
-@app.get("/")
-def read_root():
-    return {"message": "FastAPI + PostgreSQL + Docker 🚀"}
+    @_app.exception_handler(RequestValidationError)
+    async def validation_exception_handler(request: Request, exc: RequestValidationError):
+        return JSONResponse(
+            status_code=422,
+            content={
+                "success": False,
+                "message": "Validation Error",
+                "errors": exc.errors()
+            },
+        )
+
+    _app.include_router(api_router, prefix=settings.API_V1_STR)
+
+    @_app.get("/", tags=["Health Check"])
+    async def health_check():
+        return {
+            "success": True,
+            "message": "Service is healthy",
+            "data": {
+                "project_name": settings.PROJECT_NAME,
+                "environment": settings.ENVIRONMENT
+            }
+        }
+
+    return _app
+
+app = get_application()

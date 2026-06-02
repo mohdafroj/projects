@@ -1,42 +1,78 @@
-version: "3.9"
-
 services:
-  db:
+  srv_db:
     image: postgres:15
-    container_name: postgres_db
+    container_name: ctr_postgres_db
     restart: always
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: fastapi_db
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-fastapi_db}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backendnetwork
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-fastapi_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  app:
-    build: .
-    container_name: fastapi_app
+  srv_redis:
+    image: redis:alpine
+    container_name: ctr_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - backendnetwork
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  srv_fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ctr_fastapi
     depends_on:
-      - db
+      srv_db:
+        condition: service_healthy
+      srv_redis:
+        condition: service_healthy
     ports:
       - "8000:8000"
+    env_file:
+      - .env
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/fastapi_db
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@srv_db:5432/${POSTGRES_DB:-fastapi_db}
+      REDIS_URL: redis://srv_redis:6379/0
     volumes:
       - .:/app
     restart: always
+    networks:
+      - backendnetwork
 
-  fastapi_srv_pgadmin:
+  srv_pgadmin:
     image: dpage/pgadmin4
-    container_name: fastapi_ctr_pgadmin
+    container_name: ctrs_pgadmin
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@example.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
     ports:
       - "5050:80"
     depends_on:
-      - db
+      - srv_db
+    networks:
+      - backendnetwork
+
 volumes:
   postgres_data:
+
+networks:
+  backendnetwork:
+    driver: bridge
