@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, Table, ForeignKey
+from sqlalchemy import Column, String, Boolean, Table, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 
@@ -27,6 +27,20 @@ class User(Base):
     is_super_admin = Column(Boolean, default=False)
     
     roles = relationship("Role", secondary=user_roles, back_populates="users")
+    refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
+
+class RefreshToken(Base):
+    token = Column(String(512), unique=True, index=True, nullable=False)
+    user_id = Column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    is_revoked = Column(Boolean, default=False)
+    ip_address = Column(String(45), nullable=True)
+    user_agent = Column(String(512), nullable=True)
+    device_id = Column(String(255), nullable=True)   # Unique Mobile/Device ID
+    device_name = Column(String(255), nullable=True) # e.g. "iPhone 15"
+    platform = Column(String(50), nullable=True)    # e.g. "ios", "android"
+    
+    user = relationship("User", back_populates="refresh_tokens")
 
 class Role(Base):
     name = Column(String(100), unique=True, index=True, nullable=False)
