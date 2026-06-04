@@ -9,6 +9,7 @@ from app.core.config import settings
 from app.db.base import Base
 # Import all models here for autogenerate support
 import app.models.user
+import app.models.audit
 
 config = context.config
 

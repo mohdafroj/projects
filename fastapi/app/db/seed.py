@@ -14,6 +14,7 @@ async def seed_data():
             {"name": "user:update", "description": "Update existing users", "module": "user"},
             {"name": "user:delete", "description": "Delete users", "module": "user"},
             {"name": "role:manage", "description": "Manage roles and permissions", "module": "role"},
+            {"name": "audit:view", "description": "View system audit logs", "module": "audit"},
         ]
         
         permissions = []

@@ -4,6 +4,7 @@ from app.repositories.user_repository import UserRepository, RoleRepository
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate, UserCreateAdmin
 from app.core.security import get_password_hash
+from app.core.exceptions import BadRequestException, NotFoundException
 from typing import List, Optional
 
 class UserService:
@@ -15,17 +16,11 @@ class UserService:
     async def register_user(self, user_data: UserCreate) -> User:
         # Check if email exists
         if await self.user_repo.get_by_email(user_data.email):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="A user with this email already exists"
-            )
+            raise BadRequestException(message="A user with this email already exists")
         
         # Check if username exists
         if await self.user_repo.get_by_username(user_data.username):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="A user with this username already exists"
-            )
+            raise BadRequestException(message="A user with this username already exists")
         
         # Get default "User" role
         default_role = await self.role_repo.get_by_name("User")
@@ -46,17 +41,11 @@ class UserService:
     async def create_user_admin(self, user_data: UserCreateAdmin) -> User:
         # Check if email exists
         if await self.user_repo.get_by_email(user_data.email):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="A user with this email already exists"
-            )
+            raise BadRequestException(message="A user with this email already exists")
         
         # Check if username exists
         if await self.user_repo.get_by_username(user_data.username):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="A user with this username already exists"
-            )
+            raise BadRequestException(message="A user with this username already exists")
         
         # Get default "User" role
         default_role = await self.role_repo.get_by_name("User")

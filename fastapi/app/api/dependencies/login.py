@@ -1,6 +1,7 @@
-from fastapi import Request, HTTPException, status
+from fastapi import Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from app.schemas.auth import LoginRequest
+from app.core.exceptions import ValidationException
 import json
 
 async def get_login_data(request: Request) -> LoginRequest:
@@ -15,10 +16,7 @@ async def get_login_data(request: Request) -> LoginRequest:
             body = await request.json()
             return LoginRequest(**body)
         except Exception:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Invalid JSON payload"
-            )
+            raise ValidationException(message="Invalid JSON payload")
     
     # Fallback to Form Data (for Swagger UI / OAuth2 clients)
     try:
@@ -29,16 +27,10 @@ async def get_login_data(request: Request) -> LoginRequest:
         captcha_code = form.get("captcha_code")
         
         if not username or not password:
-             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Username and password are required"
-            )
+             raise ValidationException(message="Username and password are required")
             
         if not captcha_id or not captcha_code:
-             raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Captcha ID and code are required"
-            )
+             raise ValidationException(message="Captcha ID and code are required")
             
         return LoginRequest(
             username=username, 
@@ -50,7 +42,6 @@ async def get_login_data(request: Request) -> LoginRequest:
             platform=form.get("platform")
         )
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Invalid form data: {str(e)}"
-        )
+        if isinstance(e, ValidationException):
+            raise e
+        raise ValidationException(message=f"Invalid form data: {str(e)}")

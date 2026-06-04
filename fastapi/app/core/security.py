@@ -41,3 +41,7 @@ def get_password_hash(password: str) -> str:
 def hash_token(token: str) -> str:
     import hashlib
     return hashlib.sha256(token.encode()).hexdigest()
+
+def generate_csrf_token() -> str:
+    import secrets
+    return secrets.token_urlsafe(32)

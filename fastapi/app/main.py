@@ -3,8 +3,10 @@ from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.cors import CORSMiddleware
+from app.middleware.audit_log import AuditLogMiddleware
 
 from app.core.config import settings
+from app.core.exceptions import AppException
 from app.api.v1.api import api_router
 
 def get_application() -> FastAPI:
@@ -23,7 +25,22 @@ def get_application() -> FastAPI:
             allow_headers=["*"],
         )
 
+    # Audit Logging
+    _app.add_middleware(AuditLogMiddleware)
+
     # Exception Handlers
+    @_app.exception_handler(AppException)
+    async def app_exception_handler(request: Request, exc: AppException):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "success": False,
+                "message": exc.message,
+                "data": exc.data,
+                "errors": exc.errors
+            },
+        )
+
     @_app.exception_handler(StarletteHTTPException)
     async def http_exception_handler(request: Request, exc: StarletteHTTPException):
         return JSONResponse(

@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional
-from fastapi import HTTPException, status
 from jose import jwt, JWTError
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,6 +11,8 @@ from app.schemas.auth import LoginRequest
 from app.schemas.token import Token, TokenPayload
 from app.models.user import RefreshToken
 from app.services.captcha_service import CaptchaService
+from app.core.exceptions import UnauthorizedException, BadRequestException, NotFoundException, ForbiddenException
+from app.db.redis import get_redis
 
 class AuthService:
     def __init__(self, db: AsyncSession):
@@ -19,31 +20,52 @@ class AuthService:
         self.token_repo = TokenRepository(db)
 
     async def authenticate(self, login_data: LoginRequest, ip_address: str = None, user_agent: str = None) -> Token:
+        redis = await get_redis()
+        lockout_key = f"lockout:{login_data.username}"
+        attempts_key = f"attempts:{login_data.username}"
+        
         # 1. VERIFY CAPTCHA FIRST
         is_captcha_valid = await CaptchaService.verify_captcha(
             login_data.captcha_id, 
             login_data.captcha_code
         )
         if not is_captcha_valid:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Invalid or expired captcha code"
+            raise BadRequestException(message="Invalid or expired captcha code")
+
+        # 2. CHECK ACCOUNT LOCKOUT
+        is_locked = await redis.get(lockout_key)
+        if is_locked:
+            ttl = await redis.ttl(lockout_key)
+            time_str = f"{round(ttl/60, 1)} minutes" if ttl >= 60 else f"{ttl} seconds"
+            raise ForbiddenException(
+                message=f"Account is temporarily locked due to too many failed attempts. Please try again in {time_str}."
             )
 
-        # 2. Check user
+        # 3. Check user
         user = await self.user_repo.get_by_username(login_data.username)
+        
+        # Handle password verification and lockout tracking
         if not user or not verify_password(login_data.password, user.hashed_password):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+            # Increment failed attempts
+            attempts = await redis.incr(attempts_key)
+            if attempts == 1:
+                await redis.expire(attempts_key, 3600) # Reset attempt counter after 1 hour of no activity
+            
+            if attempts >= 5:
+                # Lock account for 15 minutes
+                await redis.set(lockout_key, "true", ex=900)
+                await redis.delete(attempts_key)
+                raise ForbiddenException(
+                    message="Too many failed login attempts. Your account has been locked for 15 minutes."
+                )
+                
+            raise UnauthorizedException(message=f"Incorrect username or password. {5 - attempts} attempts remaining.")
         
         if not user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Inactive user"
-            )
+            raise BadRequestException(message="Inactive user")
+
+        # 4. Successful login - Reset attempts
+        await redis.delete(attempts_key)
 
         access_token = create_access_token(subject=user.id)
         refresh_token_str = create_refresh_token(subject=user.id)
@@ -74,38 +96,26 @@ class AuthService:
             )
             token_data = TokenPayload(**payload)
             if token_data.type != "refresh":
-                raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Invalid token type",
-                )
+                raise UnauthorizedException(message="Invalid token type")
         except (JWTError, ValidationError):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Could not validate credentials",
-            )
+            raise UnauthorizedException(message="Could not validate credentials")
         
         # 2. Check if token exists and is active in database (USING HASH)
         db_token = await self.token_repo.get_by_token(hash_token(refresh_token))
         if not db_token:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Refresh token expired or revoked"
-            )
+            raise UnauthorizedException(message="Refresh token expired or revoked")
             
         # 3. VERIFY DEVICE BINDING
         if db_token.user_agent != user_agent:
              await self.token_repo.revoke_token(db_token)
-             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Session binding mismatch. Please login again."
-            )
+             raise UnauthorizedException(message="Session binding mismatch. Please login again.")
 
         # 4. Check user
         user = await self.user_repo.get_by_id(token_data.sub)
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise NotFoundException(message="User not found")
         if not user.is_active:
-            raise HTTPException(status_code=400, detail="Inactive user")
+            raise BadRequestException(message="Inactive user")
 
         # 5. Token rotation
         # Revoke old token

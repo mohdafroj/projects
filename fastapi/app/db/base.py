@@ -1,4 +1,5 @@
 import uuid
+import re
 from datetime import datetime, timezone
 from sqlalchemy import Column, DateTime, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
@@ -13,11 +14,17 @@ class Base(DeclarativeBase):
     deleted_at = Column(DateTime(timezone=True), nullable=True)
     is_deleted = Column(Boolean, default=False, nullable=False)
     
-    # These would ideally link to User.id, but since User isn't defined yet, 
-    # we'll just use UUID columns for now.
+    # Audit trail (optional link to user)
     created_by = Column(UUID(as_uuid=True), nullable=True)
     updated_by = Column(UUID(as_uuid=True), nullable=True)
 
     @declared_attr
     def __tablename__(cls) -> str:
-        return cls.__name__.lower() + "s"
+        """
+        Automatically converts CamelCase class names to plural snake_case table names.
+        Example: AuditLog -> audit_logs, RefreshToken -> refresh_tokens
+        """
+        name = re.sub(r'(?<!^)(?=[A-Z])', '_', cls.__name__).lower()
+        if name.endswith('y'):
+            return name[:-1] + 'ies'
+        return name + 's'
