@@ -4,6 +4,8 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.cors import CORSMiddleware
 from app.middleware.audit_log import AuditLogMiddleware
+from app.middleware.security import SecurityHeadersMiddleware
+from app.middleware.correlation import CorrelationIDMiddleware
 
 from app.core.config import settings
 from app.core.exceptions import AppException
@@ -25,7 +27,9 @@ def get_application() -> FastAPI:
             allow_headers=["*"],
         )
 
-    # Audit Logging
+    # Middleware Stack (Outer to Inner)
+    _app.add_middleware(CorrelationIDMiddleware)
+    _app.add_middleware(SecurityHeadersMiddleware)
     _app.add_middleware(AuditLogMiddleware)
 
     # Exception Handlers

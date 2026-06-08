@@ -10,6 +10,7 @@ class AuditLog(Base):
     action = Column(String(50), nullable=False)    # e.g., POST, PATCH, DELETE
     resource = Column(String(255), nullable=False) # e.g., /api/v1/users/
     status_code = Column(Integer, nullable=False)
+    request_id = Column(String(50), index=True, nullable=True) # Correlation ID
     ip_address = Column(String(45), nullable=True)
     user_agent = Column(String(512), nullable=True)
     metadata_json = Column(JSON, nullable=True)     # Stores request info, IDs, etc.

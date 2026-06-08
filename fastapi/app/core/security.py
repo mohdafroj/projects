@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
-from typing import Any, Union
-from jose import jwt
+from typing import Any, Union, Optional
+from jose import jwt, JWTError
 from passlib.context import CryptContext
 from app.core.config import settings
 
@@ -45,3 +45,23 @@ def hash_token(token: str) -> str:
 def generate_csrf_token() -> str:
     import secrets
     return secrets.token_urlsafe(32)
+
+def create_action_token(subject: Union[str, Any], purpose: str, expires_minutes: int = 15) -> str:
+    """
+    Creates a short-lived, signed token for specific actions (verify-email, reset-password).
+    """
+    expire = datetime.now(timezone.utc) + timedelta(minutes=expires_minutes)
+    to_encode = {"exp": expire, "sub": str(subject), "purpose": purpose}
+    return jwt.encode(to_encode, settings.JWT_SECRET, algorithm=settings.ALGORITHM)
+
+def decode_action_token(token: str, purpose: str) -> Optional[str]:
+    """
+    Decodes and validates an action token. Returns the subject (user_id) if valid.
+    """
+    try:
+        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.ALGORITHM])
+        if payload.get("purpose") != purpose:
+            return None
+        return payload.get("sub")
+    except JWTError:
+        return None

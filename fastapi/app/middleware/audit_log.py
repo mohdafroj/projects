@@ -3,6 +3,7 @@ from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from app.db.session import AsyncSessionLocal
 from app.services.audit_service import AuditService
+from app.middleware.correlation import get_request_id
 from jose import jwt
 from app.core.config import settings
 
@@ -17,7 +18,7 @@ class AuditLogMiddleware(BaseHTTPMiddleware):
         # Only log state-changing operations
         is_state_changing = action in ["POST", "PATCH", "PUT", "DELETE"]
         
-        # Try to get user_id from token if present (manual decode for middleware)
+        # Try to get user_id from token if present
         user_id = None
         auth_header = request.headers.get("Authorization")
         if auth_header and auth_header.startswith("Bearer "):
@@ -26,15 +27,16 @@ class AuditLogMiddleware(BaseHTTPMiddleware):
                 payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.ALGORITHM])
                 user_id = payload.get("sub")
             except:
-                pass # Token invalid or expired, ignore here
+                pass 
         
         # 2. Execute the request
         response = await call_next(request)
         
-        # 3. Log after execution (to get status code)
+        # 3. Log after execution
         if is_state_changing:
-            # We use a new session specifically for the audit log to ensure it's recorded
-            # even if the main request session rolls back.
+            # Retrieve request_id from correlation context
+            request_id = get_request_id()
+            
             async with AsyncSessionLocal() as db:
                 audit_service = AuditService(db)
                 try:
@@ -44,11 +46,11 @@ class AuditLogMiddleware(BaseHTTPMiddleware):
                         resource=resource,
                         status_code=response.status_code,
                         ip_address=ip_address,
-                        user_agent=user_agent
+                        user_agent=user_agent,
+                        request_id=request_id
                     )
                     await db.commit()
                 except Exception as e:
-                    # In production, you might log this to a file or sentry
                     print(f"Failed to record audit log: {e}")
         
         return response

@@ -15,6 +15,7 @@ class AuditService:
         status_code: int,
         ip_address: str | None,
         user_agent: str | None,
+        request_id: str | None = None,
         metadata_json: dict | None = None,
         description: str | None = None
     ) -> AuditLog:
@@ -25,6 +26,7 @@ class AuditService:
             status_code=status_code,
             ip_address=ip_address,
             user_agent=user_agent,
+            request_id=request_id,
             metadata_json=metadata_json,
             description=description
         )

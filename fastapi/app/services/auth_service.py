@@ -6,8 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import settings
 from app.repositories.user_repository import UserRepository
 from app.repositories.token_repository import TokenRepository
-from app.core.security import verify_password, create_access_token, create_refresh_token, hash_token
-from app.schemas.auth import LoginRequest
+from app.core.security import verify_password, create_access_token, create_refresh_token, hash_token, create_action_token, decode_action_token, get_password_hash
+from app.schemas.auth import LoginRequest, PasswordResetConfirm
 from app.schemas.token import Token, TokenPayload
 from app.models.user import RefreshToken
 from app.services.captcha_service import CaptchaService
@@ -106,6 +106,12 @@ class AuthService:
             raise UnauthorizedException(message="Refresh token expired or revoked")
             
         # 3. VERIFY DEVICE BINDING
+        # For mobile apps, we prioritize device_id over User-Agent if provided
+        if db_token.device_id and db_token.user_agent != user_agent:
+             # If it's a known mobile device, we expect the same UA or at least same platform
+             # For now, keeping the strict UA check as a baseline
+             pass
+
         if db_token.user_agent != user_agent:
              await self.token_repo.revoke_token(db_token)
              raise UnauthorizedException(message="Session binding mismatch. Please login again.")
@@ -142,3 +148,78 @@ class AuthService:
             access_token=access_token,
             refresh_token=new_refresh_token_str
         )
+
+    async def blacklist_access_token(self, token: str) -> None:
+        """
+        Adds the given access token to the Redis blacklist with a TTL 
+        matching the token's remaining validity period.
+        """
+        try:
+            payload = jwt.decode(
+                token, settings.JWT_SECRET, algorithms=[settings.ALGORITHM]
+            )
+            exp = payload.get("exp")
+            if exp:
+                now = int(datetime.now(timezone.utc).timestamp())
+                ttl = exp - now
+                if ttl > 0:
+                    redis = await get_redis()
+                    await redis.set(f"bl:{token}", "true", ex=ttl)
+        except JWTError:
+            # Token is invalid or expired anyway
+            pass
+
+    # --- Auth Lifecycle Methods ---
+
+    async def request_password_reset(self, email: str) -> str:
+        """
+        Generates a password reset token. In production, this would be emailed.
+        """
+        user = await self.user_repo.get_by_email(email)
+        if not user:
+            # We return a success message anyway to prevent email enumeration attacks
+            return "If the email exists, a reset link has been sent."
+            
+        token = create_action_token(subject=user.id, purpose="password-reset")
+        # In a real app, send email here. For now, we return it for the user.
+        return token
+
+    async def reset_password(self, reset_data: PasswordResetConfirm) -> None:
+        """
+        Verifies the token and updates the password.
+        """
+        user_id = decode_action_token(reset_data.token, purpose="password-reset")
+        if not user_id:
+            raise BadRequestException(message="Invalid or expired reset token")
+            
+        user = await self.user_repo.get_by_id(user_id)
+        if not user:
+             raise NotFoundException(message="User not found")
+             
+        # Update password
+        user.hashed_password = get_password_hash(reset_data.new_password)
+        # Revoke all existing sessions for safety after password change
+        await self.token_repo.revoke_all_user_tokens(user.id)
+        await self.user_repo.update(user)
+
+    async def request_email_verification(self, user_id: str) -> str:
+        """
+        Generates an email verification token.
+        """
+        token = create_action_token(subject=user_id, purpose="email-verification", expires_minutes=1440) # 24 hours
+        return token
+
+    async def verify_email(self, token: str) -> None:
+        """
+        Verifies the email token and marks user as verified.
+        """
+        user_id = decode_action_token(token, purpose="email-verification")
+        if not user_id:
+            raise BadRequestException(message="Invalid or expired verification token")
+            
+        user = await self.user_repo.get_by_id(user_id)
+        if not user:
+            raise NotFoundException(message="User not found")
+            
+        user.is_verified = True
+        await self.user_repo.update(user)

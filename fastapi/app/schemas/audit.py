@@ -8,6 +8,7 @@ class AuditLogBase(BaseModel):
     action: str
     resource: str
     status_code: int
+    request_id: Optional[str] = None
     ip_address: Optional[str] = None
     user_agent: Optional[str] = None
     metadata_json: Optional[Any] = None
