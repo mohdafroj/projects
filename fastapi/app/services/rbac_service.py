@@ -54,7 +54,8 @@ class RbacService:
             raise BadRequestException(f"Role '{data.name}' already exists.")
         
         role = Role(**data.model_dump())
-        return await self.role_repo.create(role)
+        role = await self.role_repo.create(role)
+        return await self.role_repo.get_by_id(str(role.id))
 
     async def list_roles(self, skip: int = 0, limit: int = 100) -> List[Role]:
         return await self.role_repo.list(skip=skip, limit=limit)

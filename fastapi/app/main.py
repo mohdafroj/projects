@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.encoders import jsonable_encoder
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.cors import CORSMiddleware
 from app.middleware.audit_log import AuditLogMiddleware
@@ -9,9 +10,12 @@ from app.middleware.correlation import CorrelationIDMiddleware
 
 from app.core.config import settings
 from app.core.exceptions import AppException
+from app.core.logger import setup_logging
 from app.api.v1.api import api_router
 
 def get_application() -> FastAPI:
+    setup_logging()
+    
     _app = FastAPI(
         title=settings.PROJECT_NAME,
         debug=settings.DEBUG,
@@ -63,7 +67,7 @@ def get_application() -> FastAPI:
             content={
                 "success": False,
                 "message": "Validation Error",
-                "errors": exc.errors()
+                "errors": jsonable_encoder(exc.errors())
             },
         )
 

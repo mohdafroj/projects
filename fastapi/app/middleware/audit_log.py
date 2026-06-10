@@ -4,7 +4,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from app.db.session import AsyncSessionLocal
 from app.services.audit_service import AuditService
 from app.middleware.correlation import get_request_id
-from jose import jwt
+from app.core.security import decode_nested_token
 from app.core.config import settings
 
 class AuditLogMiddleware(BaseHTTPMiddleware):
@@ -24,7 +24,7 @@ class AuditLogMiddleware(BaseHTTPMiddleware):
         if auth_header and auth_header.startswith("Bearer "):
             try:
                 token = auth_header.split(" ")[1]
-                payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.ALGORITHM])
+                payload = decode_nested_token(token)
                 user_id = payload.get("sub")
             except:
                 pass 

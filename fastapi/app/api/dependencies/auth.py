@@ -1,7 +1,7 @@
 from typing import Callable, List, Union
 from fastapi import Depends, Header, Cookie
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt, JWTError
+from jose import JWTError
 from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,6 +14,7 @@ from app.repositories.user_repository import UserRepository
 from app.schemas.token import TokenPayload
 from app.core.exceptions import UnauthorizedException, ForbiddenException, NotFoundException, BadRequestException
 from app.db.redis import get_redis
+from app.core.security import decode_nested_token
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login"
@@ -24,9 +25,7 @@ async def get_current_user(
     token: str = Depends(reusable_oauth2)
 ) -> User:
     try:
-        payload = jwt.decode(
-            token, settings.JWT_SECRET, algorithms=[settings.ALGORITHM]
-        )
+        payload = decode_nested_token(token)
         token_data = TokenPayload(**payload)
         if token_data.type != "access":
             raise UnauthorizedException(message="Invalid token type")

@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, Boolean, Table, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
+from datetime import datetime, timezone
 from app.db.base import Base
 
 # Many-to-Many Link Tables
@@ -26,8 +27,20 @@ class User(Base):
     is_verified = Column(Boolean, default=False)
     is_super_admin = Column(Boolean, default=False)
     
+    totp_secret = Column(String(255), nullable=True)
+    is_mfa_enabled = Column(Boolean, default=False)
+    
+    password_changed_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    
     roles = relationship("Role", secondary=user_roles, back_populates="users")
     refresh_tokens = relationship("RefreshToken", back_populates="user", cascade="all, delete-orphan")
+    password_histories = relationship("PasswordHistory", back_populates="user", cascade="all, delete-orphan", order_by="desc(PasswordHistory.created_at)")
+
+class PasswordHistory(Base):
+    user_id = Column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    hashed_password = Column(String(255), nullable=False)
+    
+    user = relationship("User", back_populates="password_histories")
 
 class RefreshToken(Base):
     token = Column(String(512), unique=True, index=True, nullable=False)
