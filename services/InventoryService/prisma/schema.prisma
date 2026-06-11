@@ -1,0 +1,132 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum FeatureOn {
+  web
+  mobile
+  both
+}
+
+model RefreshToken {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  token_hash String
+  device     String?
+  ip         String?
+  expires_at DateTime
+  created_at DateTime @default(now())
+  user       User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String         @unique
+  password      String
+  mobile        String?
+  is_active     Boolean        @default(true)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  Profile       Profile[]
+  UserRole      UserRole[]
+  refreshTokens RefreshToken[]
+
+  @@map("users")
+}
+
+model Profile {
+  id        Int      @id @default(autoincrement())
+  title     String
+  picture   String?
+  content   String?
+  published Boolean? @default(false)
+  author    User?    @relation(fields: [author_id], references: [id])
+  author_id Int?
+
+  @@map("profiles")
+}
+
+model Role {
+  id          Int        @id @default(autoincrement())
+  title       String
+  name        String     @unique
+  description String
+  is_active   Boolean    @default(true)
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  UserRole    UserRole[]
+
+  @@map("ms_roles")
+}
+
+model UserRole {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    Int
+  role       Role     @relation(fields: [role_id], references: [id])
+  role_id    Int
+  created_at DateTime @default(now())
+
+  @@map("ms_user_roles")
+}
+
+model Permission {
+  id              Int      @id @default(autoincrement())
+  name            String
+  permission_code String   @unique
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now())
+  mfp             Mfp[]
+
+  @@map("ms_permissions")
+}
+
+model Module {
+  id          Int       @id @default(autoincrement())
+  name        String
+  module_code String    @unique
+  is_active   Boolean   @default(true)
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  mfp         Mfp[]
+  features    Feature[]
+
+  @@map("ms_modules")
+}
+
+model Feature {
+  id           Int       @id @default(autoincrement())
+  name         String
+  feature_code String    @unique
+  module       Module    @relation(fields: [module_id], references: [id])
+  module_id    Int
+  feature_on   FeatureOn @default(web)
+  is_active    Boolean   @default(true)
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  mfp          Mfp[]
+
+  @@map("ms_features")
+}
+
+model Mfp {
+  id            Int        @id @default(autoincrement())
+  module        Module     @relation(fields: [module_id], references: [id])
+  module_id     Int
+  feature       Feature    @relation(fields: [feature_id], references: [id])
+  feature_id    Int
+  permission    Permission @relation(fields: [permission_id], references: [id])
+  permission_id Int
+  created_at    DateTime   @default(now())
+
+  @@map("ms_module_feature_permissions")
+}

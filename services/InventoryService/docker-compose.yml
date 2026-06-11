@@ -1,0 +1,59 @@
+services:
+    srv_nest_dev:
+        container_name: ctr_nest_dev
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        env_file:
+            - .env.development
+        ports:
+            - "3000:3000"
+            - "5555:5555"
+        depends_on:
+            - srv_postgresql
+        volumes:
+            - .:/app
+            - node_modules:/app/node_modules
+            #- prisma:/app/prisma
+        profiles:
+            - dev
+    srv_nest_prod:
+        container_name: ctr_nest_prod
+        build:
+            context: .
+            dockerfile: Dockerfile.prod
+        env_file:
+            - .env.production
+        ports:
+            - "3001:3000"
+        depends_on:
+            - srv_postgresql
+        profiles:
+            - prod
+
+    srv_postgresql:
+        image: postgres:18-alpine
+        container_name: ctr_postgresql
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=postgres
+        ports:
+            - '5432:5432'
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+    srv_pgadmin:
+        image: dpage/pgadmin4
+        container_name: ctr_pgadmin
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=admin@example.com
+            - PGADMIN_DEFAULT_PASSWORD=admin
+            - PYTHONWARNINGS=ignore
+        ports:
+            - '5050:80'
+        depends_on:
+            - srv_postgresql
+volumes:
+    pgdata:
+    node_modules:
+    prisma:
