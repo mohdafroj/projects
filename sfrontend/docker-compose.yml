@@ -1,0 +1,66 @@
+services:
+  srv_main_app:
+    image: img_main_app
+    build:
+      context: ./main_app
+      dockerfile: Dockerfile
+    container_name: ctr_main_app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - REMOTE_HEADER_URL=http://localhost:3001
+      - REMOTE_IAM_URL=http://localhost:3002
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./main_app:/app
+      - /app/node_modules
+    command: npm start
+    networks:
+      - mfenetwork
+    depends_on:
+      - srv_iam_app
+      - srv_header_app
+
+  srv_iam_app:
+    image: img_iam_app
+    build:
+      context: ./iam_app
+      dockerfile: Dockerfile
+    container_name: ctr_iam_app
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./iam_app:/app
+      - /app/node_modules
+    command: npm start
+    networks:
+      - mfenetwork
+
+  srv_header_app:
+    image: img_header_app
+    build:
+      context: ./header_app
+      dockerfile: Dockerfile
+    container_name: ctr_header_app
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./header_app:/app
+      - /app/node_modules
+    command: npm start
+    networks:
+      - mfenetwork
+
+networks:
+  mfenetwork:
+    driver: bridge
