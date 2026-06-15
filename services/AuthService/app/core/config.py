@@ -53,7 +53,7 @@ class Settings(BaseSettings):
         return f"redis://{info.data.get('REDIS_HOST')}:{info.data.get('REDIS_PORT')}/0"
 
     # CORS
-    BACKEND_CORS_ORIGINS: List[Union[str, AnyHttpUrl]] = []
+    BACKEND_CORS_ORIGINS: List[Union[str, AnyHttpUrl]] = ['http://localhost:3000']
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     @classmethod

@@ -4,15 +4,17 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [captchaCode, setCaptchaCode] = useState("");
-  const [captchaData, setCaptchaData] = useState<{ img: string; key: string } | null>(null);
+  const [captchaData, setCaptchaData] = useState<string | null>(null);
   const [isLoadingCaptcha, setIsLoadingCaptcha] = useState(false);
 
   const fetchCaptcha = async () => {
     setIsLoadingCaptcha(true);
     try {
       const response = await fetch("http://localhost:8000/api/v1/auth/captcha");
-      const data = await response.json();
-      setCaptchaData(data);
+      const data = await response.blob();
+      // Create temporary URL
+      const imageUrl = URL.createObjectURL(data);
+      setCaptchaData(imageUrl);
     } catch (error) {
       console.error("Failed to fetch captcha:", error);
     } finally {
@@ -117,7 +119,7 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Logging in with: ${email}, Captcha: ${captchaCode}, Key: ${captchaData?.key}`);
+    alert(`Logging in with: ${email}, Captcha Code: ${captchaCode}, Captcha Id: 232323`);
   };
 
   return (
@@ -132,7 +134,7 @@ const Login = () => {
             <label style={labelStyle}>Email Address</label>
             <input
               type="email"
-              placeholder="admin@school.com"
+              placeholder="admin@example.com"
               style={inputStyle}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -165,14 +167,14 @@ const Login = () => {
               />
               {captchaData ? (
                 <img
-                  src={captchaData.img}
+                  src={captchaData}
                   alt="captcha"
                   style={captchaImageStyle}
                   onClick={fetchCaptcha}
                   title="Click to refresh"
                 />
               ) : (
-                <div 
+                <div
                   style={{ ...captchaImageStyle, width: "120px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", color: "#999" }}
                   onClick={fetchCaptcha}
                 >

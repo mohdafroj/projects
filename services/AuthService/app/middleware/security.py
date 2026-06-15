@@ -32,7 +32,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "default-src 'self'; "
             "script-src 'self' 'unsafe-inline' 'unsafe-eval' cdn.jsdelivr.net; "
             "style-src 'self' 'unsafe-inline' cdn.jsdelivr.net; "
-            "img-src 'self' data: fastly.jsdelivr.net; "
+            "img-src 'self' data: blob: fastly.jsdelivr.net; "
             "frame-ancestors 'none';"
         )
         response.headers["Content-Security-Policy"] = csp_policy
