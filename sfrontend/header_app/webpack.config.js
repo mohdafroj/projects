@@ -76,19 +76,19 @@ module.exports = {
                 react: {
                     singleton: true,
                     requiredVersion: deps.react,
-                    eager: true,
+                    eager: false,
                     strictVersion: false,
                 },
                 "react-dom": {
                     singleton: true,
                     requiredVersion: deps["react-dom"],
-                    eager: true,
+                    eager: false,
                     strictVersion: false,
                 },
                 "react-router-dom": {
                     singleton: true,
                     requiredVersion: deps["react-router-dom"],
-                    eager: true,
+                    eager: false,
                     strictVersion: false,
                 },
             },

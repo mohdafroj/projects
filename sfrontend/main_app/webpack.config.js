@@ -7,7 +7,7 @@ const remoteHeaderUrl = process.env.REMOTE_HEADER_URL || "http://localhost:3001"
 const remoteIAMUrl = process.env.REMOTE_IAM_URL || "http://localhost:3002";
 
 module.exports = {
-  entry: "./src/bootstrap",
+  entry: "./src/index",
   mode: "development",
   output: {
     path: path.resolve(__dirname, "dist"),
@@ -81,19 +81,19 @@ module.exports = {
         react: {
           singleton: true,
           requiredVersion: deps.react,
-          eager: true,
+          eager: false,
           strictVersion: false,
         },
         "react-dom": {
           singleton: true,
           requiredVersion: deps["react-dom"],
-          eager: true,
+          eager: false,
           strictVersion: false,
         },
         "react-router-dom": {
           singleton: true,
           requiredVersion: deps["react-router-dom"],
-          eager: true,
+          eager: false,
           strictVersion: false,
         },
       },

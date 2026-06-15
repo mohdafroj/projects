@@ -4,7 +4,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+  const isUsersLoggedIn = false; // Simulate user authentication status
+  const iamPath = "/iam";
   const headerStyle: React.CSSProperties = {
     background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
     color: "white",
@@ -64,8 +65,8 @@ const Header = () => {
 
         <ul style={navLinksStyle}>
           <li
-            style={navLinkStyle(location.pathname === "/")}
-            onClick={() => navigate("/")}
+            style={navLinkStyle(location.pathname === '/')}
+            onClick={() => navigate('/')}
           >
             Dashboard
           </li>
@@ -94,26 +95,41 @@ const Header = () => {
             Attendance
           </li>
           <li
-            style={navLinkStyle(location.pathname === "/iam")}
-            onClick={() => navigate("/iam")}
+            style={navLinkStyle(location.pathname === iamPath)}
+            onClick={() => navigate(iamPath)}
           >
-            IAM
+            Access Control
           </li>
         </ul>
 
         <div style={userSectionStyle}>
-          <span>👤 Admin User</span>
-          <button
-            style={buttonStyle}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(255,255,255,0.3)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(255,255,255,0.2)";
-            }}
-          >
-            Logout
-          </button>
+          {isUsersLoggedIn ? (
+            <>
+              <span>👤 Admin User</span>
+              <button
+                style={buttonStyle}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.2)";
+                }}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <span>👤 Guest</span>
+              <button style={buttonStyle} onClick={() => navigate(`${iamPath}/login`)} onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.3)";
+              }} onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.2)";
+              }}>
+                Login
+              </button>
+            </>
+          )}
         </div>
       </nav>
     </header>

@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 const RemoteHeader = React.lazy(() => import("remoteHeader/Header"));
 const RemoteIAM = React.lazy(() => import("remoteIAM/IAM"));
 
+const iamPath = "/iam";
+
 const Dashboard = () => (
   <div style={{ padding: "20px" }}>
     <h2>Software Main App 1</h2>
@@ -24,7 +26,7 @@ const Dashboard = () => (
           <Link to="/attendance">Attendance</Link>
         </li>
         <li>
-          <Link to="/iam">IAM Management</Link>
+          <Link to={iamPath}>IAM Management</Link>
         </li>
       </ul>
     </div>
@@ -80,7 +82,7 @@ export const App = () => {
           <Route path="/classes" element={<Classes />} />
           <Route path="/attendance" element={<Attendance />} />
           <Route
-            path="/iam"
+            path={`${iamPath}/*`}
             element={
               <Suspense fallback={<div style={{ padding: "20px" }}>Loading IAM Module...</div>}>
                 <RemoteIAM />

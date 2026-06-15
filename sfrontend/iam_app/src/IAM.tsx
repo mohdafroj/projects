@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
+import Login from "./pages/Login";
 import "./IAM.css";
 
 interface User {
@@ -42,6 +44,9 @@ interface Permission {
 }
 
 const IAM = () => {
+  const location = useLocation();
+  const isLoginPage = location.pathname.includes("/login");
+
   const [users, setUsers] = useState<User[]>([
     {
       id: "1",
@@ -258,6 +263,10 @@ const IAM = () => {
   const deleteFeature = (id: string) => {
     setFeatures(features.filter((feature) => feature.id !== id));
   };
+
+  if (isLoginPage) {
+    return <Login />;
+  }
 
   return (
     <div className="iam-container">

@@ -4,7 +4,7 @@ const path = require("path");
 const deps = require("./package.json").dependencies;
 
 module.exports = {
-    entry: "./src/bootstrap",
+    entry: "./src/index",
     mode: "development",
     output: {
         path: path.resolve(__dirname, "dist"),
@@ -73,16 +73,22 @@ module.exports = {
                 "./IAM": "./src/IAM",
             },
             shared: {
-                react: {
+                "react": {
                     singleton: true,
                     requiredVersion: deps.react,
-                    eager: true,
+                    eager: false,
                     strictVersion: false,
                 },
                 "react-dom": {
                     singleton: true,
                     requiredVersion: deps["react-dom"],
-                    eager: true,
+                    eager: false,
+                    strictVersion: false,
+                },
+                "react-router-dom": {
+                    singleton: true,
+                    requiredVersion: deps["react-router-dom"],
+                    eager: false,
                     strictVersion: false,
                 },
             },
