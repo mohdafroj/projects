@@ -1,0 +1,6 @@
+{
+  "name": "Director",
+  "seeders": [
+    "App\\Modules\\Director\\Seeders\\DirectorUsersSeeder"
+  ]
+}

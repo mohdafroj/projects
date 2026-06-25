@@ -1,0 +1,26 @@
+--- a/src/.env	2026-05-23 17:44:25.691061127 +0530
++++ b/src/.env	2026-05-23 17:44:25.696061174 +0530
+@@ -22,7 +22,7 @@
+ LOG_LEVEL=debug
+ 
+ DB_CONNECTION=pgsql
+-DB_HOST=postgres
++DB_HOST=vani-postgres.vani-laravel.svc.cluster.local
+ DB_PORT=5432
+ DB_DATABASE=vani_setu
+ DB_USERNAME=vani
+@@ -56,7 +56,7 @@
+ MEMCACHED_HOST=127.0.0.1
+ 
+ REDIS_CLIENT=phpredis
+-REDIS_HOST=redis
++REDIS_HOST=vani-redis.vani-laravel.svc.cluster.local
+ REDIS_PASSWORD=null
+ REDIS_PORT=6379
+ 
+@@ -126,4 +126,4 @@
+ 
+ SARVAM_API_KEY=sk_7yugu1ej_u4nObW8eoEFWcwdlBQcmKcmL
+ SARVAM_API_BASE=https://api.sarvam.ai
+-SARVAM_VOICE_PIPELINE_URL=http://ml-gateway:8000/v1/speech-to-speech
++SARVAM_VOICE_PIPELINE_URL=http://vani-ml-gateway.vani-system.svc.cluster.local:8000/v1/speech-to-speech

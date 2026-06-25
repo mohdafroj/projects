@@ -1,0 +1,4 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+17 1 * * * sds-dev cd /home/sds-dev && BACKUP_DIR=/var/backups/vanisetu /home/sds-dev/scripts/backup.sh >> /var/backups/vanisetu/backup.log 2>&1

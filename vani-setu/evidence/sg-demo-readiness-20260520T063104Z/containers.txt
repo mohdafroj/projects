@@ -1,0 +1,49 @@
+NAME                             IMAGE                              COMMAND                  SERVICE                CREATED          STATUS          PORTS
+sds-dev-uat-app-1                vani-setu-app:local                "docker-php-entrypoi…"   uat-app                9 minutes ago    Up 9 minutes    9000/tcp
+sds-dev-uat-caddy-1              caddy:2-alpine                     "caddy run --config …"   uat-caddy              11 minutes ago   Up 11 minutes   80/tcp, 2019/tcp, 443/udp, 0.0.0.0:9443->443/tcp
+sds-dev-uat-frontend-1           vani-setu-frontend:local           "docker-entrypoint.s…"   uat-frontend           11 minutes ago   Up 11 minutes   0.0.0.0:5273->5173/tcp
+sds-dev-uat-meilisearch-1        getmeili/meilisearch:v1.10         "tini -- /bin/sh -c …"   uat-meilisearch        11 minutes ago   Up 11 minutes   7700/tcp
+sds-dev-uat-ml-gateway-1         vani-setu-ml-gateway:local         "uvicorn app.main:ap…"   uat-ml-gateway         11 minutes ago   Up 11 minutes   8000/tcp
+sds-dev-uat-postgres-1           postgres:16-alpine                 "docker-entrypoint.s…"   uat-postgres           11 minutes ago   Up 11 minutes   5432/tcp
+sds-dev-uat-realtime-sidecar-1   vani-setu-realtime-sidecar:local   "docker-entrypoint.s…"   uat-realtime-sidecar   11 minutes ago   Up 11 minutes   1234/tcp
+sds-dev-uat-redis-1              redis:7-alpine                     "docker-entrypoint.s…"   uat-redis              11 minutes ago   Up 11 minutes   6379/tcp
+sds-dev-uat-reverb-1             vani-setu-app:local                "docker-php-entrypoi…"   uat-reverb             11 minutes ago   Up 11 minutes   9000/tcp
+sds-dev-uat-web-1                vani-setu-web:local                "/docker-entrypoint.…"   uat-web                11 minutes ago   Up 9 minutes    80/tcp
+sds-dev-uat-worker-1             vani-setu-app:local                "docker-php-entrypoi…"   uat-worker             11 minutes ago   Up 11 minutes   9000/tcp
+vani-setu-app                    vani-setu-app:local                "docker-php-entrypoi…"   app                    20 minutes ago   Up 20 minutes   9000/tcp
+vani-setu-audit                  vani-setu-app:local                "docker-php-entrypoi…"   audit                  20 minutes ago   Up 20 minutes   9000/tcp
+vani-setu-caddy                  caddy:2-alpine                     "caddy run --config …"   caddy                  22 minutes ago   Up 20 minutes   0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp, 443/udp, 2019/tcp
+vani-setu-frontend               vani-setu-frontend:local           "docker-entrypoint.s…"   frontend               50 minutes ago   Up 50 minutes   0.0.0.0:5173->5173/tcp
+vani-setu-meilisearch            getmeili/meilisearch:v1.10         "tini -- /bin/sh -c …"   meilisearch            13 hours ago     Up 13 hours     0.0.0.0:7700->7700/tcp
+vani-setu-ml-gateway             vani-setu-ml-gateway:local         "uvicorn app.main:ap…"   ml-gateway             57 minutes ago   Up 57 minutes   0.0.0.0:8001->8000/tcp
+vani-setu-postgres               postgres:16-alpine                 "docker-entrypoint.s…"   postgres               14 hours ago     Up 14 hours     5432/tcp
+vani-setu-realtime-sidecar       vani-setu-realtime-sidecar:local   "docker-entrypoint.s…"   realtime-sidecar       3 hours ago      Up 3 hours      0.0.0.0:1234->1234/tcp
+vani-setu-redis                  redis:7-alpine                     "docker-entrypoint.s…"   redis                  14 hours ago     Up 14 hours     6379/tcp
+vani-setu-reverb                 vani-setu-app:local                "docker-php-entrypoi…"   reverb                 20 minutes ago   Up 20 minutes   9000/tcp
+vani-setu-web                    vani-setu-web:local                "/docker-entrypoint.…"   web                    57 minutes ago   Up 57 minutes   80/tcp
+vani-setu-worker                 vani-setu-app:local                "docker-php-entrypoi…"   worker                 20 minutes ago   Up 20 minutes   9000/tcp
+
+NAME                             IMAGE                              COMMAND                  SERVICE                CREATED          STATUS          PORTS
+sds-dev-uat-app-1                vani-setu-app:local                "docker-php-entrypoi…"   uat-app                9 minutes ago    Up 9 minutes    9000/tcp
+sds-dev-uat-caddy-1              caddy:2-alpine                     "caddy run --config …"   uat-caddy              11 minutes ago   Up 11 minutes   80/tcp, 2019/tcp, 443/udp, 0.0.0.0:9443->443/tcp
+sds-dev-uat-frontend-1           vani-setu-frontend:local           "docker-entrypoint.s…"   uat-frontend           11 minutes ago   Up 11 minutes   0.0.0.0:5273->5173/tcp
+sds-dev-uat-meilisearch-1        getmeili/meilisearch:v1.10         "tini -- /bin/sh -c …"   uat-meilisearch        11 minutes ago   Up 11 minutes   7700/tcp
+sds-dev-uat-ml-gateway-1         vani-setu-ml-gateway:local         "uvicorn app.main:ap…"   uat-ml-gateway         11 minutes ago   Up 11 minutes   8000/tcp
+sds-dev-uat-postgres-1           postgres:16-alpine                 "docker-entrypoint.s…"   uat-postgres           11 minutes ago   Up 11 minutes   5432/tcp
+sds-dev-uat-realtime-sidecar-1   vani-setu-realtime-sidecar:local   "docker-entrypoint.s…"   uat-realtime-sidecar   11 minutes ago   Up 11 minutes   1234/tcp
+sds-dev-uat-redis-1              redis:7-alpine                     "docker-entrypoint.s…"   uat-redis              11 minutes ago   Up 11 minutes   6379/tcp
+sds-dev-uat-reverb-1             vani-setu-app:local                "docker-php-entrypoi…"   uat-reverb             11 minutes ago   Up 11 minutes   9000/tcp
+sds-dev-uat-web-1                vani-setu-web:local                "/docker-entrypoint.…"   uat-web                11 minutes ago   Up 9 minutes    80/tcp
+sds-dev-uat-worker-1             vani-setu-app:local                "docker-php-entrypoi…"   uat-worker             11 minutes ago   Up 11 minutes   9000/tcp
+vani-setu-app                    vani-setu-app:local                "docker-php-entrypoi…"   app                    20 minutes ago   Up 20 minutes   9000/tcp
+vani-setu-audit                  vani-setu-app:local                "docker-php-entrypoi…"   audit                  20 minutes ago   Up 20 minutes   9000/tcp
+vani-setu-caddy                  caddy:2-alpine                     "caddy run --config …"   caddy                  22 minutes ago   Up 20 minutes   0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp, 443/udp, 2019/tcp
+vani-setu-frontend               vani-setu-frontend:local           "docker-entrypoint.s…"   frontend               50 minutes ago   Up 50 minutes   0.0.0.0:5173->5173/tcp
+vani-setu-meilisearch            getmeili/meilisearch:v1.10         "tini -- /bin/sh -c …"   meilisearch            13 hours ago     Up 13 hours     0.0.0.0:7700->7700/tcp
+vani-setu-ml-gateway             vani-setu-ml-gateway:local         "uvicorn app.main:ap…"   ml-gateway             57 minutes ago   Up 57 minutes   0.0.0.0:8001->8000/tcp
+vani-setu-postgres               postgres:16-alpine                 "docker-entrypoint.s…"   postgres               14 hours ago     Up 14 hours     5432/tcp
+vani-setu-realtime-sidecar       vani-setu-realtime-sidecar:local   "docker-entrypoint.s…"   realtime-sidecar       3 hours ago      Up 3 hours      0.0.0.0:1234->1234/tcp
+vani-setu-redis                  redis:7-alpine                     "docker-entrypoint.s…"   redis                  14 hours ago     Up 14 hours     6379/tcp
+vani-setu-reverb                 vani-setu-app:local                "docker-php-entrypoi…"   reverb                 20 minutes ago   Up 20 minutes   9000/tcp
+vani-setu-web                    vani-setu-web:local                "/docker-entrypoint.…"   web                    57 minutes ago   Up 57 minutes   80/tcp
+vani-setu-worker                 vani-setu-app:local                "docker-php-entrypoi…"   worker                 20 minutes ago   Up 20 minutes   9000/tcp

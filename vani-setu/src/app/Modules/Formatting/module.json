@@ -1,0 +1,6 @@
+{
+  "name": "Formatting",
+  "seeders": [
+    "App\\Modules\\Formatting\\Seeders\\FormattingUsersSeeder"
+  ]
+}

@@ -1,0 +1,81 @@
+# =============================================================================
+# docker-compose.monitoring.yml  --  RETIRED STUB (do not resurrect lightly)
+# =============================================================================
+#
+# Status:      RETIRED on 2026-05-23 (Phase 2 decommission completed via
+#              `docker rm` of all 11 containers; this file then stubbed out so
+#              `docker compose up` cannot resurrect them).
+# Owner:       Software Manager, Rajya Sabha SDS (Kushal Pathak).
+# Replaces:    The local vani-setu observability stack (Prometheus / Grafana /
+#              Loki / Promtail / Alertmanager / cAdvisor / node-exporter /
+#              postgres-exporter / redis-exporter / blackbox-exporter /
+#              ops-remediator) that previously ran on this host.
+#
+# Why retired:
+#   The observability surface for the SDS programme has been consolidated onto
+#   the central Command-Control-Centre host at .132. Every per-host stack is
+#   being collapsed into that single pane so that ops/audit can read one
+#   Grafana, one Alertmanager, one Loki and not eleven. Running a duplicate
+#   stack on /home/sds-dev wasted ~2 GB RAM, leaked container metrics into two
+#   Prometheus tenants, and ran a privileged cAdvisor we no longer need.
+#
+# Where the surface moved to (.132 replacement endpoints):
+#   - Prometheus    https://ccc.rajyasabha.digital/prometheus/
+#   - Grafana       https://ccc.rajyasabha.digital/
+#   - Alertmanager  https://ccc.rajyasabha.digital/alertmanager/
+#   - Loki          ingest at  loki.ccc.rajyasabha.digital:3100  (mTLS)
+#   - Remediator    https://ccc.rajyasabha.digital/ops-remediator/healthz
+#   Host-level scrape of this box (node-exporter / cAdvisor / postgres + redis
+#   exporters) is now done by the .132 Prometheus over the private mesh; the
+#   exporter daemons run as systemd units on this host, not in containers.
+#
+# Why the file is kept (not deleted):
+#   Three callers existence-check this path and would break if it vanished:
+#     - /home/sds-dev/Makefile                       (target `up-observability`)
+#     - /home/sds-dev/sds-monorepo/scripts/deploy/check-stage.sh:109
+#     - /home/sds-dev/ops/backup/backup.sh:66
+#   The stub gives them a file to find while contributing zero services to the
+#   merged compose graph. `docker compose -f docker-compose.yml \
+#   -f docker-compose.monitoring.yml up` therefore adds nothing observability-
+#   related, which is the desired post-Phase-2 behaviour.
+#
+# Why the volumes block is preserved verbatim:
+#   The named volumes still hold ~weeks of TSDB / WAL / Grafana state and are
+#   the only rollback path. Deleting them with `docker volume rm` is a one-way
+#   door: you lose dashboards-with-edits, alert silences, Loki chunks, and
+#   remediator action-cooldown state. Leave them in place until .132 is proven
+#   stable over a full sitting week, then prune in a separate, audited PR.
+#
+# Rollback (resurrect the local stack):
+#   Primary path (this host today, file is in .git/info/exclude so a direct
+#   `git show HEAD:docker-compose.monitoring.yml` returns nothing): restore
+#   from the snapshot taken at retirement time:
+#
+#       cp /home/sds-dev/ops/retired-stack/docker-compose.monitoring.yml.pre-stub-2026-05-23 \
+#          /tmp/restore.yml
+#       docker compose -f /tmp/restore.yml up -d
+#
+#   Fallback path (any clone where this file is tracked in git):
+#
+#       cd /home/sds-dev
+#       git show HEAD:docker-compose.monitoring.yml > /tmp/restore.yml
+#       docker compose -f /tmp/restore.yml up -d
+#
+#   The previous container_names + 127.0.0.1 port bindings (9090 / 3000 / 3100
+#   / 9093 / 9085 / 9115 / 9121 / 9187 / 8088) will reattach to the preserved
+#   named volumes below and resume serving immediately. After rollback, also
+#   re-enable the Caddy /prometheus, /grafana, /alertmanager virtual hosts
+#   that were short-circuited on 2026-05-23.
+#
+# Companion doc: /home/sds-dev/docs/MONITORING_STACK_RETIREMENT.md
+# =============================================================================
+
+services: {}
+
+volumes:
+  prometheus-data:
+  grafana-data:
+  loki-data:
+  alertmanager-data:
+  promtail-data:
+  remediator-data:

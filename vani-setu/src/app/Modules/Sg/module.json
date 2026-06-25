@@ -1,0 +1,9 @@
+{
+  "name": "Sg",
+  "providers": [
+    "App\\Modules\\Sg\\Providers\\SgServiceProvider"
+  ],
+  "seeders": [
+    "App\\Modules\\Sg\\Seeders\\SgUsersSeeder"
+  ]
+}

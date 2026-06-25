@@ -1,0 +1,25 @@
+fastapi==0.136.1
+starlette==0.49.3
+uvicorn[standard]==0.34.3
+httpx==0.28.1
+certifi>=2024.07.04
+urllib3>=2.7.0
+idna>=3.15
+tornado>=6.5.5
+Brotli>=1.2.0
+pydantic==2.13.4
+pydantic-settings==2.14.1
+boto3==1.43.15
+# Sarvam streaming WebSocket SDK (Phase 1 TTS-WS / STT-WS). Pure-python +
+# websockets; only imported when enable_sarvam_ws is set, else inert.
+sarvamai
+# Local Whisper STT fallback (slice F). Used both by adapters/whisper.py
+# (recheck-engine /v1/asr chain) and by _try_whisper_stt in
+# routers/speech_to_speech.py (live S2S fallback after Sarvam STT
+# fails/times out). Activates only when whisper_enabled=true; otherwise
+# the import never runs and pays no overhead.
+faster-whisper==1.1.1
+# faster-whisper 1.1.1 imports `requests` in its utils module but doesn't
+# declare it in its install_requires — pin explicitly so the image
+# always has it.
+requests>=2.32.0

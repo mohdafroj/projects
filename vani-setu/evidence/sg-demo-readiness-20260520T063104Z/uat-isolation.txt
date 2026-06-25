@@ -1,0 +1,4 @@
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  database "vani_setu_uat" does not exist
+prod_to_uat_status:2
+psql: error: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: FATAL:  database "vani_setu" does not exist
+uat_to_prod_status:2

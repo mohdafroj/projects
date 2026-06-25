@@ -1,0 +1,17 @@
+--- a/docker-compose.yml	2026-05-23 17:44:25.719061390 +0530
++++ b/docker-compose.yml	2026-05-23 17:44:25.724061437 +0530
+@@ -10,12 +10,12 @@
+   ASR_INGEST_SECRET: ${ASR_INGEST_SECRET:?Set ASR_INGEST_SECRET before starting Laravel app}
+   REALTIME_AUDIT_SECRET: ${REALTIME_AUDIT_SECRET:?Set REALTIME_AUDIT_SECRET before starting Laravel app}
+   DB_CONNECTION: pgsql
+-  DB_HOST: postgres
++  DB_HOST: vani-postgres.vani-laravel.svc.cluster.local
+   DB_PORT: 5432
+   DB_DATABASE: vani_setu
+   DB_USERNAME: vani
+   DB_PASSWORD: vani_secret
+-  REDIS_HOST: redis
++  REDIS_HOST: vani-redis.vani-laravel.svc.cluster.local
+   REDIS_PORT: 6379
+   CACHE_STORE: redis
+   QUEUE_CONNECTION: redis

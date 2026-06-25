@@ -1,0 +1,7 @@
+{
+  "name": "Regional",
+  "seeders": [
+    "App\\Modules\\Regional\\Seeders\\RegionalUsersSeeder",
+    "App\\Modules\\Regional\\Seeders\\DemoRegionalCaseSeeder"
+  ]
+}

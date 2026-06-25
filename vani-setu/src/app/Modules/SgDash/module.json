@@ -1,0 +1,6 @@
+{
+  "name": "SgDash",
+  "seeders": [
+    "App\\Modules\\SgDash\\Seeders\\SgDashSeeder"
+  ]
+}

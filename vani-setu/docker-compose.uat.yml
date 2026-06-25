@@ -1,0 +1,185 @@
+x-uat-app-environment: &uat-app-environment
+  APP_ENV: uat
+  APP_DEBUG: "false"
+  APP_KEY: ${UAT_APP_KEY:?Set UAT_APP_KEY before starting UAT Laravel app}
+  APP_URL: https://uat.vanisetu.rajyasabha.digital:9443
+  TRUSTED_PROXIES: 10.42.0.0/16,172.16.0.0/12,127.0.0.1
+  SESSION_SECURE_COOKIE: "true"
+  SESSION_SAME_SITE: strict
+  ML_GATEWAY_SERVICE_TOKEN: ${UAT_ML_GATEWAY_SERVICE_TOKEN:?Set UAT_ML_GATEWAY_SERVICE_TOKEN before starting UAT Laravel app}
+  DB_CONNECTION: pgsql
+  DB_HOST: uat-postgres
+  DB_PORT: 5432
+  DB_DATABASE: vani_setu_uat
+  DB_USERNAME: vani
+  DB_PASSWORD: ${UAT_DB_PASSWORD:?Set UAT_DB_PASSWORD before starting UAT Laravel app}
+  REDIS_HOST: uat-redis
+  REDIS_PORT: 6379
+  REDIS_DB: 1
+  REDIS_CACHE_DB: 2
+  CACHE_STORE: redis
+  QUEUE_CONNECTION: redis
+  SESSION_DRIVER: file
+  BROADCAST_CONNECTION: reverb
+  REVERB_APP_ID: ${UAT_REVERB_APP_ID:-vanisetu-uat}
+  REVERB_APP_KEY: ${UAT_REVERB_APP_KEY:?Set UAT_REVERB_APP_KEY before starting UAT Reverb}
+  REVERB_APP_SECRET: ${UAT_REVERB_APP_SECRET:?Set UAT_REVERB_APP_SECRET before starting UAT Reverb}
+  REVERB_HOST: uat.vanisetu.rajyasabha.digital
+  REVERB_PORT: 9443
+  REVERB_SCHEME: https
+  REVERB_SERVER_PORT: 8080
+  MEILISEARCH_HOST: http://uat-meilisearch:7700
+  MEILISEARCH_KEY: ${UAT_MEILI_MASTER_KEY:?Set UAT_MEILI_MASTER_KEY before starting UAT Laravel app}
+
+services:
+  uat-web:
+    image: vani-setu-web:local
+    volumes:
+      - ./src:/var/www/html:ro
+    expose:
+      - "80"
+    depends_on:
+      - uat-app
+    networks:
+      - vani-setu-uat
+
+  uat-postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: vani_setu_uat
+      POSTGRES_USER: vani
+      POSTGRES_PASSWORD: ${UAT_DB_PASSWORD:?Set UAT_DB_PASSWORD before starting UAT Postgres}
+    volumes:
+      - postgres_uat_data:/var/lib/postgresql/data
+    networks:
+      - vani-setu-uat
+
+  uat-app:
+    image: vani-setu-app:local
+    working_dir: /var/www/html
+    environment: *uat-app-environment
+    volumes:
+      - ./src:/var/www/html
+    expose:
+      - "9000"
+    depends_on:
+      - uat-postgres
+      - uat-redis
+    networks:
+      vani-setu-uat:
+        aliases:
+          - app
+
+  uat-worker:
+    image: vani-setu-app:local
+    working_dir: /var/www/html
+    environment: *uat-app-environment
+    command: php artisan horizon
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - uat-app
+      - uat-postgres
+      - uat-redis
+    networks:
+      - vani-setu-uat
+
+  uat-reverb:
+    image: vani-setu-app:local
+    working_dir: /var/www/html
+    environment: *uat-app-environment
+    command: php artisan reverb:start --host=0.0.0.0
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - uat-app
+    networks:
+      - vani-setu-uat
+
+  uat-frontend:
+    image: vani-setu-frontend:local
+    working_dir: /app
+    environment:
+      VITE_API_BASE_URL: https://uat.vanisetu.rajyasabha.digital:9443/api
+    ports:
+      - "127.0.0.1:5273:5173"
+    volumes:
+      - /opt/vanisetu/frontend/src:/app/src
+    depends_on:
+      - uat-app
+    networks:
+      - vani-setu-uat
+
+  uat-redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-uat-data:/data
+    networks:
+      - vani-setu-uat
+
+  uat-meilisearch:
+    image: getmeili/meilisearch:v1.10
+    environment:
+      MEILI_ENV: production
+      MEILI_NO_ANALYTICS: "true"
+      MEILI_MASTER_KEY: ${UAT_MEILI_MASTER_KEY:?Set UAT_MEILI_MASTER_KEY before starting UAT Meilisearch}
+    volumes:
+      - meilisearch-uat-data:/meili_data
+    networks:
+      - vani-setu-uat
+
+  uat-ml-gateway:
+    image: vani-setu-ml-gateway:local
+    env_file:
+      - ./ml-gateway/.env
+    environment:
+      VANI_API_URL: http://uat-web
+      ML_GATEWAY_AUTH_REQUIRED: "true"
+      ML_GATEWAY_SERVICE_TOKEN: ${UAT_ML_GATEWAY_SERVICE_TOKEN:?Set UAT_ML_GATEWAY_SERVICE_TOKEN before starting UAT ML gateway}
+    depends_on:
+      - uat-web
+    networks:
+      - vani-setu-uat
+
+  uat-realtime-sidecar:
+    image: vani-setu-realtime-sidecar:local
+    environment:
+      PORT: 1234
+      DATABASE_URL: postgres://vani:${UAT_DB_PASSWORD:?Set UAT_DB_PASSWORD before starting UAT realtime sidecar}@uat-postgres:5432/vani_setu_uat
+      LARAVEL_BASE_URL: http://uat-web
+      REALTIME_AUDIT_SECRET: ${REALTIME_AUDIT_SECRET:?Set REALTIME_AUDIT_SECRET before starting UAT realtime sidecar}
+    depends_on:
+      - uat-app
+      - uat-postgres
+    networks:
+      - vani-setu-uat
+
+  uat-caddy:
+    image: caddy:2-alpine
+    ports:
+      - "0.0.0.0:9443:443"
+    volumes:
+      - ./caddy/Caddyfile.uat:/etc/caddy/Caddyfile:ro
+      - ./caddy/certs:/etc/caddy/certs:ro
+      - /opt/vanisetu/frontend/dist:/srv/vanisetu-frontend:ro
+      - caddy_uat_data:/data
+      - caddy_uat_config:/config
+    depends_on:
+      - uat-web
+      - uat-frontend
+      - uat-ml-gateway
+      - uat-realtime-sidecar
+      - uat-reverb
+    networks:
+      - vani-setu-uat
+
+networks:
+  vani-setu-uat:
+    driver: bridge
+
+volumes:
+  postgres_uat_data:
+  redis-uat-data:
+  meilisearch-uat-data:
+  caddy_uat_data:
+  caddy_uat_config:

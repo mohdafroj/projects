@@ -1,0 +1,49 @@
+# docker-compose.prod.yml — prod deploy overrides for vanisetu.rajyasabha.digital.
+#
+# Used as an OVERRIDE on top of docker-compose.yml. The CI/CD shell runner on
+# the prod host (10.21.217.17 — same as dev host) calls:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml \
+#     pull && up -d --no-build
+#
+# Image names point at the GitLab Container Registry that ships with the
+# bundled GitLab CE instance (registry.gitlab.sds.local). The CI build:image
+# jobs tag each image with $CI_COMMIT_SHORT_SHA and also push :latest; the
+# deploy job pulls :latest by default and re-creates the container set.
+#
+# Override pattern: any setting present here REPLACES the value in the base
+# file. Empty `build:` removes the build context so compose does not try to
+# rebuild from source on the prod host.
+
+services:
+  app:
+    image: ${VANI_APP_IMAGE:-registry.gitlab.sds.local/vani/setu/app:latest}
+    build: !reset null
+    pull_policy: always
+
+  worker:
+    image: ${VANI_APP_IMAGE:-registry.gitlab.sds.local/vani/setu/app:latest}
+    pull_policy: always
+
+  audit:
+    image: ${VANI_APP_IMAGE:-registry.gitlab.sds.local/vani/setu/app:latest}
+    pull_policy: always
+
+  reverb:
+    image: ${VANI_APP_IMAGE:-registry.gitlab.sds.local/vani/setu/app:latest}
+    pull_policy: always
+
+  web:
+    image: ${VANI_WEB_IMAGE:-registry.gitlab.sds.local/vani/setu/web:latest}
+    build: !reset null
+    pull_policy: always
+
+  ml-gateway:
+    image: ${VANI_MLGW_IMAGE:-registry.gitlab.sds.local/vani/setu/ml-gateway:latest}
+    build: !reset null
+    pull_policy: always
+
+  realtime-sidecar:
+    image: ${VANI_RTSIDECAR_IMAGE:-registry.gitlab.sds.local/vani/setu/realtime-sidecar:latest}
+    build: !reset null
+    pull_policy: always

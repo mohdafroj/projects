@@ -1,0 +1,11 @@
+{
+  "name": "capture",
+  "seeders": [
+    "App\\Modules\\Capture\\Seeders\\MemberRosterSeeder",
+    "App\\Modules\\Capture\\Seeders\\DemoSittingSeeder",
+    "App\\Modules\\Capture\\Seeders\\DemoBlockSeeder",
+    "App\\Modules\\Capture\\Seeders\\DemoReporterSeeder",
+    "App\\Modules\\Capture\\Seeders\\DemoSupervisorSeeder",
+    "App\\Modules\\Capture\\Seeders\\DemoAssignmentSeeder"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Js",
+  "seeders": [
+    "App\\Modules\\Js\\Seeders\\JsUsersSeeder",
+    "App\\Modules\\Js\\Seeders\\JsWindowDemoSeeder"
+  ]
+}

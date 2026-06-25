@@ -1,0 +1,21 @@
+## TLS certificate
+subject=O = mkcert development certificate, OU = sds-dev@sds-dev
+issuer=O = mkcert development CA, OU = sds-dev@sds-dev, CN = mkcert sds-dev@sds-dev
+notBefore=May 20 06:08:18 2026 GMT
+notAfter=Aug 20 06:08:18 2028 GMT
+X509v3 Subject Alternative Name: 
+    DNS:vanisetu.rajyasabha.digital, DNS:vanisetu.local, DNS:localhost, IP Address:10.21.217.17
+
+## HTTPS frontend
+HTTP/2 200 
+alt-svc: h3=":443"; ma=2592000
+cache-control: no-cache
+content-type: text/html
+date: Wed, 20 May 2026 06:31:04 GMT
+etag: W/"379-ikglYASt7QJkKaWw7xSTvUcwR8U"
+vary: Origin
+via: 1.1 Caddy
+
+
+## API health
+{"status":"ok","service":"vani-setu","checked_at":"2026-05-20T06:31:04+00:00"}

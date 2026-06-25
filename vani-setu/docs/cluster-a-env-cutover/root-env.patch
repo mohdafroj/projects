@@ -1,0 +1,20 @@
+--- a/.env	2026-05-23 17:44:25.665060884 +0530
++++ b/.env	2026-05-23 17:44:25.670060930 +0530
+@@ -12,7 +12,7 @@
+ SANCTUM_TOKEN_PREFIX=vst_
+ 
+ DB_CONNECTION=pgsql
+-DB_HOST=postgres
++DB_HOST=vani-postgres.vani-laravel.svc.cluster.local
+ DB_PORT=5432
+ DB_DATABASE=vani_setu
+ DB_USERNAME=vani
+@@ -22,7 +22,7 @@
+ BOOTSTRAP_ADMIN_PASSWORD=
+ BOOTSTRAP_ADMIN_EMPLOYEE_ID=
+ 
+-REDIS_HOST=redis
++REDIS_HOST=vani-redis.vani-laravel.svc.cluster.local
+ REDIS_PASSWORD=null
+ REDIS_PORT=6379
+ 

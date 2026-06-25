@@ -1,0 +1,203 @@
+services:
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    container_name: vani-setu-prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+      - --web.external-url=https://ccc.rajyasabha.digital/prometheus/
+      - --web.route-prefix=/prometheus/
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observability/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus-data:/prometheus
+    depends_on:
+      - alertmanager
+    networks:
+      - vani-setu
+
+  grafana:
+    image: grafana/grafana:11.2.2
+    container_name: vani-setu-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${OPS_GRAFANA_ADMIN_USER:-opsadmin}
+      GF_SECURITY_ADMIN_PASSWORD: ${OPS_GRAFANA_ADMIN_PASSWORD:-change-this-now}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_DOMAIN: ${OPS_GRAFANA_DOMAIN:-ccc.rajyasabha.digital}
+      GF_SERVER_ROOT_URL: ${OPS_GRAFANA_ROOT_URL:-https://ccc.rajyasabha.digital/}
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_BASIC_ENABLED: "false"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/command-control-centre.json
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+      - loki
+      - alertmanager
+    networks:
+      - vani-setu
+
+  loki:
+    image: grafana/loki:3.2.1
+    container_name: vani-setu-loki
+    restart: unless-stopped
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "127.0.0.1:3100:3100"
+    volumes:
+      - ./observability/loki/loki.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    networks:
+      - vani-setu
+
+  alertmanager:
+    image: prom/alertmanager:v0.27.0
+    container_name: vani-setu-alertmanager
+    restart: unless-stopped
+    user: "0:0"
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+      - --web.external-url=https://ccc.rajyasabha.digital/alertmanager/
+      - --web.route-prefix=/alertmanager/
+    ports:
+      - "127.0.0.1:9093:9093"
+    volumes:
+      - ./observability/alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager-data:/alertmanager
+    depends_on:
+      - ops-remediator
+    networks:
+      - vani-setu
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: vani-setu-postgres-exporter
+    restart: unless-stopped
+    environment:
+      DATA_SOURCE_NAME: postgresql://vani:vani_secret@postgres:5432/vani_setu?sslmode=disable
+    ports:
+      - "127.0.0.1:9187:9187"
+    depends_on:
+      - postgres
+    networks:
+      - vani-setu
+
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.63.0
+    container_name: vani-setu-redis-exporter
+    restart: unless-stopped
+    environment:
+      REDIS_ADDR: redis://redis:6379
+    ports:
+      - "127.0.0.1:9121:9121"
+    depends_on:
+      - redis
+    networks:
+      - vani-setu
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: vani-setu-cadvisor
+    restart: unless-stopped
+    privileged: true
+    ports:
+      - "127.0.0.1:8088:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    networks:
+      - vani-setu
+
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: vani-setu-node-exporter
+    restart: unless-stopped
+    command:
+      - --path.rootfs=/host
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --collector.systemd
+    volumes:
+      - /:/host:ro,rslave
+    networks:
+      - vani-setu
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.25.0
+    container_name: vani-setu-blackbox-exporter
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/blackbox_exporter/config.yml
+    ports:
+      - "127.0.0.1:9115:9115"
+    volumes:
+      - ./observability/blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+    networks:
+      - vani-setu
+
+  promtail:
+    image: grafana/promtail:3.2.1
+    container_name: vani-setu-promtail
+    restart: unless-stopped
+    command:
+      - -config.file=/etc/promtail/promtail.yml
+    volumes:
+      - ./observability/promtail/promtail.yml:/etc/promtail/promtail.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - promtail-data:/tmp
+    depends_on:
+      - loki
+    networks:
+      - vani-setu
+
+  ops-remediator:
+    build:
+      context: ./observability/remediator
+    image: vani-setu-ops-remediator:local
+    container_name: vani-setu-ops-remediator
+    restart: unless-stopped
+    environment:
+      OPS_ALERT_EMAIL_TO: ${OPS_ALERT_EMAIL_TO:-kushal.pathak@rajyasabha.digital}
+      OPS_SMTP_HOST: ${OPS_SMTP_HOST:-}
+      OPS_SMTP_PORT: ${OPS_SMTP_PORT:-587}
+      OPS_SMTP_USERNAME: ${OPS_SMTP_USERNAME:-}
+      OPS_SMTP_PASSWORD: ${OPS_SMTP_PASSWORD:-}
+      OPS_SMTP_FROM: ${OPS_SMTP_FROM:-ops-monitor@rajyasabha.digital}
+      OPS_SMTP_STARTTLS: ${OPS_SMTP_STARTTLS:-true}
+      OPS_ACTION_COOLDOWN_SECONDS: ${OPS_ACTION_COOLDOWN_SECONDS:-900}
+    ports:
+      - "127.0.0.1:9085:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - remediator-data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - vani-setu
+
+volumes:
+  prometheus-data:
+  grafana-data:
+  loki-data:
+  alertmanager-data:
+  promtail-data:
+  remediator-data:

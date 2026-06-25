@@ -1,0 +1,6 @@
+{
+  "name": "Synopsis",
+  "seeders": [
+    "App\\Modules\\Synopsis\\Seeders\\SynopsisRoleSeeder"
+  ]
+}

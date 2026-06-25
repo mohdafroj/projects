@@ -1,0 +1,52 @@
+uat.vanisetu.rajyasabha.digital {
+    tls /etc/caddy/certs/vanisetu.crt /etc/caddy/certs/vanisetu.key
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        Content-Security-Policy "default-src 'self'; connect-src 'self' wss://uat.vanisetu.rajyasabha.digital:9443 https://uat.vanisetu.rajyasabha.digital:9443; img-src 'self' data: blob:; media-src 'self' blob:; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    }
+    @blocked path /gov/* /server-status /.env* /storage/* /vendor/* /node_modules/* /composer.* /package*.json
+    handle @blocked {
+        respond "Not Found" 404
+    }
+    @api path /api/* /sanctum/*
+    handle @api {
+        reverse_proxy uat-web:80
+    }
+    @ml path /v1/*
+    handle @ml {
+        reverse_proxy uat-ml-gateway:8000
+    }
+    @rt_ws {
+        path /collab /collab/*
+        header Upgrade websocket
+    }
+    handle @rt_ws {
+        reverse_proxy uat-realtime-sidecar:1234
+    }
+    @rt_plain path /collab /collab/*
+    handle @rt_plain {
+        respond "Not Found" 404
+    }
+    @reverb path /app/* /apps/*
+    handle @reverb {
+        reverse_proxy uat-reverb:8080
+    }
+    @static path /assets/* /favicon.ico /robots.txt
+    handle @static {
+        root * /srv/vanisetu-frontend
+        file_server
+    }
+    handle {
+        root * /srv/vanisetu-frontend
+        try_files {path} /index.html
+        file_server
+    }
+    encode gzip zstd
+    log {
+        output stdout
+    }
+}

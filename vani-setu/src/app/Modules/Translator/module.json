@@ -1,0 +1,8 @@
+{
+  "name": "Translator",
+  "seeders": [
+    "App\\Modules\\Translator\\Seeders\\TranslatorUsersSeeder",
+    "App\\Modules\\Translator\\Seeders\\TranslatorGlossarySeeder",
+    "App\\Modules\\Translator\\Seeders\\DemoTranslatorAssignmentSeeder"
+  ]
+}

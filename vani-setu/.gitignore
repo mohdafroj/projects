@@ -1,0 +1,16 @@
+vendor/
+node_modules/
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+storage/logs/
+storage/logs/*.log
+.terraform/
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars.local
+terraform/**/.generated/
+src/test-results/

@@ -1,0 +1,7 @@
+{
+  "name": "Chief",
+  "seeders": [
+    "App\\Modules\\Chief\\Seeders\\ChiefUsersSeeder",
+    "App\\Modules\\Chief\\Seeders\\DemoChiefConsolidationSeeder"
+  ]
+}

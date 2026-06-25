@@ -1,0 +1,160 @@
+(security_headers) {
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(self), geolocation=()"
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' blob: data:; connect-src 'self' https://unpkg.com https://vanisetu.rajyasabha.digital wss://vanisetu.rajyasabha.digital; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+        -Server
+    }
+}
+
+(vani_routes) {
+    request_body {
+        max_size 600MB
+    }
+
+    @minio_unsigned {
+        path /minio-audio/*
+        not query X-Amz-Signature=*
+        not query Signature=*
+    }
+    handle @minio_unsigned {
+        respond "Forbidden" 403
+    }
+    handle_path /minio-audio/* {
+        reverse_proxy http://vani-setu-minio:9000 {
+            header_up Host vani-setu-minio:9000
+            header_down Cache-Control "private, max-age=900"
+            header_down -Server
+            header_down -X-Amz-Request-Id
+            header_down -X-Amz-Id-2
+            header_down -X-Minio-Deployment-Id
+            header_down -X-Amz-Meta-Artifact-Type
+            header_down -X-Amz-Meta-Language-Code
+            header_down -X-Amz-Meta-Provider
+            header_down -X-Amz-Meta-Segment-Id
+            header_down -X-Amz-Meta-Session-Id
+            header_down -X-Amz-Meta-Sha256
+            header_down -X-Ratelimit-Limit
+            header_down -X-Ratelimit-Remaining
+        }
+    }
+
+    @s2s_audio path /storage/s2s/*
+    handle @s2s_audio {
+        reverse_proxy web:80
+    }
+
+    @blocked path /.env /.env* /.git /.git/* /server-status /@vite /@vite/* /@id /@id/* /src /src/* /node_modules /node_modules/* /vanisetu-prototypes /vanisetu-prototypes/* /admin /admin/* /phpinfo.php /storage /storage/* /vendor /vendor/*
+    handle @blocked {
+        respond "Not Found" 404
+    }
+
+    @api path /api/* /sanctum/*
+    handle @api {
+        reverse_proxy web:80
+    }
+    @ml path /v1/*
+    handle @ml {
+        reverse_proxy ml-gateway:8000
+    }
+    @rt_ws {
+        path /collab /collab/*
+        header Upgrade websocket
+    }
+    handle @rt_ws {
+        reverse_proxy realtime-sidecar:1234
+    }
+    @rt_plain path /collab /collab/*
+    handle @rt_plain {
+        respond "Not Found" 404
+    }
+    @reverb_ws {
+        path /app/* /apps/*
+        header Upgrade websocket
+    }
+    handle @reverb_ws {
+        reverse_proxy reverb:8080
+    }
+    @laravel path / /build/* /js/* /css/* /vanisetu-speech-to-speech/* /app/* /login /speech-to-speech /speech-to-speech/* /speech-to-text /speech-to-text/* /text-to-text /text-to-text/* /design-standard
+    handle @laravel {
+        reverse_proxy web:80
+    }
+    @static path /assets/* /favicon.ico /robots.txt
+    handle @static {
+        root * /srv/vanisetu-frontend
+        file_server
+    }
+    @docs path /docs /docs/*
+    handle @docs {
+        root * /srv/vanisetu-frontend
+        file_server
+    }
+    handle {
+        root * /srv/vanisetu-frontend
+        try_files {path} /index.html
+        file_server
+    }
+}
+
+http://vanisetu.rajyasabha.digital, http://vanisetu.local, http://10.21.217.17 {
+    # Reverb WebSocket (Phase 4 per-listener channels): handle the WS upgrade
+    # BEFORE the http->https redirect guard below, so the browser's
+    # wss://.../app/* (proxied by traefik as http+Upgrade) reaches Reverb
+    # instead of being 308-redirected. Path + Upgrade header only — no source-IP
+    # gate, since the WS upgrade doesn't reliably satisfy @forwarded_https.
+    @reverb_upgrade {
+        path /app/* /apps/*
+        header Upgrade websocket
+    }
+    handle @reverb_upgrade {
+        reverse_proxy reverb:8080
+    }
+
+    @forwarded_https {
+        header X-Forwarded-Proto https
+        remote_ip 10.201.1.1/32
+    }
+    handle @forwarded_https {
+        import security_headers
+        import vani_routes
+    }
+
+    handle {
+        header Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        redir https://{host}{uri} 308
+    }
+
+    encode gzip zstd
+    log {
+        output stdout
+    }
+}
+
+vanisetu.rajyasabha.digital, vanisetu.local, 10.21.217.17 {
+    tls /etc/caddy/gov-ssl/6714853845_fullchain.pem /etc/caddy/gov-ssl/rajyasabha.key
+    import security_headers
+    import vani_routes
+    encode gzip zstd
+    log {
+        output stdout
+    }
+}
+
+gitlab.sds.local, registry.gitlab.sds.local, minio.gitlab.sds.local, kas.sds.local {
+    tls /etc/caddy/certs/gitlab.crt /etc/caddy/certs/gitlab.key
+    reverse_proxy 10.201.1.1:30208 {
+        header_up Host {host}
+        header_up X-Forwarded-Proto https
+        header_up X-Forwarded-Host {host}
+    }
+    request_body {
+        max_size 2000MB
+    }
+    encode gzip zstd
+    log {
+        output stdout
+    }
+}

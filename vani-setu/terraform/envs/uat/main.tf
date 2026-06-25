@@ -1,0 +1,36 @@
+module "platform" {
+  source = "../.."
+
+  environment                      = var.environment
+  environment_owner                = var.environment_owner
+  cluster_name                     = var.cluster_name
+  node_name                        = var.node_name
+  node_ip                          = var.node_ip
+  app_host_ip                      = var.app_host_ip
+  shared_services_host_ip          = var.shared_services_host_ip
+  ssh_user                         = var.ssh_user
+  ssh_key_path                     = var.ssh_key_path
+  kubeconfig_path                  = var.kubeconfig_path
+  k3s_version                      = var.k3s_version
+  storage_class_name               = var.storage_class_name
+  internal_domain                  = var.internal_domain
+  public_hosts                     = var.public_hosts
+  gitops_repo_url                  = var.gitops_repo_url
+  gitops_repo_branch               = var.gitops_repo_branch
+  argocd_hostname                  = var.argocd_hostname
+  tls_issuer_name                  = var.tls_issuer_name
+  vault_path_prefix                = var.vault_path_prefix
+  harbor_registry_project          = var.harbor_registry_project
+  enable_remote_changes            = var.enable_remote_changes
+  enable_k3s                       = var.enable_k3s
+  enable_namespaces                = var.enable_namespaces
+  enable_cert_manager              = var.enable_cert_manager
+  enable_argocd                    = var.enable_argocd
+  enable_linkerd                   = var.enable_linkerd
+  enable_vault                     = var.enable_vault
+  enable_harbor                    = var.enable_harbor
+  enable_monitoring                = var.enable_monitoring
+  enable_docker_service_recreation = var.enable_docker_service_recreation
+  production_apply_approved        = var.production_apply_approved
+  namespaces                       = var.namespaces
+}

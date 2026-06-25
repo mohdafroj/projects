@@ -1,0 +1,40 @@
+--- a/src/.env.example	2026-05-23 17:44:25.704061249 +0530
++++ b/src/.env.example	2026-05-23 17:44:25.710061305 +0530
+@@ -22,7 +22,7 @@
+ LOG_LEVEL=debug
+ 
+ DB_CONNECTION=pgsql
+-DB_HOST=postgres
++DB_HOST=vani-postgres.vani-laravel.svc.cluster.local
+ DB_PORT=5432
+ DB_DATABASE=vani_setu
+ DB_USERNAME=vani
+@@ -57,7 +57,7 @@
+ MEMCACHED_HOST=127.0.0.1
+ 
+ REDIS_CLIENT=phpredis
+-REDIS_HOST=redis
++REDIS_HOST=vani-redis.vani-laravel.svc.cluster.local
+ REDIS_PASSWORD=null
+ REDIS_PORT=6379
+ 
+@@ -84,8 +84,8 @@
+ VANI_MINIO_AUDIO_BUCKET=vani-audio-raw-rs
+ VANI_MINIO_REGION=us-east-1
+ 
+-SYNOPSIS_MODEL_URL=http://ml-gateway:8000/v1/synopsis
+-SYNOPSIS_MODEL_ALLOWED_HOSTS=ml-gateway
++SYNOPSIS_MODEL_URL=http://vani-ml-gateway.vani-system.svc.cluster.local:8000/v1/synopsis
++SYNOPSIS_MODEL_ALLOWED_HOSTS=vani-ml-gateway.vani-system.svc.cluster.local
+ SYNOPSIS_MODEL=vani-setu-synopsis
+ SYNOPSIS_MODEL_TOKEN=
+ SYNOPSIS_MODEL_TIMEOUT=20
+@@ -100,7 +100,7 @@
+ 
+ # Sarvam S2S — see docs/vani-setu-poc-handover.md for rationale on each value.
+ SARVAM_API_BASE=https://api.sarvam.ai
+-SARVAM_VOICE_PIPELINE_URL=http://ml-gateway:8000/v1/speech-to-speech
++SARVAM_VOICE_PIPELINE_URL=http://vani-ml-gateway.vani-system.svc.cluster.local:8000/v1/speech-to-speech
+ SARVAM_TIMEOUT=20
+ SARVAM_RETRIES=1
+ SARVAM_RETRY_SLEEP_MS=250

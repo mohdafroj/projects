@@ -1,0 +1,60 @@
+vanisetu.rajyasabha.digital {
+    tls /etc/caddy/gov-ssl/6714853845_fullchain.pem /etc/caddy/gov-ssl/rajyasabha.key
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        -Server
+    }
+
+    @blocked path /.env* /.git* /server-status /@vite* /@id/* /src/* /node_modules/* /admin /admin/* /phpinfo.php /storage /storage/* /vendor /vendor/*
+    respond @blocked "Not Found" 404
+
+    @api path /api/* /sanctum/*
+    handle @api {
+        reverse_proxy web:80
+    }
+    @ml path /v1/*
+    handle @ml {
+        reverse_proxy ml-gateway:8000
+    }
+    @rt_ws {
+        path /collab /collab/*
+        header Upgrade websocket
+    }
+    handle @rt_ws {
+        reverse_proxy realtime-sidecar:1234
+    }
+    @rt_plain path /collab /collab/*
+    handle @rt_plain {
+        respond "Not Found" 404
+    }
+    @reverb_ws {
+        path /app/* /apps/*
+        header Upgrade websocket
+    }
+    handle @reverb_ws {
+        reverse_proxy reverb:8080
+    }
+    @laravel path / /build/* /js/* /css/* /vanisetu-speech-to-speech/* /app/* /login /speech-to-speech /speech-to-speech/* /speech-to-text /speech-to-text/* /text-to-text /text-to-text/* /design-standard
+    handle @laravel {
+        reverse_proxy web:80
+    }
+    @static path /assets/* /favicon.ico /robots.txt
+    handle @static {
+        root * /srv/vanisetu-frontend
+        file_server
+    }
+    handle {
+        root * /srv/vanisetu-frontend
+        try_files {path} /index.html
+        file_server
+    }
+    encode gzip zstd
+    log {
+        output stdout
+    }
+}

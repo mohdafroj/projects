@@ -1,0 +1,21 @@
+services:
+  ml-gateway:
+    build:
+      context: ./ml-gateway
+    image: vani-setu-ml-gateway:local
+    container_name: vani-setu-ml-gateway
+    env_file:
+      - ./ml-gateway/.env
+    environment:
+      VANI_API_URL: http://app:9000
+      # Sarvam TTS-WebSocket streaming (sub-1s first audio). Code defaults these
+      # off; enabling here makes the WS path the deploy default. STT-WS stays off
+      # (Phase 1b). Any WS error auto-falls back to the HTTP per-sentence path.
+      ENABLE_SARVAM_WS: "true"
+      ENABLE_SARVAM_WS_TTS: "true"
+    ports:
+      - "${ML_GATEWAY_PORT:-8001}:8000"
+    depends_on:
+      - app
+    networks:
+      - vani-setu

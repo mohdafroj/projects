@@ -1,0 +1,7 @@
+{
+  "name": "ApprovalQueue",
+  "slug": "approval_queue",
+  "seeders": [
+    "App\\Modules\\ApprovalQueue\\Seeders\\ApprovalQueueSeeder"
+  ]
+}

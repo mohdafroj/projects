@@ -1,0 +1,6 @@
+{
+  "name": "CommitteeSittings",
+  "seeders": [
+    "App\\Modules\\CommitteeSittings\\Seeders\\CommitteeSeeder"
+  ]
+}

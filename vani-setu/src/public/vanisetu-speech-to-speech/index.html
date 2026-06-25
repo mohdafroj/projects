@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Vanisetu · वाणीसेतु · Speech to Speech</title>
+
+<!-- Splash thumbnail used by the bundler when this file is exported as a single offline HTML -->
+<template id="__bundler_thumbnail">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+    <defs>
+      <radialGradient id="bg" cx="50%" cy="35%" r="80%">
+        <stop offset="0%" stop-color="#1a1623"/>
+        <stop offset="100%" stop-color="#07060a"/>
+      </radialGradient>
+      <linearGradient id="acc" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ff8a1f"/>
+        <stop offset="100%" stop-color="#d96812"/>
+      </linearGradient>
+    </defs>
+    <rect width="200" height="200" fill="url(#bg)"/>
+    <circle cx="100" cy="100" r="36" fill="url(#acc)"/>
+    <text x="100" y="112" font-family="serif" font-size="36" font-weight="700" fill="#07060a" text-anchor="middle">वा</text>
+    <path d="M30 150 L50 130 L60 145 L75 120 L90 155 L110 115 L125 150 L140 130 L155 145 L170 135" stroke="#ff8a1f" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+  </svg>
+</template>
+
+<link rel="stylesheet" href="styles.css?v=20260526-output-select"/>
+
+<!-- React + Babel (pinned) -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- Order: tweaks shell, sarvam client, recorder, ui parts, app -->
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="sarvam.jsx"></script>
+<script type="text/babel" src="recorder.jsx"></script>
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="glossary.jsx?v=20260526-glossary"></script>
+<script type="text/babel" src="app.jsx?v=20260526-output-select"></script>
+
+<script type="text/babel">
+  // mount
+  const root = ReactDOM.createRoot(document.getElementById("root"));
+  root.render(<App/>);
+</script>
+</body>
+</html>

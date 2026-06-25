@@ -1,0 +1,7 @@
+{
+  "name": "AdminFull",
+  "providers": [
+    "App\\Modules\\AdminFull\\Providers\\AdminFullServiceProvider"
+  ],
+  "seeders": []
+}

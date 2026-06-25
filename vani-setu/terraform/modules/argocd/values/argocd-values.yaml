@@ -1,0 +1,5 @@
+global:
+  domain: ${hostname}
+server:
+  ingress:
+    enabled: false

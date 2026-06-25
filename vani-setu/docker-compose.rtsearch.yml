@@ -1,0 +1,35 @@
+services:
+  meilisearch:
+    image: getmeili/meilisearch:v1.10
+    container_name: vani-setu-meilisearch
+    environment:
+      MEILI_ENV: production
+      MEILI_NO_ANALYTICS: "true"
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:?Set MEILI_MASTER_KEY before starting Meilisearch}
+    ports:
+      - "127.0.0.1:7700:7700"
+    volumes:
+      - meilisearch-data:/meili_data
+    networks:
+      - vani-setu
+
+  realtime-sidecar:
+    build:
+      context: ./realtime-sidecar
+    image: vani-setu-realtime-sidecar:local
+    container_name: vani-setu-realtime-sidecar
+    environment:
+      PORT: 1234
+      DATABASE_URL: postgres://vani:${DB_PASSWORD:?Set DB_PASSWORD before starting realtime-sidecar}@postgres:5432/vani_setu
+      LARAVEL_BASE_URL: http://web
+      REALTIME_AUDIT_SECRET: ${REALTIME_AUDIT_SECRET:?Set REALTIME_AUDIT_SECRET before starting realtime-sidecar}
+    ports:
+      - "127.0.0.1:1234:1234"
+    depends_on:
+      - app
+      - postgres
+    networks:
+      - vani-setu
+
+volumes:
+  meilisearch-data:

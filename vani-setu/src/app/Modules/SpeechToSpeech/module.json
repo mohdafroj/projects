@@ -1,0 +1,7 @@
+{
+  "name": "SpeechToSpeech",
+  "providers": [
+    "App\\Modules\\SpeechToSpeech\\Providers\\SpeechToSpeechServiceProvider"
+  ],
+  "seeders": []
+}
