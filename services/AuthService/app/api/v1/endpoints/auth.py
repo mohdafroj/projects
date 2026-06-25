@@ -38,7 +38,7 @@ async def get_captcha():
     return FastAPIResponse(
         content=image_data, 
         media_type="image/png",
-        headers={"X-Captcha-ID": captcha_id}
+        headers={"X-Captcha-ID": captcha_id, "Access-Control-Expose-Headers": "X-Captcha-ID"}
     )
 
 @router.post("/login", response_model=Token, dependencies=[Depends(RateLimiter(times=5, seconds=60))])

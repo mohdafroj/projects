@@ -35,6 +35,7 @@ services:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
+      - API_BASE_URL=http://localhost:8000/api/v1
     volumes:
       - ./iam_app:/app
       - /app/node_modules

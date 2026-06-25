@@ -1,7 +1,10 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
 const path = require("path");
+const webpack = require("webpack");
 const deps = require("./package.json").dependencies;
+
+require('dotenv').config();
 
 module.exports = {
     entry: "./src/index",
@@ -95,6 +98,11 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: "./public/index.html",
+        }),
+        new webpack.DefinePlugin({
+            "process.env.API_BASE_URL": JSON.stringify(process.env.API_BASE_URL),
+            "process.env.CAPTCHA_ENDPOINT": JSON.stringify(process.env.CAPTCHA_ENDPOINT),
+            "process.env.LOGIN_ENDPOINT": JSON.stringify(process.env.LOGIN_ENDPOINT),
         }),
     ],
 };

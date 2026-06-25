@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
+import { authService, CaptchaResponse } from "../services/authService";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@example.com");
+  const [password, setPassword] = useState("admin123");
   const [captchaCode, setCaptchaCode] = useState("");
-  const [captchaData, setCaptchaData] = useState<string | null>(null);
+  const [captchaData, setCaptchaData] = useState<CaptchaResponse | null>(null);
   const [isLoadingCaptcha, setIsLoadingCaptcha] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const fetchCaptcha = async () => {
     setIsLoadingCaptcha(true);
     try {
-      const response = await fetch("http://localhost:8000/api/v1/auth/captcha");
-      const data = await response.blob();
-      // Create temporary URL
-      const imageUrl = URL.createObjectURL(data);
-      setCaptchaData(imageUrl);
-    } catch (error) {
-      console.error("Failed to fetch captcha:", error);
+      const data = await authService.getCaptcha();
+      setCaptchaData(data);
+    } catch (error: any) {
+      setErrorMessage(error.message || "Failed to load captcha");
     } finally {
       setIsLoadingCaptcha(false);
     }
@@ -25,6 +25,30 @@ const Login = () => {
   useEffect(() => {
     fetchCaptcha();
   }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoggingIn(true);
+    setErrorMessage("");
+
+    const payload = {
+      username: email,
+      password: password,
+      captcha_id: captchaData?.key || "",
+      captcha_code: captchaCode,
+    };
+
+    try {
+      const data = await authService.login(payload);
+      alert("Login successful!");
+      console.log("Logged in user:", data.user);
+    } catch (error: any) {
+      setErrorMessage(error.message || "Login failed");
+      fetchCaptcha();
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
 
   const containerStyle: React.CSSProperties = {
     display: "flex",
@@ -117,17 +141,18 @@ const Login = () => {
     color: "#888",
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert(`Logging in with: ${email}, Captcha Code: ${captchaCode}, Captcha Id: 232323`);
-  };
-
   return (
     <div style={containerStyle}>
       <div style={cardStyle}>
         <div style={{ fontSize: "40px", marginBottom: "15px" }}>🔐</div>
         <h2 style={titleStyle}>Welcome Back</h2>
         <p style={subtitleStyle}>Please enter your credentials to access the CRM</p>
+
+        {errorMessage && (
+          <div style={{ color: "#e53e3e", background: "#fff5f5", padding: "10px", borderRadius: "6px", marginBottom: "20px", fontSize: "14px", border: "1px solid #fed7d7" }}>
+            {errorMessage}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div style={formGroupStyle}>
@@ -167,7 +192,7 @@ const Login = () => {
               />
               {captchaData ? (
                 <img
-                  src={captchaData}
+                  src={captchaData.img}
                   alt="captcha"
                   style={captchaImageStyle}
                   onClick={fetchCaptcha}
@@ -186,17 +211,20 @@ const Login = () => {
 
           <button
             type="submit"
-            style={loginButtonStyle}
+            style={{ ...loginButtonStyle, opacity: isLoggingIn ? 0.7 : 1, cursor: isLoggingIn ? "not-allowed" : "pointer" }}
+            disabled={isLoggingIn}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-1px)";
-              e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+              if (!isLoggingIn) {
+                e.currentTarget.style.transform = "translateY(-1px)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
+              }
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = "translateY(0)";
               e.currentTarget.style.boxShadow = "none";
             }}
           >
-            Sign In
+            {isLoggingIn ? "Signing In..." : "Sign In"}
           </button>
         </form>
 
