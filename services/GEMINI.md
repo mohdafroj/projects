@@ -23,7 +23,7 @@ Always prioritize:
 
 ### [InventoryService](./InventoryService/README.md)
 *   **Status:** Active Development
-*   **Tech Stack:** NestJS, Prisma, PostgreSQL.
+*   **Tech Stack:** NestJS, PostgreSQL.
 
 ---
 

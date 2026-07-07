@@ -1,0 +1,14 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type InventoryItem {
+  description: String
+  id: ID!
+  name: String!
+  quantity: Int!
+}
+
+type Query {
+  items: [InventoryItem!]!
+}
