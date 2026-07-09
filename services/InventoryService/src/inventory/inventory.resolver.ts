@@ -1,24 +1,30 @@
-import { Resolver, Query, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { InventoryItem } from './models/inventory-item.model';
+import { InventoryItemDoc, InventoryItemDocument } from './schemas/inventory-item.schema';
 
 @Resolver(() => InventoryItem)
 export class InventoryResolver {
-    // A simple query to fetch all inventory items
+    constructor(
+        @InjectModel(InventoryItemDoc.name)
+        private inventoryModel: Model<InventoryItemDocument>,
+    ) { }
+
     @Query(() => [InventoryItem], { name: 'items' })
-    async getItems(): Promise<InventoryItem[] | Object[]> {
-        return [
-            {
-                id: '1',
-                name: 'Developer Laptop',
-                description: 'High-performance Macbook Pro',
-                quantity: 15,
-            },
-            {
-                id: '2',
-                name: 'Ergonomic Chair',
-                description: 'Office chair with lumbar support',
-                quantity: 30,
-            },
-        ];
+    async getItems(): Promise<InventoryItem[]> {
+        return [{ id: '12', name: 'afroj', quantity: 1, description: 'test' }];
+        //return this.inventoryModel.find().exec();
+    }
+
+    // Example mutation to create an item in MongoDB
+    @Mutation(() => InventoryItem)
+    async createItem(
+        @Args('name') name: string,
+        @Args('quantity') quantity: number,
+        @Args('description', { nullable: true }) description?: string,
+    ): Promise<InventoryItem> {
+        const newItem = new this.inventoryModel({ name, quantity, description });
+        return newItem.save();
     }
 }

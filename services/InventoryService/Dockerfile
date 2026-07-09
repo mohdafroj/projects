@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 #Install depencies
-RUN npm ci --force
+RUN npm i
 
 #Copy rest project files
 COPY . .

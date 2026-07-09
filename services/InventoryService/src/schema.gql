@@ -9,6 +9,10 @@ type InventoryItem {
   quantity: Int!
 }
 
+type Mutation {
+  createItem(description: String, name: String!, quantity: Float!): InventoryItem!
+}
+
 type Query {
   items: [InventoryItem!]!
 }
