@@ -115,9 +115,21 @@ services:
     networks:
       - backendnetwork
 
+  srv_dbgate:
+    image: dbgate/dbgate
+    container_name: ctr_dbgate
+    restart: always
+    ports:
+      - "5051:3000"
+    volumes:
+      - dbgate_data:/root/.dbgate
+    networks:
+      - backendnetwork
+
 volumes:
   postgres_data:
   mongodb_data:
+  dbgate_data:
 
 networks:
   backendnetwork:
