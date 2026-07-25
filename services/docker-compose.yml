@@ -226,7 +226,7 @@ services:
       - ./OcrService/.env
     environment:
       OPENSEARCH_URL: http://srv_opensearch:9200
-      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@srv_mongodb:27017/${MONGO_DATABASE:-inventory_db}?authSource=admin
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@srv_mongodb:27017/${MONGO_DATABASE:-ocr_db}?authSource=admin
       REDIS_URL: redis://srv_redis:6379/0
       TSC_WATCHFILE: PriorityPollingInterval
     volumes:

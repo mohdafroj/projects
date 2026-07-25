@@ -30,7 +30,7 @@ import configuration from './config/configuration';
           const port = parseInt(url.port || '6379', 10);
           const password = url.password ? decodeURIComponent(url.password) : undefined;
           const db = parseInt(url.pathname.substring(1) || '0', 10);
-          
+
           return {
             connection: {
               host,
@@ -56,4 +56,4 @@ import configuration from './config/configuration';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

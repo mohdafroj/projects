@@ -19,4 +19,4 @@ import { OcrDocument, OcrDocumentSchema } from '../database/schemas/document.sch
   providers: [OcrService, OcrProcessor, EmbeddingService, OpenSearchService],
   exports: [OcrService],
 })
-export class OcrModule {}
+export class OcrModule { }
