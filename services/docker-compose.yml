@@ -1,24 +1,81 @@
 services:
-  srv_db:
-    image: postgres:15
+  srv_opensearch:
+    image: opensearchproject/opensearch:2.19.1
+    container_name: ctr_opensearch
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node
+      - discovery.type=single-node
+
+      # Disable demo security (Development only)
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+
+      # memory lock
+      - bootstrap.memory_lock=true
+
+      # Java Heap
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+
+      # Disable mmap
+      - node.store.allow_mmap=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s http://localhost:9200 >/dev/null || exit 1" ]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    restart: unless-stopped
+    networks:
+      - backendnetwork
+
+  srv_os_dashboards:
+    image: opensearchproject/opensearch-dashboards:2.19.1
+    container_name: ctr_os_dashboards
+    environment:
+      OPENSEARCH_HOSTS: '["http://srv_opensearch:9200"]'
+      DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"
+    ports:
+      - "5601:5601"
+    depends_on:
+      srv_opensearch:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - backendnetwork
+  srv_postgres_db:
+    image: postgres:15-alpine
     container_name: ctr_postgres_db
     restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-fastapi_db}
+      # POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      # POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      # POSTGRES_DB: ${POSTGRES_DB:-postgres}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - backendnetwork
+      - ./postgres-init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-fastapi_db}" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
-  
+    networks:
+      - backendnetwork
+
   srv_mongodb:
     image: mongo:8
     container_name: ctr_mongodb
@@ -34,7 +91,7 @@ services:
     networks:
       - backendnetwork
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -53,54 +110,6 @@ services:
       timeout: 5s
       retries: 5
 
-  srv_auth:
-    build:
-      context: ./AuthService
-      dockerfile: Dockerfile
-    container_name: ctr_auth
-    depends_on:
-      srv_db:
-        condition: service_healthy
-      srv_redis:
-        condition: service_healthy
-    ports:
-      - "8000:8000"
-    env_file:
-      - ./AuthService/.env
-    environment:
-      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@srv_db:5432/${POSTGRES_DB:-fastapi_db}
-      REDIS_URL: redis://srv_redis:6379/0
-    volumes:
-      - ./AuthService:/app
-    restart: always
-    networks:
-      - backendnetwork
-
-  srv_inventory:
-    build:
-      context: ./InventoryService
-      dockerfile: Dockerfile
-    container_name: ctr_inventory
-    depends_on:
-      srv_db:
-        condition: service_healthy
-      srv_redis:
-        condition: service_healthy
-    ports:
-      - "8001:3000"
-    env_file:
-      - ./InventoryService/.env
-    environment:
-      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@srv_mongodb:27017/${MONGO_DATABASE:-inventory_db}?authSource=admin
-      REDIS_URL: redis://srv_redis:6379/0
-      TSC_WATCHFILE: PriorityPollingInterval
-    volumes:
-      - ./InventoryService:/app
-      - /app/node_modules
-    restart: always
-    networks:
-      - backendnetwork
-
   srv_pgadmin:
     image: dpage/pgadmin4
     container_name: ctr_pgadmin
@@ -111,7 +120,7 @@ services:
     ports:
       - "5050:80"
     depends_on:
-      - srv_db
+      - srv_postgres_db
     networks:
       - backendnetwork
 
@@ -126,10 +135,86 @@ services:
     networks:
       - backendnetwork
 
+  srv_auth:
+    build:
+      context: ./AuthService
+      dockerfile: Dockerfile
+    container_name: ctr_auth
+    depends_on:
+      srv_postgres_db:
+        condition: service_healthy
+      srv_redis:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./AuthService/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@srv_postgres_db:5432/fastapi_db
+      REDIS_URL: redis://srv_redis:6379/0
+    volumes:
+      - ./AuthService:/app
+    restart: always
+    networks:
+      - backendnetwork
+
+  srv_inventory:
+    build:
+      context: ./InventoryService
+      dockerfile: Dockerfile
+    container_name: ctr_inventory
+    depends_on:
+      srv_postgres_db:
+        condition: service_healthy
+      srv_redis:
+        condition: service_healthy
+    ports:
+      - "8001:3000"
+    env_file:
+      - ./InventoryService/.env
+    environment:
+      OPENSEARCH_URL: http://srv_opensearch:9200
+      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@srv_mongodb:27017/${MONGO_DATABASE:-inventory_db}?authSource=admin
+      REDIS_URL: redis://srv_redis:6379/0
+      TSC_WATCHFILE: PriorityPollingInterval
+    volumes:
+      - ./InventoryService:/app
+      - inventory_node_modules:/app/node_modules
+    restart: always
+    networks:
+      - backendnetwork
+
+  srv_order:
+    build:
+      context: ./OrderService
+      dockerfile: Dockerfile.dev
+    container_name: ctr_order
+    depends_on:
+      srv_postgres_db:
+        condition: service_healthy
+    ports:
+      - "8002:3000"
+      - "5555:5555"
+    env_file:
+      - ./OrderService/.env.development
+    environment:
+      POSTGRES_DB_HOST: srv_postgres_db
+      POSTGRES_DB_NAME: order_db
+      DATABASE_URL: postgresql://postgres:postgres@srv_postgres_db:5432/order_db?schema=public
+    volumes:
+      - ./OrderService:/app
+      - order_node_modules:/app/node_modules
+    restart: always
+    networks:
+      - backendnetwork
+
 volumes:
+  opensearch_data:
   postgres_data:
   mongodb_data:
   dbgate_data:
+  inventory_node_modules:
+  order_node_modules:
 
 networks:
   backendnetwork:

@@ -24,13 +24,6 @@ type Category {
   updated_by: Int
 }
 
-type CategoryResponse {
-  data: Category
-  error: [FieldError!]
-  message: String!
-  success: Boolean!
-}
-
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -42,9 +35,10 @@ type FieldError {
 }
 
 type Mutation {
-  createCategory(created_by: Int!, description: String, image: String, meta_description: String, meta_keywords: String, meta_title: String, name: String!, parent_id: Int, sort: Int, status: Boolean, title: String): CategoryResponse!
+  createCategory(created_by: Int!, description: String, image: String, meta_description: String, meta_keywords: String, meta_title: String, name: String!, parent_id: Int, sort: Int, status: Boolean, title: String): Category!
 }
 
 type Query {
   categories: [Category!]!
+  category(id: Int!): Category!
 }
