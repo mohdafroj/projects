@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
 const path = require("path");
+const webpack = require("webpack");
 const deps = require("./package.json").dependencies;
 
 module.exports = {
@@ -61,7 +62,7 @@ module.exports = {
             },
             {
                 test: /\.css$/i,
-                use: ["style-loader", "css-loader"],
+                use: ["style-loader", "css-loader", "postcss-loader"],
             },
         ],
     },
@@ -95,6 +96,9 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: "./public/index.html",
+        }),
+        new webpack.DefinePlugin({
+            "process.env.IAM_BASE_PATH": JSON.stringify(process.env.IAM_BASE_PATH),
         }),
     ],
 };

@@ -64,7 +64,7 @@ module.exports = {
             },
             {
                 test: /\.css$/i,
-                use: ["style-loader", "css-loader"],
+                use: ["style-loader", "css-loader", "postcss-loader"],
             },
         ],
     },
@@ -101,6 +101,7 @@ module.exports = {
         }),
         new webpack.DefinePlugin({
             "process.env.API_BASE_URL": JSON.stringify(process.env.API_BASE_URL),
+            "process.env.IAM_BASE_PATH": JSON.stringify(process.env.IAM_BASE_PATH),
             "process.env.CAPTCHA_ENDPOINT": JSON.stringify(process.env.CAPTCHA_ENDPOINT),
             "process.env.LOGIN_ENDPOINT": JSON.stringify(process.env.LOGIN_ENDPOINT),
         }),

@@ -1,5 +1,5 @@
 module.exports = {
-    important: '#header-app',
+    important: '#iam-app',
     corePlugins: {
         preflight: false,
     },

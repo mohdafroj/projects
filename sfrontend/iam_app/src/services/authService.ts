@@ -13,7 +13,26 @@ export interface LoginPayload {
   captcha_code: string;
 }
 
+export interface RegisterPayload {
+  full_name: string;
+  email: string;
+  username: string;
+  password: string;
+  confirm_password: string;
+  is_active: boolean;
+}
+
 export interface LoginResponse {
+  token: string;
+  user: {
+    id: string;
+    email: string;
+    role: string;
+  };
+  message?: string;
+}
+
+export interface RegisterResponse {
   token: string;
   user: {
     id: string;
@@ -28,6 +47,7 @@ const BASE_PATH = "/auth";
 const ENDPOINTS = {
   CAPTCHA: `${BASE_PATH}/captcha`,
   LOGIN: `${BASE_PATH}/login`,
+  REGISTER: `${BASE_PATH}/register`,
 };
 
 // --- Service ---
@@ -48,6 +68,14 @@ export const authService = {
    */
   async login(payload: LoginPayload): Promise<LoginResponse> {
     const response = await api.post<LoginResponse>(ENDPOINTS.LOGIN, payload);
+    return response.data;
+  },
+
+  /**
+   * Performs user registration
+   */
+  async register(payload: RegisterPayload): Promise<RegisterResponse> {
+    const response = await api.post<RegisterResponse>(ENDPOINTS.REGISTER, payload);
     return response.data;
   }
 };

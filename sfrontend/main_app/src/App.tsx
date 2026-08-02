@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 const RemoteHeader = React.lazy(() => import("remoteHeader/Header"));
 const RemoteIAM = React.lazy(() => import("remoteIAM/IAM"));
 
-const iamPath = "/iam";
+const iamPath = process.env.IAM_BASE_PATH || "";
 
 const Dashboard = () => (
   <div style={{ padding: "20px" }}>

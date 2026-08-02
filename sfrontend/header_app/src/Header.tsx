@@ -1,137 +1,77 @@
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
+import "./index.css";
 
+const iamPath = process.env.IAM_BASE_PATH || "";
 const Header = () => {
-  const navigate = useNavigate();
   const location = useLocation();
-  const isUsersLoggedIn = false; // Simulate user authentication status
-  const iamPath = "/iam";
-  const headerStyle: React.CSSProperties = {
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    color: "white",
-    padding: "0",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-  };
-
-  const navStyle: React.CSSProperties = {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: "1rem 2rem",
-  };
-
-  const logoStyle: React.CSSProperties = {
-    fontSize: "1.5rem",
-    fontWeight: "bold",
-    cursor: "pointer",
-  };
-
-  const navLinksStyle: React.CSSProperties = {
-    display: "flex",
-    gap: "2rem",
-    listStyle: "none",
-  };
-
-  const navLinkStyle = (isActive: boolean): React.CSSProperties => ({
-    cursor: "pointer",
-    paddingBottom: "0.5rem",
-    borderBottom: isActive ? "3px solid white" : "3px solid transparent",
-    transition: "border-color 0.3s",
-    fontWeight: isActive ? "bold" : "normal",
-  });
-
-  const userSectionStyle: React.CSSProperties = {
-    display: "flex",
-    gap: "1rem",
-    alignItems: "center",
-  };
-
-  const buttonStyle: React.CSSProperties = {
-    background: "rgba(255,255,255,0.2)",
-    color: "white",
-    border: "1px solid white",
-    padding: "0.5rem 1rem",
-    borderRadius: "4px",
-    cursor: "pointer",
-    transition: "background 0.3s",
-  };
+  const isLogged = false; // Simulate user authentication status
 
   return (
-    <header style={headerStyle}>
-      <nav style={navStyle}>
-        <div style={logoStyle} onClick={() => navigate("/")}>
-          Software
-        </div>
+    <header id="header-app">
+      <div className="bg-blue-950 text-white shadow-md">
+        <nav className="flex justify-between items-center h-12">
+          <div className="w-1/5 text-xl text-center">
+            <Link to="/" className="no-underline hover:text-gray-300">Software</Link>
+          </div>
 
-        <ul style={navLinksStyle}>
-          <li
-            style={navLinkStyle(location.pathname === '/')}
-            onClick={() => navigate('/')}
-          >
-            Dashboard
-          </li>
-          <li
-            style={navLinkStyle(location.pathname === "/students")}
-            onClick={() => navigate("/students")}
-          >
-            Students
-          </li>
-          <li
-            style={navLinkStyle(location.pathname === "/teachers")}
-            onClick={() => navigate("/teachers")}
-          >
-            Teachers
-          </li>
-          <li
-            style={navLinkStyle(location.pathname === "/classes")}
-            onClick={() => navigate("/classes")}
-          >
-            Classes
-          </li>
-          <li
-            style={navLinkStyle(location.pathname === "/attendance")}
-            onClick={() => navigate("/attendance")}
-          >
-            Attendance
-          </li>
-          <li
-            style={navLinkStyle(location.pathname === iamPath)}
-            onClick={() => navigate(iamPath)}
-          >
-            Access Control
-          </li>
-        </ul>
+          <ul className="flex gap-4">
+            <li
+              className={`${location.pathname === "/" ? "border-b-2" : ""} hover:border-b-2 border-white`}
+            >
+              <Link to="/" className="no-underline">Dashboard</Link>
+            </li>
+            <li
+              className={`${location.pathname === "/students" ? "border-b-2" : ""} hover:border-b-2 border-white`}
+            >
+              <Link to="/students" className="no-underline">Students</Link>
+            </li>
+            <li
+              className={`${location.pathname === "/teachers" ? "border-b-2" : ""} hover:border-b-2 border-white`}
+            >
+              <Link to="/teachers" className="no-underline">Teachers</Link>
+            </li>
+            <li
+              className={`${location.pathname === "/classes" ? "border-b-2" : ""} hover:border-b-2 border-white`}
+            >
+              <Link to="/classes" className="no-underline">Classes</Link>
+            </li>
+            <li
+              className={`${location.pathname === "/attendance" ? "border-b-2" : ""} hover:border-b-2 border-white`}
+            >
+              <Link to="/attendance" className="no-underline">Attendance</Link>
+            </li>
+            <li
+              className={`${(location.pathname.includes(iamPath) && !["login", "register"].some((page) =>
+                location.pathname.split('/').includes(page)
+              )) ? "border-b-2" : ""} hover:border-b-2 border-white`}
+            >
+              <Link to={iamPath} className="no-underline">Access Control</Link>
+            </li>
+          </ul>
 
-        <div style={userSectionStyle}>
-          {isUsersLoggedIn ? (
-            <>
-              <span>👤 Admin User</span>
-              <button
-                style={buttonStyle}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "rgba(255,255,255,0.3)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "rgba(255,255,255,0.2)";
-                }}
-              >
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <span>👤 Guest</span>
-              <button style={buttonStyle} onClick={() => navigate(`${iamPath}/login`)} onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.3)";
-              }} onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.2)";
-              }}>
-                Login
-              </button>
-            </>
-          )}
-        </div>
-      </nav>
+          <div className="w-1/5 flex items-center justify-center">
+            {isLogged ? (
+              <div className="w-4/5 flex items-center justify-end gap-2">
+                <span>👤 Admin</span>
+                <Link
+                  className="w-15 text-center bg-gray-900 hover:bg-gray-700 border border-gray-900 rounded-md no-underline"
+                  to={`${iamPath}/logout`}
+                >
+                  Logout
+                </Link>
+              </div>
+            ) : (
+              <div className="w-4/5 flex items-center justify-end gap-2">
+                <span>👤 Guest</span>
+                <Link className="w-15 text-center bg-gray-900 hover:bg-gray-700 border border-gray-900 rounded-md no-underline" to={`${iamPath}/login`}>
+                  Login
+                </Link>
+              </div>
+            )}
+          </div>
+        </nav>
+      </div>
     </header>
   );
 };

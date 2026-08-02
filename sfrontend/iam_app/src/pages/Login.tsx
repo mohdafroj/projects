@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { authService, CaptchaResponse } from "../services/authService";
+import { useNavigate, Link } from "react-router-dom";
+import { LINKS } from "../routes/routes";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("admin@example.com");
   const [password, setPassword] = useState("admin123");
   const [captchaCode, setCaptchaCode] = useState("");
@@ -50,142 +53,51 @@ const Login = () => {
     }
   };
 
-  const containerStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: "calc(100vh - 200px)",
-    padding: "20px",
-  };
-
-  const cardStyle: React.CSSProperties = {
-    background: "white",
-    padding: "40px",
-    borderRadius: "12px",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
-    width: "100%",
-    maxWidth: "400px",
-    textAlign: "center",
-  };
-
-  const titleStyle: React.CSSProperties = {
-    fontSize: "24px",
-    fontWeight: "bold",
-    marginBottom: "10px",
-    color: "#333",
-  };
-
-  const subtitleStyle: React.CSSProperties = {
-    color: "#666",
-    marginBottom: "30px",
-    fontSize: "14px",
-  };
-
-  const formGroupStyle: React.CSSProperties = {
-    width: "100%",
-    marginBottom: "20px",
-    textAlign: "left",
-  };
-
-  const labelStyle: React.CSSProperties = {
-    display: "block",
-    marginBottom: "8px",
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#555",
-  };
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "12px 15px",
-    borderRadius: "6px",
-    border: "1px solid #ddd",
-    fontSize: "16px",
-    outline: "none",
-    transition: "border-color 0.3s",
-  };
-
-  const captchaContainerStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    marginTop: "10px",
-  };
-
-  const captchaImageStyle: React.CSSProperties = {
-    height: "45px",
-    borderRadius: "6px",
-    border: "1px solid #ddd",
-    cursor: "pointer",
-    background: "#f9f9f9",
-  };
-
-  const loginButtonStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "12px",
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    color: "white",
-    border: "none",
-    borderRadius: "6px",
-    fontSize: "16px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    transition: "transform 0.2s, box-shadow 0.2s",
-    marginTop: "10px",
-  };
-
-  const footerStyle: React.CSSProperties = {
-    marginTop: "20px",
-    fontSize: "14px",
-    color: "#888",
-  };
-
   return (
-    <div style={containerStyle}>
-      <div style={cardStyle}>
-        <div style={{ fontSize: "40px", marginBottom: "15px" }}>🔐</div>
-        <h2 style={titleStyle}>Welcome Back</h2>
-        <p style={subtitleStyle}>Please enter your credentials to access the CRM</p>
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] p-5">
+      <div className="bg-white p-10 rounded-xl shadow-xl w-full max-w-[400px] text-center">
+        <div className="text-4xl mb-4">🔐</div>
+        <h2 className="text-2xl font-bold mb-2 text-gray-800">Welcome Back</h2>
+        <p className="text-sm text-gray-600 mb-8">Please enter your credentials to access the CRM</p>
 
         {errorMessage && (
-          <div style={{ color: "#e53e3e", background: "#fff5f5", padding: "10px", borderRadius: "6px", marginBottom: "20px", fontSize: "14px", border: "1px solid #fed7d7" }}>
+          <div className="text-red-600 bg-red-50 p-2.5 rounded-md mb-5 text-sm border border-red-200">
             {errorMessage}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <div style={formGroupStyle}>
-            <label style={labelStyle}>Email Address</label>
+          <div className="w-full mb-5 text-left">
+            <label className="block mb-2 text-sm font-semibold text-gray-700">Email Address</label>
             <input
               type="email"
               placeholder="admin@example.com"
-              style={inputStyle}
+              className="w-full py-3 px-4 rounded-md border border-gray-300 text-base outline-none transition-colors duration-300 focus:border-indigo-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
 
-          <div style={formGroupStyle}>
-            <label style={labelStyle}>Password</label>
+          <div className="w-full mb-5 text-left">
+            <label className="block mb-2 text-sm font-semibold text-gray-700">Password</label>
             <input
               type="password"
               placeholder="••••••••"
-              style={inputStyle}
+              className="w-full py-3 px-4 rounded-md border border-gray-300 text-base outline-none transition-colors duration-300 focus:border-indigo-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
 
-          <div style={formGroupStyle}>
-            <label style={labelStyle}>Captcha</label>
-            <div style={captchaContainerStyle}>
+          <div className="w-full mb-5 text-left">
+            <label className="block mb-2 text-sm font-semibold text-gray-700">Captcha</label>
+            <div className="flex items-center gap-2.5 mt-2.5">
               <input
                 type="text"
                 placeholder="Enter code"
-                style={{ ...inputStyle, flex: 1 }}
+                className="w-full py-3 px-4 rounded-md border border-gray-300 text-base outline-none transition-colors duration-300 focus:border-indigo-500 flex-1"
                 value={captchaCode}
                 onChange={(e) => setCaptchaCode(e.target.value)}
                 required
@@ -194,13 +106,13 @@ const Login = () => {
                 <img
                   src={captchaData.img}
                   alt="captcha"
-                  style={captchaImageStyle}
+                  className="h-[45px] rounded-md border border-gray-300 cursor-pointer bg-gray-50"
                   onClick={fetchCaptcha}
                   title="Click to refresh"
                 />
               ) : (
                 <div
-                  style={{ ...captchaImageStyle, width: "120px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", color: "#999" }}
+                  className="h-[45px] w-[120px] flex items-center justify-center rounded-md border border-gray-300 cursor-pointer bg-gray-50 text-xs text-gray-400"
                   onClick={fetchCaptcha}
                 >
                   {isLoadingCaptcha ? "Loading..." : "Reload"}
@@ -211,25 +123,19 @@ const Login = () => {
 
           <button
             type="submit"
-            style={{ ...loginButtonStyle, opacity: isLoggingIn ? 0.7 : 1, cursor: isLoggingIn ? "not-allowed" : "pointer" }}
             disabled={isLoggingIn}
-            onMouseEnter={(e) => {
-              if (!isLoggingIn) {
-                e.currentTarget.style.transform = "translateY(-1px)";
-                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
+            className={`w-full py-3 mt-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-md text-base transition-all duration-200 transform active:translate-y-0 hover:shadow-lg disabled:opacity-70 ${isLoggingIn ? "cursor-not-allowed opacity-70" : "cursor-pointer hover:-translate-y-0.5"
+              }`}
           >
             {isLoggingIn ? "Signing In..." : "Sign In"}
           </button>
         </form>
 
-        <div style={footerStyle}>
-          Don't have an account? <span style={{ color: "#667eea", cursor: "pointer" }}>Contact Admin</span>
+        <div className="mt-10 text-sm text-gray-600">
+          Don't have an account?{" "}
+          <Link to={LINKS.REGISTER.path} className="text-blue-950 hover:text-blue-800">
+            Click to Register
+          </Link>
         </div>
       </div>
     </div>

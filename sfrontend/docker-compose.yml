@@ -1,3 +1,9 @@
+x-common-env: &common-env
+  NODE_ENV: development
+  CHOKIDAR_USEPOLLING: "true"
+  WATCHPACK_POLLING: "true"
+  IAM_BASE_PATH: /iam
+
 services:
   srv_main_app:
     image: img_main_app
@@ -8,11 +14,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=development
-      - REMOTE_HEADER_URL=http://localhost:3001
-      - REMOTE_IAM_URL=http://localhost:3002
-      - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true
+      <<: *common-env
+      REMOTE_HEADER_URL: http://localhost:3001
+      REMOTE_IAM_URL: http://localhost:3002
     volumes:
       - ./main_app:/app
       - /app/node_modules
@@ -32,10 +36,8 @@ services:
     ports:
       - "3002:3002"
     environment:
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true
-      - API_BASE_URL=http://localhost:8000/api/v1
+      <<: *common-env
+      API_BASE_URL: http://localhost:8000/api/v1
     volumes:
       - ./iam_app:/app
       - /app/node_modules
@@ -52,9 +54,7 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
-      - WATCHPACK_POLLING=true
+      <<: *common-env
     volumes:
       - ./header_app:/app
       - /app/node_modules

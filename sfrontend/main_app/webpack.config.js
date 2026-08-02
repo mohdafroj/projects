@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
 const path = require("path");
+const webpack = require("webpack");
 const deps = require("./package.json").dependencies;
 
 const remoteHeaderUrl = process.env.REMOTE_HEADER_URL || "http://localhost:3001";
@@ -100,6 +101,9 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
+    }),
+    new webpack.DefinePlugin({
+      "process.env.IAM_BASE_PATH": JSON.stringify(process.env.IAM_BASE_PATH),
     }),
   ],
 };
