@@ -71,4 +71,11 @@ export const LINKS = {
             title: 'Login',
         },
     },
+    LOGOUT: {
+        path: IAM_BASE_PATH + '/logout',
+        name: 'Logout',
+        meta: {
+            title: 'Logout',
+        },
+    },
 }

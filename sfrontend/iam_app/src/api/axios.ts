@@ -16,7 +16,7 @@ api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // Example: const token = localStorage.getItem("token");
     // if (token) config.headers.Authorization = `Bearer ${token}`;
-    console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
+    //console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
   (error: AxiosError) => {
@@ -42,7 +42,8 @@ api.interceptors.response.use(
     const customError = {
       message: data?.message || "An unexpected error occurred",
       status: status,
-      originalError: error
+      originalError: error,
+      data: error?.response?.data,
     };
 
     return Promise.reject(customError);

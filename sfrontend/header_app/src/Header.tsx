@@ -5,7 +5,7 @@ import "./index.css";
 const iamPath = process.env.IAM_BASE_PATH || "";
 const Header = () => {
   const location = useLocation();
-  const isLogged = false; // Simulate user authentication status
+  const isLogged = sessionStorage.getItem("iam_token");
 
   return (
     <header id="header-app">

@@ -1,239 +1,153 @@
 import React, { useState, useEffect } from "react";
-import { authService, CaptchaResponse } from "../services/authService";
+import { authService } from "../services/authService";
+import { useNavigate, Link } from "react-router-dom";
+import { LINKS } from "../routes/routes";
 
-const Login = () => {
-  const [email, setEmail] = useState("admin@example.com");
-  const [password, setPassword] = useState("admin123");
-  const [captchaCode, setCaptchaCode] = useState("");
-  const [captchaData, setCaptchaData] = useState<CaptchaResponse | null>(null);
-  const [isLoadingCaptcha, setIsLoadingCaptcha] = useState(false);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+const formSchema = {
+  fullname: "",
+  username: "",
+  email: "",
+  password: "",
+  confirm_password: "",
+}
+const Register = () => {
+  const navigate = useNavigate();
+  const [isRegistering, setIsRegistering] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
-  const fetchCaptcha = async () => {
-    setIsLoadingCaptcha(true);
-    try {
-      const data = await authService.getCaptcha();
-      setCaptchaData(data);
-    } catch (error: any) {
-      setErrorMessage(error.message || "Failed to load captcha");
-    } finally {
-      setIsLoadingCaptcha(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCaptcha();
-  }, []);
-
+  const [formData, setFormData] = useState<typeof formSchema>(formSchema);
+  const [errorForm, setErrorForm] = useState<typeof formSchema>(formSchema);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoggingIn(true);
-    setErrorMessage("");
+    setIsRegistering(true);
+    setErrorForm(formSchema);
+
+    if (formData.confirm_password !== formData.password) {
+      setErrorForm((prev: any) => ({ ...prev, confirm_password: "Passwords do not match" }));
+      setIsRegistering(false);
+      return;
+    }
 
     const payload = {
-      username: email,
-      password: password,
-      captcha_id: captchaData?.key || "",
-      captcha_code: captchaCode,
+      full_name: formData.fullname,
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+      confirm_password: formData.confirm_password,
+      is_active: true,
     };
 
     try {
-      const data = await authService.login(payload);
-      alert("Login successful!");
-      console.log("Logged in user:", data.user);
+      const data = await authService.register(payload);
+      console.log("Registered Data: ", data);
+      navigate(LINKS.LOGIN.path);
     } catch (error: any) {
-      setErrorMessage(error.message || "Login failed");
-      fetchCaptcha();
+      error.data?.errors?.forEach((item: { loc: Array<string>; msg: string }) => {
+        if (formSchema.hasOwnProperty(item.loc[1])) {
+          setErrorForm((prev: any) => ({ ...prev, [item.loc[1]]: item.msg }));
+        }
+      })
     } finally {
-      setIsLoggingIn(false);
+      setIsRegistering(false);
     }
   };
 
-  const containerStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: "calc(100vh - 200px)",
-    padding: "20px",
-  };
-
-  const cardStyle: React.CSSProperties = {
-    background: "white",
-    padding: "40px",
-    borderRadius: "12px",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
-    width: "100%",
-    maxWidth: "400px",
-    textAlign: "center",
-  };
-
-  const titleStyle: React.CSSProperties = {
-    fontSize: "24px",
-    fontWeight: "bold",
-    marginBottom: "10px",
-    color: "#333",
-  };
-
-  const subtitleStyle: React.CSSProperties = {
-    color: "#666",
-    marginBottom: "30px",
-    fontSize: "14px",
-  };
-
-  const formGroupStyle: React.CSSProperties = {
-    width: "100%",
-    marginBottom: "20px",
-    textAlign: "left",
-  };
-
-  const labelStyle: React.CSSProperties = {
-    display: "block",
-    marginBottom: "8px",
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#555",
-  };
-
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "12px 15px",
-    borderRadius: "6px",
-    border: "1px solid #ddd",
-    fontSize: "16px",
-    outline: "none",
-    transition: "border-color 0.3s",
-  };
-
-  const captchaContainerStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-    marginTop: "10px",
-  };
-
-  const captchaImageStyle: React.CSSProperties = {
-    height: "45px",
-    borderRadius: "6px",
-    border: "1px solid #ddd",
-    cursor: "pointer",
-    background: "#f9f9f9",
-  };
-
-  const loginButtonStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "12px",
-    background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-    color: "white",
-    border: "none",
-    borderRadius: "6px",
-    fontSize: "16px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    transition: "transform 0.2s, box-shadow 0.2s",
-    marginTop: "10px",
-  };
-
-  const footerStyle: React.CSSProperties = {
-    marginTop: "20px",
-    fontSize: "14px",
-    color: "#888",
-  };
-
   return (
-    <div style={containerStyle}>
-      <div style={cardStyle}>
-        <div style={{ fontSize: "40px", marginBottom: "15px" }}>🔐</div>
-        <h2 style={titleStyle}>Welcome Back</h2>
-        <p style={subtitleStyle}>Please enter your credentials to access the CRM</p>
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] p-5">
+      <div className="bg-white p-4 rounded-xl shadow-xl w-full max-w-[370px] text-center">
+        <h2 className="text-2xl font-bold mb-2 text-gray-800">Welcome to Sign Up</h2>
+        <p className="text-sm text-gray-600 mb-2">Please enter your details to register.</p>
 
         {errorMessage && (
-          <div style={{ color: "#e53e3e", background: "#fff5f5", padding: "10px", borderRadius: "6px", marginBottom: "20px", fontSize: "14px", border: "1px solid #fed7d7" }}>
+          <div className="text-red-600 bg-red-50 p-2 rounded-md mb-2 text-sm border border-red-200">
             {errorMessage}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <div style={formGroupStyle}>
-            <label style={labelStyle}>Email Address</label>
+          <div className="w-full mb-4 text-left">
+            <label htmlFor="fullname" className="block mb-0 text-sm font-semibold text-gray-700">Fullname:</label>
             <input
+              id="fullname"
+              type="text"
+              placeholder="Mohd Afroj"
+              className="w-full py-2 px-3 rounded-md border border-gray-300 text-sm outline-none transition-colors duration-300 focus:border-indigo-500"
+              value={formData.fullname}
+              onChange={(e) => { setFormData({ ...formData, fullname: e.target.value }); setErrorForm({ ...errorForm, fullname: '' }) }}
+            />
+            {errorForm.fullname && <p className="text-red-600 text-sm">{errorForm.fullname}</p>}
+          </div>
+
+          <div className="w-full mb-4 text-left">
+            <label htmlFor="username" className="block mb-0 text-sm font-semibold text-gray-700">Username:</label>
+            <input
+              id="username"
+              type="text"
+              placeholder="mohd.afroj"
+              className="w-full py-2 px-3 rounded-md border border-gray-300 text-sm outline-none transition-colors duration-300 focus:border-indigo-500"
+              value={formData.username}
+              onChange={(e) => { setFormData({ ...formData, username: e.target.value }); setErrorForm({ ...errorForm, username: '' }) }}
+            />
+            {errorForm.username && <p className="text-red-600 text-sm">{errorForm.username}</p>}
+          </div>
+
+          <div className="w-full mb-4 text-left">
+            <label htmlFor="email" className="block mb-0 text-sm font-semibold text-gray-700">Email:</label>
+            <input
+              id="email"
               type="email"
               placeholder="admin@example.com"
-              style={inputStyle}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
+              className="w-full py-2 px-3 rounded-md border border-gray-300 text-sm outline-none transition-colors duration-300 focus:border-indigo-500"
+              value={formData.email}
+              onChange={(e) => { setFormData({ ...formData, email: e.target.value }); setErrorForm({ ...errorForm, email: '' }) }}
             />
+            {errorForm.email && <p className="text-red-600 text-sm">{errorForm.email}</p>}
           </div>
 
-          <div style={formGroupStyle}>
-            <label style={labelStyle}>Password</label>
+          <div className="w-full mb-4 text-left">
+            <label htmlFor="password" className="block mb-0 text-sm font-semibold text-gray-700">Password:</label>
             <input
+              id="password"
               type="password"
               placeholder="••••••••"
-              style={inputStyle}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+              className="w-full py-2 px-3 rounded-md border border-gray-300 text-sm outline-none transition-colors duration-300 focus:border-indigo-500"
+              value={formData.password}
+              onChange={(e) => { setFormData({ ...formData, password: e.target.value }); setErrorForm({ ...errorForm, password: '' }) }}
             />
+            {errorForm.password && <p className="text-red-600 text-sm">{errorForm.password}</p>}
           </div>
 
-          <div style={formGroupStyle}>
-            <label style={labelStyle}>Captcha</label>
-            <div style={captchaContainerStyle}>
-              <input
-                type="text"
-                placeholder="Enter code"
-                style={{ ...inputStyle, flex: 1 }}
-                value={captchaCode}
-                onChange={(e) => setCaptchaCode(e.target.value)}
-                required
-              />
-              {captchaData ? (
-                <img
-                  src={captchaData.img}
-                  alt="captcha"
-                  style={captchaImageStyle}
-                  onClick={fetchCaptcha}
-                  title="Click to refresh"
-                />
-              ) : (
-                <div
-                  style={{ ...captchaImageStyle, width: "120px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", color: "#999" }}
-                  onClick={fetchCaptcha}
-                >
-                  {isLoadingCaptcha ? "Loading..." : "Reload"}
-                </div>
-              )}
-            </div>
+          <div className="w-full mb-4 text-left">
+            <label htmlFor="confirm_password" className="block mb-0 text-sm font-semibold text-gray-700">Confirm Password:</label>
+            <input
+              id="confirm_password"
+              type="password"
+              placeholder="••••••••"
+              className="w-full py-2 px-3 rounded-md border border-gray-300 text-sm outline-none transition-colors duration-300 focus:border-indigo-500"
+              value={formData.confirm_password}
+              onChange={(e) => { setFormData({ ...formData, confirm_password: e.target.value }); setErrorForm({ ...errorForm, confirm_password: '' }) }}
+            />
+            {errorForm.confirm_password && <p className="text-red-600 text-sm">{errorForm.confirm_password}</p>}
           </div>
 
           <button
             type="submit"
-            style={{ ...loginButtonStyle, opacity: isLoggingIn ? 0.7 : 1, cursor: isLoggingIn ? "not-allowed" : "pointer" }}
-            disabled={isLoggingIn}
-            onMouseEnter={(e) => {
-              if (!isLoggingIn) {
-                e.currentTarget.style.transform = "translateY(-1px)";
-                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "none";
-            }}
+            disabled={isRegistering}
+            className={`w-full py-2 mt-2 bg-blue-950 text-white font-bold rounded-md disabled:opacity-70 ${isRegistering ? "cursor-not-allowed opacity-70" : "cursor-pointer"
+              }`}
           >
-            {isLoggingIn ? "Signing In..." : "Sign In"}
+            {isRegistering ? "Signing Up..." : "Sign Up"}
           </button>
         </form>
 
-        <div style={footerStyle}>
-          Already have an account? <span style={{ color: "#667eea", cursor: "pointer" }}>Click to login</span>
+        <div className="mt-2 text-sm text-gray-600">
+          Already have an account?{" "}
+          <Link to={LINKS.LOGIN.path} className="text-blue-950 hover:text-blue-800">
+            Click to Login
+          </Link>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default Register;

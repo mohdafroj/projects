@@ -47,7 +47,7 @@ const BASE_PATH = "/auth";
 const ENDPOINTS = {
   CAPTCHA: `${BASE_PATH}/captcha`,
   LOGIN: `${BASE_PATH}/login`,
-  REGISTER: `${BASE_PATH}/register`,
+  REGISTER: `/users/register`,
 };
 
 // --- Service ---
@@ -56,7 +56,7 @@ export const authService = {
    * Fetches a new captcha image and key
    */
   async getCaptcha(): Promise<CaptchaResponse> {
-    const response = await api.get<CaptchaResponse>(ENDPOINTS.CAPTCHA, {
+    const response = await api.get<CaptchaResponse, any>(ENDPOINTS.CAPTCHA, {
       responseType: "blob", // Important to handle image data correctly
     });
     const imgUrl = URL.createObjectURL(response.data);
