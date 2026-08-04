@@ -14,9 +14,8 @@ const api: AxiosInstance = axios.create({
 // Request Interceptor: Attach tokens or log requests
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    // Example: const token = localStorage.getItem("token");
-    // if (token) config.headers.Authorization = `Bearer ${token}`;
-    //console.log(`[API Request] ${config.method?.toUpperCase()} ${config.url}`);
+    const token = sessionStorage.getItem("access_token");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   (error: AxiosError) => {
@@ -29,14 +28,30 @@ api.interceptors.response.use(
   (response: AxiosResponse) => {
     return response;
   },
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
     const status = error.response?.status;
     const data: any = error.response?.data;
-
-    // Centralized Error Logic
     if (status === 401) {
-      console.warn("Unauthorized! Redirecting to login...");
-      // Optional: Clear storage and redirect
+      const refresh_token = localStorage.getItem("refresh_token");
+      const access_token = sessionStorage.getItem("access_token");
+      if (refresh_token && access_token) {
+        try {
+          const res = await api.post("/auth/refresh", {
+            refresh_token,
+            access_token,
+          });
+          if (res.data?.token) {
+            sessionStorage.setItem("access_token", res.data.token);
+            if (error.config) {
+              error.config.headers.Authorization = `Bearer ${res.data.token}`;
+            }
+            return api.request(error.config as InternalAxiosRequestConfig);
+          }
+        } catch (error) {
+          sessionStorage.removeItem("access_token");
+          window.location.href = "/login";
+        }
+      }
     }
 
     const customError = {

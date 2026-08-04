@@ -3,7 +3,7 @@ import { authService, CaptchaResponse } from "../services/authService";
 import { useNavigate, Link } from "react-router-dom";
 import { LINKS } from "../routes/routes";
 const formSchema = {
-  email: "",
+  username: "",
   password: "",
   captcha_code: "",
 }
@@ -42,16 +42,20 @@ const Login = () => {
     setErrorMessage("");
 
     const payload = {
-      username: formData.email,
+      username: formData.username,
       password: formData.password,
       captcha_id: captchaData?.key || "",
       captcha_code: formData.captcha_code,
     };
 
     try {
-      const data = await authService.login(payload);
-      console.log("Logged Data: ", data);
-      sessionStorage.setItem("iam_token", "121212");
+      const response: any = await authService.login(payload);
+      if (response?.access_token && response?.refresh_token) {
+        sessionStorage.setItem("access_token", response.access_token);
+        localStorage.setItem("refresh_token", response.refresh_token);
+        console.log("Before", LINKS.DASHBOARD.path)
+        navigate(LINKS.DASHBOARD.path);
+      }
     } catch (error: any) {
       setErrorMessage(error.message || "Login failed");
       fetchCaptcha();
@@ -75,17 +79,17 @@ const Login = () => {
 
         <form onSubmit={handleSubmit}>
           <div className="w-full mb-4 text-left">
-            <label htmlFor="email" className="block mb-0 text-sm font-semibold text-gray-700">Email:</label>
+            <label htmlFor="username" className="block mb-0 text-sm font-semibold text-gray-700">User Name:</label>
             <input
-              id="email"
-              type="email"
-              placeholder="admin@example.com"
+              id="username"
+              type="username"
+              placeholder="Please enter your username"
               className="w-full py-2 px-3 rounded-md border border-gray-300 text-sm outline-none transition-colors duration-300 focus:border-indigo-500"
-              value={formData.email}
-              onChange={(e) => { setFormData({ ...formData, email: e.target.value }); setErrorForm({ ...errorForm, email: '' }) }}
+              value={formData.username}
+              onChange={(e) => { setFormData({ ...formData, username: e.target.value }); setErrorForm({ ...errorForm, username: '' }) }}
               required
             />
-            {errorForm.email && <p className="text-red-600 text-sm">{errorForm.email}</p>}
+            {errorForm.username && <p className="text-red-600 text-sm">{errorForm.username}</p>}
           </div>
 
           <div className="w-full mb-4 text-left">

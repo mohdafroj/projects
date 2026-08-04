@@ -4,18 +4,17 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import IAMDashboard from "./pages/Dashboard";
 import { LINKS } from "./routes/routes";
-console.log(LINKS)
 
 const Logout = () => {
   useEffect(() => {
-    localStorage.removeItem("iam_token");
-    sessionStorage.clear();
+    sessionStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
   }, []);
 
   return <Navigate to={LINKS.LOGIN.path} replace />;
 };
 const AppRouter = () => {
-  const token = sessionStorage.getItem("iam_token");
+  const token = sessionStorage.getItem("access_token");
   return (
     <Routes>
       {token ? (
