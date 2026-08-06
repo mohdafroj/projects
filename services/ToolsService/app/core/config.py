@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Optional
 from pydantic import AnyHttpUrl, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -7,12 +7,15 @@ class Settings(BaseSettings):
         env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
     )
 
-    PROJECT_NAME: str = "IMA System"
+    PROJECT_NAME: str = "FastAPI Tools Service"
     ENVIRONMENT: str = "development"
     DEBUG: bool = True
     
     # API V1 prefix
     API_V1_STR: str = "/api/v1"
+
+    # OpenAI API Key
+    OPENAI_API_KEY: Optional[str] = None
 
     # Security
     SECRET_KEY: str
@@ -34,16 +37,12 @@ class Settings(BaseSettings):
     def assemble_db_connection(cls, v: str | None, info) -> str:
         if isinstance(v, str) and v:
             return v
-        return f"postgresql+asyncpg://{info.data.get('POSTGRES_USER')}:{info.data.get('POSTGRES_PASSWORD')}@{info.data.get('POSTGRES_SERVER')}:{info.data.get('POSTGRES_PORT')}/{info.data.get('POSTGRES_DB')}?schema=public"
+        return f"postgresql+asyncpg://{info.data.get('POSTGRES_USER')}:{info.data.get('POSTGRES_PASSWORD')}@{info.data.get('POSTGRES_SERVER')}:{info.data.get('POSTGRES_PORT')}/{info.data.get('POSTGRES_DB')}?schema=tools"
 
     # Redis
     REDIS_HOST: str
     REDIS_PORT: int = 6379
     REDIS_URL: str | None = None
-
-    # pgAdmin
-    PGADMIN_DEFAULT_EMAIL: str | None = None
-    PGADMIN_DEFAULT_PASSWORD: str | None = None
 
     @field_validator("REDIS_URL", mode="before")
     @classmethod

@@ -1,7 +1,34 @@
+x-postgres-port: &postgres-port 5432
+x-postgres-port-map: &postgres-port-map "5432-5442"
+x-common-env: &common-env
+  DEBUG: True
+  ENVIRONMENT: development
+  SECRET_KEY: 09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7
+  JWT_SECRET: 882e566736203115c544837549b67484d85202860d5b630f784f1837d3897850
+  ALGORITHM: HS256
+  ACCESS_TOKEN_EXPIRE_MINUTES: 30
+  REFRESH_TOKEN_EXPIRE_DAYS: 7
+
+  # Database
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  POSTGRES_DB: postgres
+  POSTGRES_PORT: *postgres-port
+
+  MONGODB_URI: mongodb://admin:admin123@srv_mongodb:27017/inventory_db?authSource=admin
+  REDIS_URL: redis://srv_redis:6379/0
+
+x-common-service: &common-service
+  restart: always
+  networks:
+    - backendnetwork
+
 services:
   srv_opensearch:
+    <<: *common-service
     image: opensearchproject/opensearch:2.19.1
     container_name: ctr_opensearch
+    restart: unless-stopped
     environment:
       - cluster.name=opensearch-cluster
       - node.name=opensearch-node
@@ -34,13 +61,12 @@ services:
     ports:
       - "9200:9200"
       - "9600:9600"
-    restart: unless-stopped
-    networks:
-      - backendnetwork
 
   srv_os_dashboards:
+    <<: *common-service
     image: opensearchproject/opensearch-dashboards:2.19.1
     container_name: ctr_os_dashboards
+    restart: unless-stopped
     environment:
       OPENSEARCH_HOSTS: '["http://srv_opensearch:9200"]'
       DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"
@@ -49,22 +75,15 @@ services:
     depends_on:
       srv_opensearch:
         condition: service_healthy
-    restart: unless-stopped
-    networks:
-      - backendnetwork
+
   srv_postgres_db:
+    <<: *common-service
     image: postgres:15-alpine
     container_name: ctr_postgres_db
-    restart: always
     environment:
-      # POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      # POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      # POSTGRES_DB: ${POSTGRES_DB:-postgres}
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+      <<: *common-env
     ports:
-      - "5432:5432"
+      - *postgres-port-map
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres-init:/docker-entrypoint-initdb.d
@@ -73,23 +92,19 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - backendnetwork
 
   srv_mongodb:
+    <<: *common-service
     image: mongo:8
     container_name: ctr_mongodb
-    restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-admin123}
-      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-inventory_db}
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin123
+      - MONGO_INITDB_DATABASE=inventory_db
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
-    networks:
-      - backendnetwork
     healthcheck:
       test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
       interval: 10s
@@ -97,13 +112,11 @@ services:
       retries: 5
 
   srv_redis:
+    <<: *common-service
     image: redis:alpine
     container_name: ctr_redis
-    restart: always
     ports:
       - "6379:6379"
-    networks:
-      - backendnetwork
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
@@ -111,31 +124,28 @@ services:
       retries: 5
 
   srv_pgadmin:
+    <<: *common-service
     image: dpage/pgadmin4
     container_name: ctr_pgadmin
-    restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@example.com}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      - PGADMIN_DEFAULT_EMAIL=admin@example.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
     ports:
       - "5050:80"
     depends_on:
       - srv_postgres_db
-    networks:
-      - backendnetwork
 
   srv_dbgate:
+    <<: *common-service
     image: dbgate/dbgate
     container_name: ctr_dbgate
-    restart: always
     ports:
       - "5051:3000"
     volumes:
       - dbgate_data:/root/.dbgate
-    networks:
-      - backendnetwork
 
   srv_auth:
+    <<: *common-service
     build:
       context: ./AuthService
       dockerfile: Dockerfile
@@ -150,15 +160,13 @@ services:
     env_file:
       - ./AuthService/.env
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@srv_postgres_db:5432/fastapi_db
-      REDIS_URL: redis://srv_redis:6379/0
+      <<: *common-env
+      POSTGRES_DB: fastapi_db
     volumes:
       - ./AuthService:/app
-    restart: always
-    networks:
-      - backendnetwork
 
   srv_inventory:
+    <<: *common-service
     build:
       context: ./InventoryService
       dockerfile: Dockerfile
@@ -173,18 +181,15 @@ services:
     env_file:
       - ./InventoryService/.env
     environment:
+      <<: *common-env
       OPENSEARCH_URL: http://srv_opensearch:9200
-      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@srv_mongodb:27017/${MONGO_DATABASE:-inventory_db}?authSource=admin
-      REDIS_URL: redis://srv_redis:6379/0
       TSC_WATCHFILE: PriorityPollingInterval
     volumes:
       - ./InventoryService:/app
       - inventory_node_modules:/app/node_modules
-    restart: always
-    networks:
-      - backendnetwork
 
   srv_order:
+    <<: *common-service
     build:
       context: ./OrderService
       dockerfile: Dockerfile.dev
@@ -198,17 +203,16 @@ services:
     env_file:
       - ./OrderService/.env.development
     environment:
+      <<: *common-env
       POSTGRES_DB_HOST: srv_postgres_db
       POSTGRES_DB_NAME: order_db
-      DATABASE_URL: postgresql://postgres:postgres@srv_postgres_db:5432/order_db?schema=public
+      DATABASE_URL: postgresql://postgres:postgres@srv_postgres_db:5432/order_db
     volumes:
       - ./OrderService:/app
       - order_node_modules:/app/node_modules
-    restart: always
-    networks:
-      - backendnetwork
 
   srv_ocr:
+    <<: *common-service
     build:
       context: ./OcrService
       dockerfile: Dockerfile
@@ -225,16 +229,35 @@ services:
     env_file:
       - ./OcrService/.env
     environment:
+      <<: *common-env
       OPENSEARCH_URL: http://srv_opensearch:9200
-      MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-admin123}@srv_mongodb:27017/${MONGO_DATABASE:-ocr_db}?authSource=admin
-      REDIS_URL: redis://srv_redis:6379/0
+      MONGODB_URI: mongodb://admin:admin123@srv_mongodb:27017/ocr_db?authSource=admin
       TSC_WATCHFILE: PriorityPollingInterval
     volumes:
       - ./OcrService:/app
       - ocr_node_modules:/app/node_modules
-    restart: always
-    networks:
-      - backendnetwork
+
+  srv_tools:
+    <<: *common-service
+    build:
+      context: ./ToolsService
+      dockerfile: Dockerfile
+    container_name: ctr_tools
+    depends_on:
+      srv_postgres_db:
+        condition: service_healthy
+      srv_redis:
+        condition: service_healthy
+    ports:
+      - "8004:8000"
+    env_file:
+      - ./ToolsService/.env
+    environment:
+      <<: *common-env
+      OPENAI_API_KEY: YOUR_OPENAI_API_KEY
+      POSTGRES_DB: fastapi_db
+    volumes:
+      - ./ToolsService:/app
 
 volumes:
   opensearch_data:

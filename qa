@@ -1,0 +1,77 @@
+1. N+1 Problem:
+
+The N+1 query problem is a performance issue that occurs when an application executes one query to fetch a list of records (1 query) and then one 
+additional query for each record (N queries) to fetch related data.
+
+2. Check for DB Performance:
+Slow queries
+N+1 queries
+Missing indexes
+Full table scans
+Large JOINs
+Fetching unnecessary columns
+
+
+==================================================================
+Find Prime Number 1 to 100:
+n = 100
+totalLoop = 0
+totalPrime = 0
+print("Prime Number: ")
+if ( n > 2 ):
+    totalPrime += 1
+    print(2)
+    for i in range(3,n,2):
+        isPrime = True
+        for j in range(3, int(i**0.5) + 1, 2):
+            totalLoop += 1
+            if(i%j == 0):
+                isPrime = False
+                break
+        if (isPrime):
+            totalPrime += 1
+            print(i)
+print("Total Loop: ", totalLoop)
+print("Total Prime: ", totalPrime)
+__________________________________________________________________
+Find Paires number in array where sum of number is given
+arr = [5,4,2,6,3,1,9,7,8]
+arr.sort()
+sumOfNumber = 8
+left = 0
+right = len(arr) - 1
+while (left < right):
+    if ( arr[left] + arr[right] < sumOfNumber ):
+        left += 1
+    elif ( arr[left] + arr[right] > sumOfNumber ):
+        right -= 1
+    else:
+        print(f'({arr[left]}, {arr[right]})')
+        left += 1
+        right -= 1
+
+__________________________________________________________________
+Find the frequesncies of words in to given string
+out = {}
+for word in 'An apple away from the Doctors, so eat an apple daily.'.lower().split(' '):
+    out[word] = out.get(word, 0) + 1
+print(out)
+
+__________________________________________________________________
+Find the missing number of array
+arr = [1, 2, 3, 5]
+
+n = len(arr) + 1
+missing = n * (n + 1) // 2 - sum(arr)
+
+print(missing)
+
+__________________________________________________________________
+__________________________________________________________________
+__________________________________________________________________
+__________________________________________________________________
+
+
+
+
+==================================================================

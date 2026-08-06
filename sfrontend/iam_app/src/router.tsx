@@ -1,18 +1,10 @@
 import React, { useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import IAMDashboard from "./pages/Dashboard";
 import { LINKS } from "./routes/routes";
 
-const Logout = () => {
-  useEffect(() => {
-    sessionStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-  }, []);
-
-  return <Navigate to={LINKS.LOGIN.path} replace />;
-};
 const AppRouter = () => {
   const token = sessionStorage.getItem("access_token");
   return (
@@ -20,7 +12,6 @@ const AppRouter = () => {
       {token ? (
         <>
           <Route path="/" key="Dashboard" element={<IAMDashboard />} />
-          <Route path="/logout" key="Logout" element={<Logout />} />
           <Route path="*" key={'NotFound'} element={<Navigate to="/" replace />} />
         </>
       ) : (

@@ -1,96 +1,39 @@
 import React, { Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./layouts/Layout";
+import ChatbotDashboard from "./pages/aichatbot/ChatbotDashboard";
+import ChatappDashboard from "./pages/chatapp/ChatappDashboard";
+import ResumeDashboard from "./pages/resume/ResumeDashboard";
+import FinanceDashboard from "./pages/financetracker/FinanceDashboard";
+import WebscrapDashboard from "./pages/webscrap/WebscrapDashboard";
+import ToolsDashboard from "./pages/tools/ToolsDashboard";
 
-const RemoteHeader = React.lazy(() => import("remoteHeader/Header"));
 const RemoteIAM = React.lazy(() => import("remoteIAM/IAM"));
-
-const iamPath = process.env.IAM_BASE_PATH || "";
-
-const Dashboard = () => (
-  <div style={{ padding: "20px" }}>
-    <h2>Software Main App 1</h2>
-    <p>Welcome to the Software System</p>
-    <div style={{ marginTop: "20px" }}>
-      <h3>Quick Links:</h3>
-      <ul>
-        <li>
-          <Link to="/students">Students Management</Link>
-        </li>
-        <li>
-          <Link to="/teachers">Teachers Management</Link>
-        </li>
-        <li>
-          <Link to="/classes">Classes Management</Link>
-        </li>
-        <li>
-          <Link to="/attendance">Attendance</Link>
-        </li>
-        <li>
-          <Link to={iamPath}>IAM Management</Link>
-        </li>
-      </ul>
-    </div>
-  </div>
-);
-
-const Students = () => (
-  <div style={{ padding: "20px" }}>
-    <h2>Students Management</h2>
-    <p>Manage student records, enrollment, and progress tracking.</p>
-  </div>
-);
-
-const Teachers = () => (
-  <div style={{ padding: "20px" }}>
-    <h2>Teachers Management</h2>
-    <p>Manage teacher profiles, assignments, and schedules.</p>
-  </div>
-);
-
-const Classes = () => (
-  <div style={{ padding: "20px" }}>
-    <h2>Classes Management</h2>
-    <p>Manage class sections, timetables, and curricula.</p>
-  </div>
-);
-
-const Attendance = () => (
-  <div style={{ padding: "20px" }}>
-    <h2>Attendance</h2>
-    <p>Track student and teacher attendance.</p>
-  </div>
-);
+const iamPath = process.env.IAM_BASE_PATH || "/iam";
 
 export const App = () => {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <div
-        style={{
-          fontFamily: "Arial, sans-serif",
-          background: "#f5f5f5",
-          minHeight: "100vh",
-        }}
-      >
-        <Suspense fallback={<div style={{ padding: "20px" }}>Loading Header...</div>}>
-          <RemoteHeader />
-        </Suspense>
 
+      <Layout>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/students" element={<Students />} />
-          <Route path="/teachers" element={<Teachers />} />
-          <Route path="/classes" element={<Classes />} />
-          <Route path="/attendance" element={<Attendance />} />
+          <Route path="/" element={<ChatbotDashboard />} />
+          <Route path="/chatapp" element={<ChatappDashboard />} />
+          <Route path="/resume-analyzer" element={<ResumeDashboard />} />
+          <Route path="/web-scraping" element={<WebscrapDashboard />} />
+          <Route path="/finance-tracker" element={<FinanceDashboard />} />
+          <Route path="/tools" element={<ToolsDashboard />} />
           <Route
             path={`${iamPath}/*`}
             element={
-              <Suspense fallback={<div style={{ padding: "20px" }}>Loading IAM Module...</div>}>
+              <Suspense fallback={<div className="px-5 py-2 text-red-800">Loading IAM Module...</div>}>
                 <RemoteIAM />
               </Suspense>
             }
           />
         </Routes>
-      </div>
+      </Layout>
+
     </Router>
   );
 };

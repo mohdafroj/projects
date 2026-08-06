@@ -29,15 +29,17 @@ const Login = () => {
   };
 
   useEffect(() => {
-    const token = sessionStorage.getItem("iam_token");
-    if (token) {
-      navigate(LINKS.DASHBOARD.path);
-    }
-    fetchCaptcha();
+    console.log(LINKS)
+    //fetchCaptcha();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    sessionStorage.setItem("access_token", "test");
+    localStorage.setItem("refresh_token", "test");
+
+    window.location.href = LINKS.DASHBOARD.path;
+    return;
     setIsLoggingIn(true);
     setErrorMessage("");
 
@@ -87,7 +89,6 @@ const Login = () => {
               className="w-full py-2 px-3 rounded-md border border-gray-300 text-sm outline-none transition-colors duration-300 focus:border-indigo-500"
               value={formData.username}
               onChange={(e) => { setFormData({ ...formData, username: e.target.value }); setErrorForm({ ...errorForm, username: '' }) }}
-              required
             />
             {errorForm.username && <p className="text-red-600 text-sm">{errorForm.username}</p>}
           </div>
@@ -101,7 +102,6 @@ const Login = () => {
               className="w-full py-2 px-3 rounded-md border border-gray-300 text-sm outline-none transition-colors duration-300 focus:border-indigo-500"
               value={formData.password}
               onChange={(e) => { setFormData({ ...formData, password: e.target.value }); setErrorForm({ ...errorForm, password: '' }) }}
-              required
             />
             {errorForm.password && <p className="text-red-600 text-sm">{errorForm.password}</p>}
           </div>
@@ -115,7 +115,6 @@ const Login = () => {
                 className="w-full p-2 rounded-md border border-gray-300 text-sm outline-none transition-colors duration-300 focus:border-indigo-500 flex-1"
                 value={formData.captcha_code}
                 onChange={(e) => { setFormData({ ...formData, captcha_code: e.target.value }); setErrorForm({ ...errorForm, captcha_code: '' }) }}
-                required
               />
               {captchaData ? (
                 <img

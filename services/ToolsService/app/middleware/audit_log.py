@@ -1,0 +1,44 @@
+import time
+import logging
+from fastapi import Request
+from starlette.middleware.base import BaseHTTPMiddleware
+from app.middleware.correlation import get_request_id
+from app.core.security import decode_nested_token
+
+logger = logging.getLogger("audit")
+
+class AuditLogMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # 1. Capture request details before execution
+        action = request.method
+        resource = str(request.url.path)
+        ip_address = request.client.host if request.client else None
+        user_agent = request.headers.get("user-agent")
+        
+        # Only log state-changing operations
+        is_state_changing = action in ["POST", "PATCH", "PUT", "DELETE"]
+        
+        # Try to get user_id from token if present
+        user_id = None
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            try:
+                token = auth_header.split(" ")[1]
+                payload = decode_nested_token(token)
+                user_id = payload.get("sub")
+            except:
+                pass 
+        
+        # 2. Execute the request
+        response = await call_next(request)
+        
+        # 3. Log after execution
+        if is_state_changing:
+            request_id = get_request_id()
+            # Log action details
+            logger.info(
+                f"Audit Log: [req_id={request_id}] user={user_id} performed {action} on {resource} - "
+                f"Status: {response.status_code} - IP: {ip_address} - User-Agent: {user_agent}"
+            )
+        
+        return response

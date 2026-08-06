@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 
-const IAM_BASE_PATH = process.env.IAM_BASE_PATH || "";
+const IAM_BASE_PATH = process.env.IAM_BASE_PATH || "/iam";
 
 export interface AppRoute {
     name: string;
@@ -49,7 +49,7 @@ export const getRouteMeta = (name: string) => routes.find((r) => r.name === name
 export const LINKS = {
     IAM_BASE_PATH: IAM_BASE_PATH,
     DASHBOARD: {
-        path: IAM_BASE_PATH + '/',
+        path: IAM_BASE_PATH,
         name: 'Dashboard',
         meta: {
             title: 'Dashboard',
