@@ -11,7 +11,7 @@ Full table scans
 Large JOINs
 Fetching unnecessary columns
 
-
+YOUR_OPENAI_API_KEY
 ==================================================================
 Find Prime Number 1 to 100:
 n = 100
