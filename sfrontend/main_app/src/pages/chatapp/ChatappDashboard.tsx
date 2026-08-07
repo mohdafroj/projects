@@ -162,6 +162,7 @@ const ChatappDashboard = () => {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const callTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
 
   // Auto-scroll messages
   const scrollToBottom = () => {
@@ -172,14 +173,100 @@ const ChatappDashboard = () => {
     scrollToBottom();
   }, [messages, activeRoom]);
 
+  // Fetch rooms list from the backend on mount
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const response = await fetch("http://localhost:8004/api/v1/chat/rooms");
+        const resData = await response.json();
+        if (resData.success && resData.data && resData.data.length > 0) {
+          setRooms(resData.data);
+          // Set first room as active initially
+          setActiveRoom(resData.data[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching rooms from backend:", error);
+      }
+    };
+    fetchRooms();
+  }, []);
+
+  // Fetch messages and manage WebSocket connection on activeRoom change
+  useEffect(() => {
+    if (!activeRoom) return;
+
+    // Check if room ID is a valid UUID (backend vs initial hardcoded mock string)
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(activeRoom.id);
+    
+    if (isUuid) {
+      // Fetch historical messages from REST API
+      const fetchMessages = async () => {
+        try {
+          const response = await fetch(`http://localhost:8004/api/v1/chat/rooms/${activeRoom.id}/messages`);
+          const resData = await response.json();
+          if (resData.success && resData.data) {
+            setMessages((prev) => ({
+              ...prev,
+              [activeRoom.id]: resData.data,
+            }));
+          }
+        } catch (error) {
+          console.error(`Error fetching messages for room ${activeRoom.id}:`, error);
+        }
+      };
+      fetchMessages();
+
+      // Establish live WebSocket connection
+      const wsUrl = `ws://localhost:8004/api/v1/chat/ws/${activeRoom.id}`;
+      const ws = new WebSocket(wsUrl);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        console.log(`WebSocket connected to room: ${activeRoom.name}`);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const newMsg: ChatMessage = JSON.parse(event.data);
+          setMessages((prev) => {
+            const roomMsgs = prev[activeRoom.id] || [];
+            // Prevent duplicate message rendering
+            if (roomMsgs.some((m) => m.id === newMsg.id)) {
+              return prev;
+            }
+            return {
+              ...prev,
+              [activeRoom.id]: [...roomMsgs, newMsg],
+            };
+          });
+        } catch (err) {
+          console.error("Failed to parse WebSocket message:", err);
+        }
+      };
+
+      ws.onerror = (err) => {
+        console.error("WebSocket error:", err);
+      };
+
+      ws.onclose = () => {
+        console.log(`WebSocket disconnected from room: ${activeRoom.name}`);
+      };
+
+      return () => {
+        ws.close();
+        wsRef.current = null;
+      };
+    }
+  }, [activeRoom?.id]);
+
   // Mark room as read when selected
   useEffect(() => {
-    if (activeRoom.unreadCount > 0) {
+    if (activeRoom && activeRoom.unreadCount > 0) {
       setRooms((prev) =>
         prev.map((r) => (r.id === activeRoom.id ? { ...r, unreadCount: 0 } : r))
       );
     }
-  }, [activeRoom.id]);
+  }, [activeRoom?.id]);
 
   // Call timer simulation
   useEffect(() => {
@@ -199,51 +286,66 @@ const ChatappDashboard = () => {
   }, [callState]);
 
   const handleSendMessage = (text: string) => {
-    if (!text.trim()) return;
+    if (!text.trim() || !activeRoom) return;
 
-    const newMsg: ChatMessage = {
-      id: Math.random().toString(),
-      senderName: "Admin",
-      senderAvatar: "👤",
-      senderColor: "from-indigo-600 to-indigo-700",
-      text: text,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      isUser: true,
-    };
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(activeRoom.id);
 
-    setMessages((prev) => ({
-      ...prev,
-      [activeRoom.id]: [...(prev[activeRoom.id] || []), newMsg],
-    }));
-
-    setInputText("");
-
-    // Simulate Reply after 1.5 seconds
-    setTimeout(() => {
-      const responses = [
-        "Sounds good! Let's sync up later on this.",
-        "Got it, reviewing the details right now.",
-        "Understood, I am on it.",
-        "Interesting. Let's discuss this during our morning standup.",
-        "Can you send the links/docs for references?",
-      ];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-
-      const replyMsg: ChatMessage = {
+    if (isUuid && wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      const payload = {
+        senderName: "Admin",
+        senderAvatar: "👤",
+        senderColor: "from-indigo-600 to-indigo-700",
+        text: text,
+        isUser: true,
+      };
+      wsRef.current.send(JSON.stringify(payload));
+      setInputText("");
+    } else {
+      // Fallback local simulation if database service is not fully updated
+      const newMsg: ChatMessage = {
         id: Math.random().toString(),
-        senderName: activeRoom.type === "dm" ? activeRoom.name : "Alex (Systems Dev)",
-        senderAvatar: activeRoom.type === "dm" ? activeRoom.avatar : "👨‍💻",
-        senderColor: activeRoom.type === "dm" ? activeRoom.avatarColor : "from-indigo-500 to-purple-500",
-        text: randomResponse,
+        senderName: "Admin",
+        senderAvatar: "👤",
+        senderColor: "from-indigo-600 to-indigo-700",
+        text: text,
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        isUser: false,
+        isUser: true,
       };
 
       setMessages((prev) => ({
         ...prev,
-        [activeRoom.id]: [...(prev[activeRoom.id] || []), replyMsg],
+        [activeRoom.id]: [...(prev[activeRoom.id] || []), newMsg],
       }));
-    }, 1500);
+
+      setInputText("");
+
+      // Simulate Reply after 1.5 seconds
+      setTimeout(() => {
+        const responses = [
+          "Sounds good! Let's sync up later on this.",
+          "Got it, reviewing the details right now.",
+          "Understood, I am on it.",
+          "Interesting. Let's discuss this during our morning standup.",
+          "Can you send the links/docs for references?",
+        ];
+        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+        const replyMsg: ChatMessage = {
+          id: Math.random().toString(),
+          senderName: activeRoom.type === "dm" ? activeRoom.name : "Alex (Systems Dev)",
+          senderAvatar: activeRoom.type === "dm" ? activeRoom.avatar : "👨‍💻",
+          senderColor: activeRoom.type === "dm" ? activeRoom.avatarColor : "from-indigo-500 to-purple-500",
+          text: randomResponse,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          isUser: false,
+        };
+
+        setMessages((prev) => ({
+          ...prev,
+          [activeRoom.id]: [...(prev[activeRoom.id] || []), replyMsg],
+        }));
+      }, 1500);
+    }
   };
 
   const handleStartCall = () => {

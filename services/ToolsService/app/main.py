@@ -8,10 +8,27 @@ from app.middleware.audit_log import AuditLogMiddleware
 from app.middleware.security import SecurityHeadersMiddleware
 from app.middleware.correlation import CorrelationIDMiddleware
 
+from contextlib import asynccontextmanager
+from sqlalchemy import text
+from app.db.session import engine, AsyncSessionLocal
+from app.services.chat_service import ChatService
 from app.core.config import settings
 from app.core.exceptions import AppException
 from app.core.logger import setup_logging
 from app.api.v1.api import api_router
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Ensure tools schema exists in shared postgres database
+    async with engine.begin() as conn:
+        await conn.execute(text("CREATE SCHEMA IF NOT EXISTS tools"))
+        
+    # Auto-seed initial rooms and messages if database is empty
+    async with AsyncSessionLocal() as db:
+        chat_service = ChatService()
+        await chat_service.seed_initial_data(db)
+        await db.commit()
+    yield
 
 def get_application() -> FastAPI:
     setup_logging()
@@ -19,6 +36,7 @@ def get_application() -> FastAPI:
     _app = FastAPI(
         title=settings.PROJECT_NAME,
         debug=settings.DEBUG,
+        lifespan=lifespan,
     )
 
     # Set all CORS enabled origins
