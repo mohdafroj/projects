@@ -256,8 +256,6 @@ services:
       <<: *common-env
 <<<<<<< HEAD
       OPENAI_API_KEY: YOUR_OPENAI_API_KEY
-=======
->>>>>>> 1e9f4b3 (added tools service)
       POSTGRES_DB: fastapi_db
     volumes:
       - ./ToolsService:/app

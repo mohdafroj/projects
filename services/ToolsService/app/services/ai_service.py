@@ -7,7 +7,11 @@ from app.schemas.chat import ChatMessage
 class AIService:
     def __init__(self):
         # Read API key from environment
+<<<<<<< HEAD
         self.api_key = os.getenv("OPENAI_API_KEY", "")
+=======
+        self.api_key = os.getenv("TEST_API_KEY", "")
+>>>>>>> 34a3883 (added)
         self.has_real_key = bool(self.api_key and not self.api_key.startswith("sk-placeholder") and len(self.api_key) > 10)
         if self.has_real_key:
             self.client = AsyncOpenAI(api_key=self.api_key)
