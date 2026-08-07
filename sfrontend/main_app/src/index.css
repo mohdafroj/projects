@@ -2,5 +2,5 @@
 @config "../tailwind.config.js";
 
 body {
-    @apply bg-green-100 text-slate-900 font-sans;
+    @apply text-slate-900 font-sans;
 }

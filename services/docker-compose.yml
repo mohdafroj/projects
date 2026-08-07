@@ -254,7 +254,7 @@ services:
       - ./ToolsService/.env
     environment:
       <<: *common-env
-      OPENAI_API_KEY: YOUR_OPENAI_API_KEY
+      OPENAI_API_KEY: H4o-W-0gjCufmyYgWRLlHXMo9247SZ41kGLNygCbYAQA0IWBJvrKF6WOr598nNzcfegKWSy8OST3BlbkFJoR0tM-btMafSyPR-o5jl_pJLGGAR8Okjg3AXSyz_cmKObVCguF2agBJRNpXiU3Ifil_bBIco8A
       POSTGRES_DB: fastapi_db
     volumes:
       - ./ToolsService:/app
