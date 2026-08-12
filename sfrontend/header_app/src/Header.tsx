@@ -75,6 +75,7 @@ const Header = () => {
                 <div className="flex items-center gap-3">
                   <span className="text-sm">👤 Admin</span>
                   <button
+                    aria-label="Logout"
                     className="px-3 py-1 bg-gray-900 hover:bg-gray-700 border border-gray-800 rounded-md cursor-pointer text-xs font-semibold"
                     onClick={handleLogout}
                   >
@@ -94,9 +95,9 @@ const Header = () => {
               )}
             </div>
 
-            {/* Hamburger Button (Mobile viewports) */}
             <div className="flex items-center lg:hidden">
               <button
+                aria-label="Toggle mobile menu"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="text-slate-100 p-2 hover:bg-blue-900 rounded-lg focus:outline-none cursor-pointer"
                 aria-expanded={isMobileMenuOpen}
@@ -153,12 +154,12 @@ const Header = () => {
               )}
             </ul>
 
-            {/* Profile / Auth Status for Mobile Dropdown */}
             <div className="border-t border-blue-900 pt-3 flex items-center justify-between">
               {isLogged ? (
                 <>
                   <span className="text-sm">👤 Admin</span>
                   <button
+                    aria-label="Logout"
                     className="px-4 py-1.5 bg-gray-900 hover:bg-gray-700 border border-gray-800 rounded-md cursor-pointer text-xs font-semibold"
                     onClick={handleLogout}
                   >
