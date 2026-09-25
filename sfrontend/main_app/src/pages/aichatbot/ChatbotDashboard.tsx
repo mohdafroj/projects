@@ -108,7 +108,7 @@ const ChatbotDashboard = () => {
 
     const [inputText, setInputText] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-    const [showInfoPanel, setShowInfoPanel] = useState(true);
+    const [showInfoPanel, setShowInfoPanel] = useState(false);
     const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
     // Settings values for active persona
@@ -529,94 +529,113 @@ const ChatbotDashboard = () => {
 
             {/* PARAMETERS / SETTINGS PANEL */}
             {showInfoPanel && (
-                <aside className="w-64 bg-[#0F1424] border-l border-slate-800 hidden xl:flex flex-col h-full overflow-y-auto">
-                    <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-[#0c101d]">
-                        <h3 className="font-semibold text-sm">Model Parameters</h3>
-                        <span className="text-[10px] bg-indigo-600/20 text-indigo-300 font-bold px-1.5 py-0.5 rounded-md uppercase">
-                            Config
-                        </span>
-                    </div>
+                <>
+                    {/* Mobile/Tablet Backdrop */}
+                    <div
+                        onClick={() => setShowInfoPanel(false)}
+                        className="fixed inset-0 z-30 bg-black/60 backdrop-blur-xs xl:hidden"
+                    />
 
-                    <div className="p-4 space-y-5">
-                        {/* Active Model Name */}
-                        <div>
-                            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
-                                Active Model
-                            </label>
-                            <div className="bg-slate-900 border border-slate-800 p-2.5 rounded-xl font-medium text-xs text-indigo-400">
-                                🤖 {activePersona.model}
-                            </div>
-                        </div>
-
-                        {/* Temperature Slider */}
-                        <div>
-                            <div className="flex justify-between text-xs mb-1">
-                                <label className="font-semibold text-slate-400 uppercase tracking-wider text-[10px]">
-                                    Temperature
-                                </label>
-                                <span className="font-mono text-indigo-400 font-bold text-xs">
-                                    {temp[activePersona.id]}
+                    <aside className="fixed inset-y-0 right-0 z-40 w-72 sm:w-80 xl:w-64 bg-[#0F1424] border-l border-slate-800 flex flex-col h-full overflow-y-auto shadow-2xl xl:shadow-none xl:static shrink-0 transition-all">
+                        <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-[#0c101d]">
+                            <h3 className="font-semibold text-sm">Model Parameters</h3>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] bg-indigo-600/20 text-indigo-300 font-bold px-1.5 py-0.5 rounded-md uppercase">
+                                    Config
                                 </span>
-                            </div>
-                            <input
-                                type="range"
-                                min="0.0"
-                                max="1.0"
-                                step="0.1"
-                                value={temp[activePersona.id]}
-                                onChange={(e) => {
-                                    const val = parseFloat(e.target.value);
-                                    setTemp((prev) => ({ ...prev, [activePersona.id]: val }));
-                                }}
-                                className="w-full accent-indigo-500 bg-slate-900 rounded-lg cursor-pointer"
-                            />
-                            <div className="flex justify-between text-[9px] text-slate-500 mt-1 font-normal">
-                                <span>Deterministic (0.0)</span>
-                                <span>Creative (1.0)</span>
+                                <button
+                                    onClick={() => setShowInfoPanel(false)}
+                                    className="xl:hidden p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                                    title="Close Parameters"
+                                >
+                                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
 
-                        {/* Max Output Tokens */}
-                        <div>
-                            <div className="flex justify-between text-xs mb-1">
-                                <label className="font-semibold text-slate-400 uppercase tracking-wider text-[10px]">
-                                    Max Output Tokens
+                        <div className="p-4 space-y-5">
+                            {/* Active Model Name */}
+                            <div>
+                                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                                    Active Model
                                 </label>
-                                <span className="font-mono text-indigo-400 font-bold text-xs">
-                                    {tokens[activePersona.id]}
-                                </span>
+                                <div className="bg-slate-900 border border-slate-800 p-2.5 rounded-xl font-medium text-xs text-indigo-400">
+                                    🤖 {activePersona.model}
+                                </div>
                             </div>
-                            <input
-                                type="range"
-                                min="256"
-                                max="4096"
-                                step="256"
-                                value={tokens[activePersona.id]}
-                                onChange={(e) => {
-                                    const val = parseInt(e.target.value);
-                                    setTokens((prev) => ({ ...prev, [activePersona.id]: val }));
-                                }}
-                                className="w-full accent-indigo-500 bg-slate-900 rounded-lg cursor-pointer"
-                            />
-                            <div className="flex justify-between text-[9px] text-slate-500 mt-1 font-normal">
-                                <span>Short (256)</span>
-                                <span>Long (4096)</span>
+
+                            {/* Temperature Slider */}
+                            <div>
+                                <div className="flex justify-between text-xs mb-1">
+                                    <label className="font-semibold text-slate-400 uppercase tracking-wider text-[10px]">
+                                        Temperature
+                                    </label>
+                                    <span className="font-mono text-indigo-400 font-bold text-xs">
+                                        {temp[activePersona.id]}
+                                    </span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="0.0"
+                                    max="1.0"
+                                    step="0.1"
+                                    value={temp[activePersona.id]}
+                                    onChange={(e) => {
+                                        const val = parseFloat(e.target.value);
+                                        setTemp((prev) => ({ ...prev, [activePersona.id]: val }));
+                                    }}
+                                    className="w-full accent-indigo-500 bg-slate-900 rounded-lg cursor-pointer"
+                                />
+                                <div className="flex justify-between text-[9px] text-slate-500 mt-1 font-normal">
+                                    <span>Deterministic (0.0)</span>
+                                    <span>Creative (1.0)</span>
+                                </div>
+                            </div>
+
+                            {/* Max Output Tokens */}
+                            <div>
+                                <div className="flex justify-between text-xs mb-1">
+                                    <label className="font-semibold text-slate-400 uppercase tracking-wider text-[10px]">
+                                        Max Output Tokens
+                                    </label>
+                                    <span className="font-mono text-indigo-400 font-bold text-xs">
+                                        {tokens[activePersona.id]}
+                                    </span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="256"
+                                    max="4096"
+                                    step="256"
+                                    value={tokens[activePersona.id]}
+                                    onChange={(e) => {
+                                        const val = parseInt(e.target.value);
+                                        setTokens((prev) => ({ ...prev, [activePersona.id]: val }));
+                                    }}
+                                    className="w-full accent-indigo-500 bg-slate-900 rounded-lg cursor-pointer"
+                                />
+                                <div className="flex justify-between text-[9px] text-slate-500 mt-1 font-normal">
+                                    <span>Short (256)</span>
+                                    <span>Long (4096)</span>
+                                </div>
+                            </div>
+
+                            <hr className="border-slate-800" />
+
+                            {/* System Instructions display */}
+                            <div>
+                                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                                    System Persona Instructions
+                                </label>
+                                <div className="bg-slate-900/60 border border-slate-800/80 p-3 rounded-xl text-xs text-slate-300 leading-relaxed font-normal">
+                                    {activePersona.systemPrompt}
+                                </div>
                             </div>
                         </div>
-
-                        <hr className="border-slate-800" />
-
-                        {/* System Instructions display */}
-                        <div>
-                            <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
-                                System Persona Instructions
-                            </label>
-                            <div className="bg-slate-900/60 border border-slate-800/80 p-3 rounded-xl text-xs text-slate-300 leading-relaxed font-normal">
-                                {activePersona.systemPrompt}
-                            </div>
-                        </div>
-                    </div>
-                </aside>
+                    </aside>
+                </>
             )}
         </div>
     );

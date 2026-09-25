@@ -12,7 +12,7 @@ services:
       dockerfile: Dockerfile
     container_name: ctr_main_app
     ports:
-      - "3000:3000"
+      - "4000:3000"
     environment:
       <<: *common-env
       REMOTE_HEADER_URL: http://localhost:3001
