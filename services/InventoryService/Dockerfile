@@ -4,13 +4,14 @@ FROM node:22-alpine AS development
 WORKDIR /app
 
 #copy package.json and package-lock.json file into the app
-COPY package*.json ./
+COPY InventoryService/package*.json ./
 
 #Install depencies
 RUN npm i
 
 #Copy rest project files
-COPY . .
+COPY InventoryService/ ./
+COPY contracts /contracts
 
 # Generate Prisma Client after everything is in place
 #RUN npx prisma generate

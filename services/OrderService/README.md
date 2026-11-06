@@ -26,6 +26,35 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Internal gRPC pilot
+
+OrderService calls InventoryService over gRPC for category and product lookups.
+The shared protobuf contract is `contracts/proto/inventory/v1/inventory.proto`.
+
+With Docker Compose, the gRPC listener is available to backend containers at
+`srv_inventory:50051`; it is not published to the host. InventoryService's
+existing HTTP and GraphQL listeners remain available. OrderService exposes
+`GET /inventory/categories/:id` and `GET /inventory/products/:id`.
+
+Product documents are read from InventoryService's MongoDB `products`
+collection by their stable string `id`, using the product schema and model in
+InventoryService.
+
+Run the services from the `services` directory:
+
+```bash
+docker compose up --build srv_inventory srv_order
+```
+
+For local development outside Compose, start InventoryService and OrderService
+from their respective directories. InventoryService listens on
+`INVENTORY_GRPC_BIND_ADDRESS` (default `0.0.0.0:50051`), and OrderService
+connects to `INVENTORY_GRPC_URL` (default `localhost:50051`).
+
+The client uses a five-second RPC timeout and maps gRPC errors to HTTP errors.
+The Compose setup is for local development; production traffic should use
+TLS/mTLS and authenticated service identities.
+
 ## Project setup
 
 ```bash

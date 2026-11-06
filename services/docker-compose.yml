@@ -168,16 +168,26 @@ services:
   srv_inventory:
     <<: *common-service
     build:
-      context: ./InventoryService
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: InventoryService/Dockerfile
     container_name: ctr_inventory
+    command:
+      [
+        "sh",
+        "-c",
+        "LOCK_HASH=$$(sha256sum package-lock.json); if [ ! -f node_modules/.package-lock-hash ] || [ \"$$(cat node_modules/.package-lock-hash 2>/dev/null)\" != \"$$LOCK_HASH\" ]; then npm ci && printf '%s' \"$$LOCK_HASH\" > node_modules/.package-lock-hash || exit 1; fi; npm run start:dev",
+      ]
     depends_on:
       srv_postgres_db:
         condition: service_healthy
       srv_redis:
         condition: service_healthy
+      srv_mongodb:
+        condition: service_healthy
     ports:
       - "8001:3000"
+    expose:
+      - "50051"
     env_file:
       - ./InventoryService/.env
     environment:
@@ -187,15 +197,30 @@ services:
     volumes:
       - ./InventoryService:/app
       - inventory_node_modules:/app/node_modules
+      - ./contracts:/contracts:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   srv_order:
     <<: *common-service
     build:
-      context: ./OrderService
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: OrderService/Dockerfile.dev
     container_name: ctr_order
+    command:
+      [
+        "sh",
+        "-c",
+        "LOCK_HASH=$$(sha256sum package-lock.json); if [ ! -f node_modules/.package-lock-hash ] || [ \"$$(cat node_modules/.package-lock-hash 2>/dev/null)\" != \"$$LOCK_HASH\" ]; then npm ci && printf '%s' \"$$LOCK_HASH\" > node_modules/.package-lock-hash || exit 1; fi; npm run start:dev",
+      ]
     depends_on:
       srv_postgres_db:
+        condition: service_healthy
+      srv_inventory:
         condition: service_healthy
     ports:
       - "8002:3000"
@@ -206,10 +231,12 @@ services:
       <<: *common-env
       POSTGRES_DB_HOST: srv_postgres_db
       POSTGRES_DB_NAME: order_db
+      INVENTORY_GRPC_URL: srv_inventory:50051
       DATABASE_URL: postgresql://postgres:postgres@srv_postgres_db:5432/order_db
     volumes:
       - ./OrderService:/app
       - order_node_modules:/app/node_modules
+      - ./contracts:/contracts:ro
 
   srv_ocr:
     <<: *common-service

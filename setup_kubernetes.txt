@@ -1,0 +1,112 @@
+1. check and install
+
+    docker --version
+    docker info
+    kubectl version --client
+    kind version
+
+    winget install Kubernetes.kind
+    winget install Kubernetes.kubectl
+
+2. Create kind-config.yaml file with content on path
+
+    kind: Cluster
+    apiVersion: kind.x-k8s.io/v1alpha4
+
+    nodes:
+    - role: control-plane
+    - role: worker
+    - role: worker
+
+3. Run command on file path
+
+    kind create cluster --name dev-cluster --config kind-config.yaml
+
+4. Run docker ps and see following containers
+    dev-cluster-control-plane
+    dev-cluster-worker
+    dev-cluster-worker2
+
+5. Check 
+    kubectl config get-contexts  //contexts
+    kubectl config use-context kind-dev-cluster // select your kind cluster
+    kubectl get nodes -o wide // get nodes
+
+Milestone 1
+ Your three-node cluster should now be running.
+
+1. Create docker file within directory with following codes:
+    FROM node:20-alpine
+
+    WORKDIR /app
+
+    COPY package*.json ./
+
+    RUN npm install
+
+    COPY . .
+
+    EXPOSE 3000
+
+    CMD ["npm", "start"]
+
+2. Create docker image 
+    docker build -t trafficlight:v1 .
+
+3. Load your image into Kind
+    kind load docker-image trafficlight:v1 --name dev-cluster 
+    Now Kind can use your Node.js image without requiring you to push it to Docker Hub.
+
+Deploy Node.js application to Kubernetes
+
+1. Create a file named deployment.yaml
+
+
+2. Apply the deployment
+    kubectl apply -f deployment.yaml
+
+3. Check deployments:
+    kubectl get deployments
+
+4. Check Pods:
+    kubectl get pods -o wide
+    //You should see two application pods, ideally distributed across your two worker nodes.
+
+Expose your application using a Service
+
+1. Create service.yaml
+
+2. Apply changes:
+    kubectl apply -f service.yaml
+
+3. Check
+    kubectl get services
+
+4. Forward the service to your Windows machine:
+    kubectl port-forward service/trafficlight-service 8080:80
+
+
+Step 9. Learn important Kubernetes commands
+    These commands will be useful in your development and interviews.
+    Command	Purpose
+    kubectl get nodes	List cluster nodes
+    kubectl get pods	List pods
+    kubectl get deployments	List deployments
+    kubectl get services	List services
+    kubectl describe pod POD_NAME	Inspect a pod
+    kubectl logs POD_NAME	View application logs
+    kubectl delete pod POD_NAME	Delete a pod
+    kubectl apply -f deployment.yaml	Apply configuration
+    kubectl scale deployment trafficlight --replicas=3	Scale application
+    kubectl rollout status deployment/trafficlight	Check deployment status
+
+Troubleshooting commands
+    kubectl get pods -A
+    kubectl get nodes
+    kubectl get events --sort-by=.metadata.creationTimestamp
+    kubectl describe deployment trafficlight
+    kubectl logs deployment/trafficlight
+
+To Delete cluster
+    kind delete cluster --name dev-cluster
+

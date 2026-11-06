@@ -8,6 +8,7 @@ import { PrismaModule } from './prisma/prisma.module';
 //import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { EventsModule } from './events/events.module';
+import { InventoryGrpcClientModule } from './inventory/inventory-grpc-client.module';
 
 @Module({
   imports: [
@@ -27,9 +28,10 @@ import { EventsModule } from './events/events.module';
     DevtoolsModule.register({ http: process.env.NODE_ENV != 'prouction' }),
     PrismaModule,
     AuthModule,
-    EventsModule
+    EventsModule,
+    InventoryGrpcClientModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
