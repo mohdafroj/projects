@@ -1,0 +1,197 @@
+<div class="login-shell" *ngIf="!auth.isAuthenticated(); else dashboard">
+  <section class="login-card">
+    <div class="brand-mark">P</div>
+    <p class="eyebrow">PEOPLE OPERATIONS</p>
+    <h1>Welcome back</h1>
+    <p class="muted">Sign in to manage your employee directory.</p>
+    <div class="alert error-alert" *ngIf="error()" role="alert">{{ error() }}</div>
+    <form [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
+      <label for="login-email">Work email</label>
+      <input id="login-email" type="email" autocomplete="username" formControlName="email" placeholder="you@company.com">
+      <small class="field-error" *ngIf="loginForm.controls.email.touched && loginForm.controls.email.invalid">Enter a valid email address.</small>
+      <label for="login-password">Password</label>
+      <input id="login-password" type="password" autocomplete="current-password" formControlName="password" placeholder="Your password">
+      <small class="field-error" *ngIf="loginForm.controls.password.touched && loginForm.controls.password.invalid">Password is required.</small>
+      <button class="button button-dark login-button" type="submit" [disabled]="saving()">{{ saving() ? 'Signing in…' : 'Sign in' }}</button>
+    </form>
+    <p class="login-note">Use the administrator account configured in your API environment.</p>
+  </section>
+</div>
+
+<ng-template #dashboard>
+  <div class="app-shell">
+    <aside class="sidebar" [class.sidebar-open]="sidebarOpen()">
+      <a class="brand" href="#" (click)="$event.preventDefault()">
+        <span class="brand-mark">P</span><span>people<span class="brand-light">desk</span></span>
+      </a>
+      <label class="global-search"><span>⌕</span><input aria-label="Search navigation" placeholder="Search anything..."><kbd>⌘ K</kbd></label>
+      <nav class="primary-nav" aria-label="Main navigation">
+        <a href="#" (click)="$event.preventDefault()"><span>▦</span> Dashboard</a>
+        <a href="#" (click)="$event.preventDefault()"><span>♧</span> Notifications</a>
+        <a class="selected" href="#" aria-current="page" (click)="$event.preventDefault()"><span>♙</span> Employees <span class="nav-chevron">›</span></a>
+        <a href="#" (click)="$event.preventDefault()"><span>▣</span> Attendance</a>
+        <a href="#" (click)="$event.preventDefault()"><span>◉</span> Payroll</a>
+        <a href="#" (click)="$event.preventDefault()"><span>▤</span> Invoices</a>
+        <a href="#" (click)="$event.preventDefault()"><span>▧</span> Performance</a>
+      </nav>
+      <p class="nav-label">FAVORITES</p>
+      <nav class="secondary-nav" aria-label="Favorites">
+        <a href="#" (click)="$event.preventDefault()">▰ &nbsp; Reimbursements</a>
+        <a href="#" (click)="$event.preventDefault()">▰ &nbsp; Timesheets</a>
+        <a href="#" (click)="$event.preventDefault()">▰ &nbsp; Overtime Logs</a>
+      </nav>
+      <a class="workspace-link" href="#" (click)="$event.preventDefault()">◎ &nbsp; Workspace</a>
+      <nav class="bottom-nav" aria-label="Support">
+        <a href="#" (click)="$event.preventDefault()">▱ &nbsp; Feedback</a>
+        <a href="#" (click)="$event.preventDefault()">⚙ &nbsp; Settings</a>
+        <a href="#" (click)="$event.preventDefault()">ⓘ &nbsp; Help Center</a>
+      </nav>
+      <button class="profile-button" type="button" (click)="logout()" aria-label="Sign out">
+        <span class="profile-avatar">{{ auth.user()?.name?.charAt(0) || 'A' }}</span>
+        <span class="profile-copy"><strong>{{ auth.user()?.name }}</strong><small>{{ auth.user()?.role | titlecase }}</small></span>
+        <span class="profile-menu">↗</span>
+      </button>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu" type="button" (click)="sidebarOpen.set(!sidebarOpen())" aria-label="Toggle navigation">☰</button>
+        <div class="page-identity"><span class="identity-icon">♙</span><strong>Employees</strong></div>
+        <div class="topbar-actions">
+          <span class="last-updated">Updated just now</span>
+          <span class="team-dots" aria-label="Team members"><i></i><i></i><i></i></span>
+          <button class="icon-button" type="button" aria-label="Theme settings">☼</button>
+          <span class="topbar-divider"></span>
+          <button class="button button-outline edit-layout" type="button" (click)="logout()">↪ &nbsp; Sign out</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="page-heading">
+          <div>
+            <p class="eyebrow">PEOPLE OVERVIEW</p>
+            <h1>Employee Overview</h1>
+            <p class="muted">A clear view of your growing team.</p>
+          </div>
+          <div class="heading-actions">
+            <button class="button button-outline" type="button" (click)="exportCsv()" [disabled]="employees().length === 0">⇩ <span>Export</span></button>
+            <button class="button button-dark" type="button" *ngIf="auth.canManageEmployees()" (click)="openCreate()">＋ <span>New Employee</span></button>
+          </div>
+        </div>
+
+        <div class="alert error-alert page-alert" *ngIf="error()" role="alert">
+          <span>{{ error() }}</span><button type="button" (click)="error.set('')" aria-label="Dismiss error">×</button>
+        </div>
+        <div class="alert success-alert page-alert" *ngIf="notice()" role="status">{{ notice() }}</div>
+
+        <section class="stats-grid" aria-label="Employee statistics">
+          <article class="stat-card">
+            <div><span class="stat-label">Total Employees</span><strong class="stat-value">{{ summary().total }}</strong><span class="stat-foot">Across your organization</span></div>
+            <span class="stat-icon icon-mint">♙</span>
+          </article>
+          <article class="stat-card">
+            <div><span class="stat-label">Active Employees</span><strong class="stat-value">{{ summary().active }}</strong><span class="stat-foot"><span class="dot dot-green"></span> Currently working</span></div>
+            <span class="stat-icon icon-blue">♧</span>
+          </article>
+          <article class="stat-card">
+            <div><span class="stat-label">Inactive Employees</span><strong class="stat-value">{{ summary().inactive }}</strong><span class="stat-foot">Former team members</span></div>
+            <span class="stat-icon icon-peach">♙</span>
+          </article>
+          <article class="stat-card">
+            <div><span class="stat-label">Departments</span><strong class="stat-value">{{ summary().departments }}</strong><span class="stat-foot">Teams and functions</span></div>
+            <span class="stat-icon icon-purple">♧</span>
+          </article>
+        </section>
+
+        <section class="chart-card" aria-labelledby="chart-title">
+          <div class="card-heading">
+            <div><span class="heading-icon">♙</span><div><h2 id="chart-title">New Hires vs. Exits</h2><p class="card-subtitle">Employee movement · {{ updatedAt | date:'yyyy' }}</p></div></div>
+            <div class="chart-legend"><span><i class="legend-dot hire-dot"></i> New Hires</span><span><i class="legend-dot exit-dot"></i> Exits</span></div>
+          </div>
+          <div class="chart-wrap" role="img" aria-label="Bar chart comparing monthly new hires and exits">
+            <div class="y-axis"><span>{{ monthMaximum() }}</span><span>{{ monthMaximum() * 0.75 | number:'1.0-0' }}</span><span>{{ monthMaximum() * 0.5 | number:'1.0-0' }}</span><span>{{ monthMaximum() * 0.25 | number:'1.0-0' }}</span><span>0</span></div>
+            <div class="plot">
+              <div class="grid-lines"><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="month-columns" *ngFor="let month of summary().months; let index = index">
+                <div class="bar-pair">
+                  <span class="bar hires-bar" [style.height.%]="barHeight(summary().hiresByMonth[index])" [title]="summary().hiresByMonth[index] + ' hires'"></span>
+                  <span class="bar exits-bar" [style.height.%]="barHeight(summary().exitsByMonth[index])" [title]="summary().exitsByMonth[index] + ' exits'"></span>
+                </div>
+                <span class="month-label">{{ month }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="directory-card" aria-label="Employee directory">
+          <div class="table-toolbar">
+            <div class="filters">
+              <label class="employee-search"><span>⌕</span><input aria-label="Search employees" placeholder="Search employee..." [value]="search()" (input)="searchChanges.next($any($event.target).value)"><kbd>⌘ K</kbd></label>
+              <label class="select-wrap"><span class="filter-icon">◷</span><select aria-label="Filter by status" [value]="statusFilter()" (change)="changeStatus($any($event.target).value)"><option value="">All Status</option><option *ngFor="let status of statuses" [value]="status.value">{{ status.label }}</option></select><span class="select-arrow">⌄</span></label>
+              <label class="select-wrap department-filter"><span class="filter-icon">▦</span><select aria-label="Filter by department" [value]="departmentFilter()" (change)="changeDepartment($any($event.target).value)"><option value="">All Departments</option><option *ngFor="let department of departments()" [value]="department">{{ department }}</option></select><span class="select-arrow">⌄</span></label>
+            </div>
+            <span class="result-count">{{ total() }} {{ total() === 1 ? 'employee' : 'employees' }}</span>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr>
+                <th scope="col" class="check-col"><input type="checkbox" aria-label="Select all employees" disabled></th>
+                <th scope="col"><button class="sort-button" type="button" (click)="toggleSort('employeeId')">User ID <span>↕</span></button></th>
+                <th scope="col"><button class="sort-button" type="button" (click)="toggleSort('name')">Name <span>↕</span></button></th>
+                <th scope="col"><button class="sort-button" type="button" (click)="toggleSort('email')">Email Address <span>↕</span></button></th>
+                <th scope="col"><button class="sort-button" type="button" (click)="toggleSort('department')">Department <span>↕</span></button></th>
+                <th scope="col"><button class="sort-button" type="button" (click)="toggleSort('jobTitle')">Job Title <span>↕</span></button></th>
+                <th scope="col"><button class="sort-button" type="button" (click)="toggleSort('joinedAt')">Joined Date <span>↕</span></button></th>
+                <th scope="col"><button class="sort-button" type="button" (click)="toggleSort('status')">Status <span>↕</span></button></th>
+                <th scope="col" class="action-col"><span class="sr-only">Actions</span></th>
+              </tr></thead>
+              <tbody>
+                <tr *ngFor="let employee of employees(); trackBy: trackEmployee">
+                  <td class="check-col"><input type="checkbox" [attr.aria-label]="'Select ' + employee.name" disabled></td>
+                  <td class="employee-id">{{ employee.employeeId }}</td>
+                  <td><div class="employee-name"><span class="avatar" [ngClass]="'avatar-' + avatarColor(employee.name)">{{ employee.name.charAt(0) }}</span><strong>{{ employee.name }}</strong></div></td>
+                  <td class="email-cell">{{ employee.email }}</td>
+                  <td><span class="department-tag" [ngClass]="'tag-' + avatarColor(employee.department)">{{ employee.department }}</span></td>
+                  <td><span class="job-tag">{{ employee.jobTitle }}</span></td>
+                  <td class="date-cell">{{ formatDate(employee.joinedAt) }}</td>
+                  <td><span class="status-pill" [ngClass]="'status-' + employee.status"><i></i>{{ statusLabel(employee.status) }}</span></td>
+                  <td class="action-col"><div class="row-actions" *ngIf="auth.canManageEmployees()"><button type="button" (click)="openEdit(employee)" [attr.aria-label]="'Edit ' + employee.name">✎</button><button type="button" (click)="deleteEmployee(employee)" [attr.aria-label]="'Delete ' + employee.name">×</button></div></td>
+                </tr>
+                <tr *ngIf="!loading() && employees().length === 0"><td colspan="9" class="empty-state"><span class="empty-icon">♙</span><strong>No employees found</strong><span>Try adjusting your filters or add a new employee.</span></td></tr>
+                <tr *ngIf="loading()"><td colspan="9" class="loading-state">Loading employees…</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <footer class="table-footer">
+            <span>Showing <strong>{{ total() ? (page() - 1) * pageSize + 1 : 0 }}–{{ Math.min(page() * pageSize, total()) }}</strong> of <strong>{{ total() }}</strong></span>
+            <div class="pagination" aria-label="Pagination">
+              <button type="button" (click)="goToPage(page() - 1)" [disabled]="!canGoPrevious()" aria-label="Previous page">‹</button>
+              <button class="page-number" *ngFor="let number of pageNumbers()" [class.current-page]="number === page()" type="button" (click)="goToPage(number)" [attr.aria-current]="number === page() ? 'page' : null">{{ number }}</button>
+              <button type="button" (click)="goToPage(page() + 1)" [disabled]="!canGoNext()" aria-label="Next page">›</button>
+            </div>
+          </footer>
+        </section>
+        <p class="footer-note">PeopleDesk <span>·</span> Your people, at a glance.</p>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="editorOpen()" (click)="closeEditor()">
+    <section class="employee-modal" role="dialog" aria-modal="true" [attr.aria-labelledby]="'employee-modal-title'" (click)="$event.stopPropagation()">
+      <div class="modal-heading"><div><p class="eyebrow">{{ editing() ? 'EMPLOYEE DETAILS' : 'NEW TEAM MEMBER' }}</p><h2 id="employee-modal-title">{{ editing() ? 'Edit employee' : 'Add employee' }}</h2><p class="muted">Keep your employee information up to date.</p></div><button type="button" class="close-button" (click)="closeEditor()" aria-label="Close dialog">×</button></div>
+      <div class="alert error-alert" *ngIf="modalError()" role="alert">{{ modalError() }}</div>
+      <form [formGroup]="employeeForm" (ngSubmit)="saveEmployee()" novalidate>
+        <div class="form-grid">
+          <label>Employee ID<input formControlName="employeeId" placeholder="EMP-1009"><small class="field-error" *ngIf="employeeForm.controls.employeeId.touched && employeeForm.controls.employeeId.invalid">Employee ID is required.</small></label>
+          <label>Full name<input formControlName="name" placeholder="Full name"><small class="field-error" *ngIf="employeeForm.controls.name.touched && employeeForm.controls.name.invalid">Name is required.</small></label>
+          <label class="full-field">Work email<input type="email" formControlName="email" placeholder="name@company.com"><small class="field-error" *ngIf="employeeForm.controls.email.touched && employeeForm.controls.email.invalid">Enter a valid email address.</small></label>
+          <label>Department<input formControlName="department" placeholder="e.g. Engineering"><small class="field-error" *ngIf="employeeForm.controls.department.touched && employeeForm.controls.department.invalid">Department is required.</small></label>
+          <label>Job title<input formControlName="jobTitle" placeholder="e.g. Product Designer"><small class="field-error" *ngIf="employeeForm.controls.jobTitle.touched && employeeForm.controls.jobTitle.invalid">Job title is required.</small></label>
+          <label>Joined date<input type="date" formControlName="joinedAt"><small class="field-error" *ngIf="employeeForm.controls.joinedAt.touched && employeeForm.controls.joinedAt.invalid">Join date is required.</small></label>
+          <label>Status<select formControlName="status"><option *ngFor="let status of statuses" [value]="status.value">{{ status.label }}</option></select></label>
+        </div>
+        <div class="modal-actions"><button class="button button-outline" type="button" (click)="closeEditor()">Cancel</button><button class="button button-dark" type="submit" [disabled]="saving()">{{ saving() ? 'Saving…' : (editing() ? 'Save changes' : 'Add employee') }}</button></div>
+      </form>
+    </section>
+  </div>
+</ng-template>
